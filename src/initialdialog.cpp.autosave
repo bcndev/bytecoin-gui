@@ -1,0 +1,61 @@
+#include <QFileDialog>
+
+#include "initialdialog.h"
+#include "settings.h"
+#include "connectselectiondialog.h"
+#include "ui_initialdialog.h"
+
+namespace WalletGUI {
+
+InitialDialog::InitialDialog(const QString& reason, QWidget *parent)
+    : QDialog(parent)
+    , ui(new Ui::InitialDialog)
+{
+    ui->setupUi(this);
+    ui->m_reasonLabel->setText(reason);
+}
+
+InitialDialog::~InitialDialog()
+{
+    delete ui;
+}
+
+void InitialDialog::createWallet()
+{
+    const QString fileName = QFileDialog::getSaveFileName(
+                this,
+                tr("Create wallet file"),
+                QString(),
+                tr("Wallet files (*.wallet);;All files (*)"));
+    if (fileName.isEmpty())
+        return;
+
+    emit runBuiltinWalletdSignal(fileName, true);
+    QDialog::accept();
+}
+
+void InitialDialog::openWallet()
+{
+    const QString fileName = QFileDialog::getOpenFileName(
+                this,
+                tr("Open wallet file"),
+                QString(),
+                tr("Wallet files (*.wallet);;All files (*)"));
+    if (fileName.isEmpty())
+        return;
+
+    emit runBuiltinWalletdSignal(fileName, false);
+    QDialog::accept();
+}
+
+void InitialDialog::remoteWallet()
+{
+    ConnectSelectionDialog dlg(this);
+    if (dlg.exec() != QDialog::Accepted)
+        return;
+
+    emit connectToRemoteWalletdSignal();
+    QDialog::accept();
+}
+
+}
