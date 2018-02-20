@@ -78,6 +78,7 @@ public:
 
     Q_SLOT void packetSent(const QByteArray& data);
     Q_SLOT void packetReceived(const QByteArray& data);
+    Q_SLOT void importKeys();
 
 protected:
     void changeEvent(QEvent* event) override;
@@ -112,8 +113,6 @@ private:
     Q_SLOT void about();
     Q_SLOT void copyAddress();
     Q_SLOT void copyBalance();
-//    Q_SLOT void showPreferences();
-//    Q_SLOT void showConsole();
     Q_SLOT void communityForumTriggered();
     Q_SLOT void reportIssueTriggered();
 
@@ -122,12 +121,6 @@ private:
     Q_SLOT void remoteWallet();
     Q_SLOT void encryptWallet();
 
-//    Q_SLOT void daemonOutputReady();
-//    Q_SLOT void daemonErrorReady();
-//    Q_SLOT void daemonErrorOccured(QProcess::ProcessError error);
-
-//Q_SIGNALS:
-//    void reinitCryptoNoteAdapterSignal();
 signals:
     void createTxSignal(const RpcApi::CreateTransaction::Request& req, QPrivateSignal);
     void sendTxSignal(const RpcApi::SendTransaction::Request& req, QPrivateSignal);
@@ -137,6 +130,7 @@ signals:
     void openWalletSignal(QWidget* parent);
     void remoteWalletSignal(QWidget* parent);
     void encryptWalletSignal(QWidget* parent);
+    void importKeysSignal(QWidget* parent);
 };
 
 }

@@ -9,6 +9,7 @@
 
 class QLockFile;
 class QDir;
+class QAuthenticator;
 
 namespace WalletGUI
 {
@@ -56,6 +57,7 @@ private:
     void createWalletd();
     void subscribeToWalletd();
     void firstRun();
+    void runBuiltinWalletd(const QString& walletFile, bool createNew, QByteArray&& keys);
 
 signals:
     void builtinRunSignal();
@@ -66,7 +68,6 @@ public slots:
     void sendTx(const RpcApi::SendTransaction::Request& req);
     void restartDaemon();
 
-    void runBuiltinWalletd(const QString& walletFile, bool createNew);
     void connectToRemoteWalletd();
 
 
@@ -74,6 +75,7 @@ public slots:
     void openWallet(QWidget* parent);
     void remoteWallet(QWidget* parent);
     void encryptWallet(QWidget* parent);
+    void importKeys(QWidget* parent);
 
     void splashMsg(const QString& msg);
 
@@ -85,6 +87,7 @@ private slots:
     void daemonFinished(int exitCode, QProcess::ExitStatus exitStatus);
     void requestPassword();
     void requestPasswordWithConfirmation();
+    void requestWalletdAuth(QAuthenticator* authenticator);
 
 #ifdef Q_OS_MAC
 private:

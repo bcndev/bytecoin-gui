@@ -23,18 +23,20 @@ namespace Ui {
 class QuestionDialog;
 }
 
-namespace WalletGUI {
+namespace WalletGUI
+{
 
-class QuestionDialog : public QDialog {
-  Q_OBJECT
-  Q_DISABLE_COPY(QuestionDialog)
+class QuestionDialog : public QDialog
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(QuestionDialog)
 
 public:
-  QuestionDialog(const QString& _title, const QString& _text, QWidget* _parent);
-  ~QuestionDialog();
+    QuestionDialog(const QString& title, const QString& text, QWidget* parent);
+    ~QuestionDialog();
 
 private:
-  QScopedPointer<Ui::QuestionDialog> m_ui;
+    QScopedPointer<Ui::QuestionDialog> ui;
 };
 
 }

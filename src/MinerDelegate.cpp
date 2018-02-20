@@ -18,7 +18,6 @@
 #include <QAbstractItemView>
 
 #include "MinerDelegate.h"
-//#include "Style/Style.h"
 #include "MinerModel.h"
 
 namespace WalletGUI {

@@ -12,17 +12,12 @@ ConnectSelectionDialog::ConnectSelectionDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->buttonBox->button(QDialogButtonBox::Ok)-> setEnabled(false);
-//    QFont font = ui->label->font();
-//    font.setBold(true);
-//    ui->label->setFont(font);
-//    ui->label->setText(reason);
     connect(ui->m_connectionOptionsFrame, &ConnectionOptionsFrame::disableAcceptButtonSignal,
         [this](bool disable)
         {
             ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(!disable);
         });
     ui->m_connectionOptionsFrame->load();
-//    setWindowTitle("Bytecoin");
 }
 
 ConnectSelectionDialog::~ConnectSelectionDialog()

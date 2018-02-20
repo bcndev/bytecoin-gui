@@ -28,7 +28,6 @@
 #include "settings.h"
 #include "IMiningManager.h"
 #include "IPoolMiner.h"
-//#include "Style/Style.h"
 
 namespace WalletGUI {
 
@@ -107,8 +106,7 @@ Qt::ItemFlags MinerModel::flags(const QModelIndex& _index) const {
   if (!_index.isValid()) {
     return 0;
   }
-
-  Qt::ItemFlags flags = Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDropEnabled;
+  Qt::ItemFlags flags = Qt::ItemIsEnabled | Qt::ItemNeverHasChildren /*| Qt::ItemIsDropEnabled*/;
   if (_index.column() != COLUMN_REMOVE) {
     flags |= Qt::ItemIsSelectable | Qt::ItemIsDragEnabled;
   }
@@ -132,8 +130,6 @@ QVariant MinerModel::headerData(int _section, Qt::Orientation _orientation, int 
       return tr("Good shares");
     case COLUMN_BAD_SHARES:
       return tr("Bad shares");
-    case COLUMN_DONATED_SHARES:
-      return tr("Donated shares");
     case COLUMN_CONNECTION_ERROR_COUNT:
       return tr("Connection error");
     case COLUMN_LAST_CONNECTION_ERROR_TIME:
@@ -260,9 +256,9 @@ void MinerModel::hashRateChanged(quintptr _minerIndex, quint32 /*_hashRate*/) {
   Q_EMIT dataChanged(minerIndex, minerIndex);
 }
 
-void MinerModel::alternateHashRateChanged(quintptr _minerIndex, quint32 /*_hashRate*/) {
-  QModelIndex minerIndex = index(_minerIndex, COLUMN_DONATION_HASHRATE);
-  Q_EMIT dataChanged(minerIndex, minerIndex);
+void MinerModel::alternateHashRateChanged(quintptr /*_minerIndex*/, quint32 /*_hashRate*/) {
+//  QModelIndex minerIndex = index(_minerIndex, COLUMN_DONATION_HASHRATE);
+//  Q_EMIT dataChanged(minerIndex, minerIndex);
 }
 
 void MinerModel::difficultyChanged(quintptr _minerIndex, quint32 /*_difficulty*/) {
@@ -280,9 +276,9 @@ void MinerModel::badShareCountChanged(quintptr _minerIndex, quint32 /*_badShareC
   Q_EMIT dataChanged(minerIndex, minerIndex);
 }
 
-void MinerModel::goodAlternateShareCountChanged(quintptr _minerIndex, quint32 /*_goodShareCount*/) {
-  QModelIndex minerIndex = index(_minerIndex, COLUMN_DONATED_SHARES);
-  Q_EMIT dataChanged(minerIndex, minerIndex);
+void MinerModel::goodAlternateShareCountChanged(quintptr /*_minerIndex*/, quint32 /*_goodShareCount*/) {
+//  QModelIndex minerIndex = index(_minerIndex, COLUMN_DONATED_SHARES);
+//  Q_EMIT dataChanged(minerIndex, minerIndex);
 }
 
 void MinerModel::connectionErrorCountChanged(quintptr _minerIndex, quint32 /*_connectionErrorCount*/) {
@@ -343,8 +339,6 @@ QVariant MinerModel::getDislayRole(const QModelIndex& _index) const {
     return _index.data(ROLE_GOOD_SHARES);
   case COLUMN_BAD_SHARES:
     return _index.data(ROLE_BAD_SHARES);
-  case COLUMN_DONATED_SHARES:
-    return _index.data(ROLE_DONATED_SHARES);
   case COLUMN_CONNECTION_ERROR_COUNT:
     return _index.data(ROLE_CONNECTION_ERROR_COUNT);
   case COLUMN_LAST_CONNECTION_ERROR_TIME: {
@@ -364,10 +358,6 @@ QVariant MinerModel::getDislayRole(const QModelIndex& _index) const {
     return tr("%1 H/s").arg(hashrate);
   }
 
-  case COLUMN_DONATION_HASHRATE: {
-    quint32 hashrate = _index.data(ROLE_DONATION_HASHRATE).toUInt();
-    return tr("%1 H/s").arg(hashrate);
-  }
   }
 
   return QVariant();
@@ -386,8 +376,6 @@ QVariant MinerModel::getUserRoles(const QModelIndex& _index, int _role) const {
     return miner->getGoodShareCount();
   case ROLE_BAD_SHARES:
     return miner->getBadShareCount();
-  case ROLE_DONATED_SHARES:
-    return miner->getGoodAlternateShareCount();
   case ROLE_CONNECTION_ERROR_COUNT:
     return miner->getConnectionErrorCount();
   case ROLE_LAST_CONNECTION_ERROR_TIME:
@@ -396,8 +384,6 @@ QVariant MinerModel::getUserRoles(const QModelIndex& _index, int _role) const {
     return miner->getCurrentState();
   case ROLE_HASHRATE:
     return miner->getHashRate();
-  case ROLE_DONATION_HASHRATE:
-    return miner->getAlternateHashRate();
   }
 
   return QVariant();

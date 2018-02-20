@@ -27,7 +27,6 @@ BalanceOverviewFrame::BalanceOverviewFrame(QWidget *parent)
     , syncLabel_(new QLabel(this))
 {
     ui->setupUi(this);
-//    ui->m_copyLabel->hide();
 
     ui->m_overviewSpendableBalanceLabel->installEventFilter(this);
     ui->m_overviewLockedOrUnconfirmedBalanceLabel->installEventFilter(this);

@@ -69,15 +69,6 @@ void LogFrame::addNetworkMessage(const QString& data)
 void LogFrame::print(const QString& data, const QColor& color)
 {
     QMutexLocker locker(mutex_);
-//    const int lines = ui->textEdit->document()->blockCount();
-//    if (lines > MAX_LINES)
-//    {
-//        ui->textEdit->moveCursor(QTextCursor::Start, QTextCursor::MoveAnchor);
-//        for (int i = lines - MAX_LINES; i > 0; --i)
-//            ui->textEdit->moveCursor(QTextCursor::Down, QTextCursor::KeepAnchor);
-//        ui->textEdit->textCursor().removeSelectedText();
-//    }
-//    ui->textEdit->moveCursor(QTextCursor::End);
     insertText(data, color);
     if (autoScroll_)
         scrollDown();
@@ -85,9 +76,7 @@ void LogFrame::print(const QString& data, const QColor& color)
 
 void LogFrame::insertText(const QString& data, const QColor& color)
 {
-//    ui->textEdit->moveCursor(QTextCursor::End);
     ui->textEdit->setTextColor(color.isValid() ? color : defaultColor_);
-//    ui->textEdit->insertPlainText(data);
     ui->textEdit->append(data);
 }
 

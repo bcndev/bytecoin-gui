@@ -12,14 +12,15 @@ TARGET = bytecoin-gui
 TEMPLATE = app
 
 !win32: QMAKE_CXXFLAGS += -std=c++14 -Wall -Wextra -pedantic
-macx: QMAKE_CXXFLAGS += -mmacosx-version-min=10.11
-macx: QMAKE_CFLAGS += -mmacosx-version-min=10.11
+macx: QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.11
 macx: ICON = images/bytecoin.icns
+win32: RC_ICONS = images/bytecoin.ico
+win32: VERSION = 2.18.2.19
 
 #QMAKE_CXXFLAGS += -fno-omit-frame-pointer -fsanitize=address,undefined
 #LIBS += -lasan -lubsan
 
-CONFIG += c++14 strict_c++
+CONFIG += c++14 strict_c++ no-opengl
 
 # copy walletd adjacent to bytecoin-gui binary on all 3 platforms
 win32 {
@@ -57,7 +58,6 @@ SOURCES += main.cpp\
     logger.cpp \
     okbutton.cpp \
     statusbar.cpp \
-    tableview.cpp \
     windoweditemmodel.cpp \
     walletmodel.cpp \
     sendframe.cpp \
@@ -65,7 +65,6 @@ SOURCES += main.cpp\
     resizablescrollarea.cpp \
     common.cpp \
     connectionoptionsframe.cpp \
-    optionsdialog.cpp \
     settings.cpp \
     Miner/Miner.cpp \
     Miner/StratumClient.cpp \
@@ -75,7 +74,6 @@ SOURCES += main.cpp\
     MiningFrame.cpp \
     MiningManager.cpp \
     PoolHeaderView.cpp \
-    QuestionDialog.cpp \
     connectselectiondialog.cpp \
     walletd.cpp \
     rpcapi.cpp \
@@ -94,7 +92,10 @@ SOURCES += main.cpp\
     addressbookdialog.cpp \
     popup.cpp \
     logframe.cpp \
-    askpassworddialog.cpp
+    askpassworddialog.cpp \
+    importkeydialog.cpp \
+    questiondialog.cpp \
+    PoolTreeView.cpp
 
 HEADERS  += mainwindow.h \
     signalhandler.h \
@@ -110,7 +111,6 @@ HEADERS  += mainwindow.h \
     logger.h \
     okbutton.h \
     statusbar.h \
-    tableview.h \
     windoweditemmodel.h \
     walletmodel.h \
     sendframe.h \
@@ -118,7 +118,6 @@ HEADERS  += mainwindow.h \
     resizablescrollarea.h \
     common.h \
     connectionoptionsframe.h \
-    optionsdialog.h \
     settings.h \
     Miner/Miner.h \
     Miner/StratumClient.h \
@@ -128,7 +127,6 @@ HEADERS  += mainwindow.h \
     MiningFrame.h \
     MiningManager.h \
     PoolHeaderView.h \
-    QuestionDialog.h \
     IMinerWorker.h \
     IMiningManager.h \
     IPoolClient.h \
@@ -151,7 +149,10 @@ HEADERS  += mainwindow.h \
     addressbookdialog.h \
     popup.h \
     logframe.h \
-    askpassworddialog.h
+    askpassworddialog.h \
+    importkeydialog.h \
+    questiondialog.h \
+    PoolTreeView.h
 
 FORMS    += mainwindow.ui \
     overviewframe.ui \
@@ -161,7 +162,6 @@ FORMS    += mainwindow.ui \
     connectionoptionsframe.ui \
     optionsdialog.ui \
     MiningFrame.ui \
-    QuestionDialog.ui \
     connectselectiondialog.ui \
     addressbookframe.ui \
     newaddressdialog.ui \
@@ -171,7 +171,9 @@ FORMS    += mainwindow.ui \
     changepassworddialog.ui \
     addressbookdialog.ui \
     logframe.ui \
-    askpassworddialog.ui
+    askpassworddialog.ui \
+    importkeydialog.ui \
+    questiondialog.ui
 
 RESOURCES += \
     resources.qrc \

@@ -3,7 +3,7 @@
 "VSVersion" = "3:800"
 "ProjectType" = "8:{978C614F-708E-4E1A-B201-565925725DBA}"
 "IsWebType" = "8:FALSE"
-"ProjectName" = "8:Bytecoin"
+"ProjectName" = "8:Bytecoin(32)"
 "LanguageId" = "3:1033"
 "CodePage" = "3:1252"
 "UILanguageId" = "3:1033"
@@ -16,12 +16,6 @@
         "Entry"
         {
         "MsmKey" = "8:_0203959C71B948929CC2F70BA18158FD"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_0394C65EF9544D1093390F27A773B039"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -75,25 +69,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_313AB37945054BAEB8EF17B6637DBE77"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_32CD8A13340B4275992F0D6A930F7A31"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_3E0AFADE5BD540FCA5287616A92F8A3A"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_3F91122B487C4639965D5416F7A0BA14"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -135,18 +111,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_669DD2E91A424161903EA4FB7969DD2C"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_6CCBE62379914727823E3E7050F6251C"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_6E9CB246C9F74BBCA1EC3422E1425E5D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -159,6 +123,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_75B1365FF49546AEA9E5353463DC61D5"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_75E67CD50F9E40618B5B9E6F81178934"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -166,6 +136,18 @@
         "Entry"
         {
         "MsmKey" = "8:_775D2937B44142639FC68F643D84110A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_7DB6004822064C4AADAC250A24321BF5"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_7EFCC668F6904FD1B039A285F6757445"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -255,6 +237,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_BEF909DD7F7F4A68A8F44192BEEB23B2"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C112ECDC5C69428EA46CA8F0FDC765E0"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_C6CB2B9377E545BC9F927EE42FA0BB1D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -301,6 +295,12 @@
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
+        "Entry"
+        {
+        "MsmKey" = "8:_F8897CB5C8F549E6AE8935F6EB8EEB22"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
     }
     "Configurations"
     {
@@ -309,7 +309,7 @@
         "DisplayName" = "8:Debug"
         "IsDebugOnly" = "11:TRUE"
         "IsReleaseOnly" = "11:FALSE"
-        "OutputFilename" = "8:Debug\\Bytecoin.msi"
+        "OutputFilename" = "8:Debug\\Bytecoin32.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -341,7 +341,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:Release\\Bytecoin.msi"
+        "OutputFilename" = "8:Release\\Bytecoin32.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -390,7 +390,7 @@
         {
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0203959C71B948929CC2F70BA18158FD"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\translations\\qt_ja.qm"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\translations\\qt_ja.qm"
             "TargetName" = "8:qt_ja.qm"
             "Tag" = "8:"
             "Folder" = "8:_CC86214A25E848578B056E8B0C7DF93F"
@@ -410,7 +410,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_08C03B2A62BB43A6A31DA9B700C142CD"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\translations\\qt_bg.qm"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\translations\\qt_bg.qm"
             "TargetName" = "8:qt_bg.qm"
             "Tag" = "8:"
             "Folder" = "8:_CC86214A25E848578B056E8B0C7DF93F"
@@ -430,7 +430,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0A9F9DE7818243CC9AF6FF9848954234"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\translations\\qt_en.qm"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\translations\\qt_en.qm"
             "TargetName" = "8:qt_en.qm"
             "Tag" = "8:"
             "Folder" = "8:_CC86214A25E848578B056E8B0C7DF93F"
@@ -450,7 +450,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0AA7B0360D694CADB8A9912880F5C9C5"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\iconengines\\qsvgicon.dll"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\iconengines\\qsvgicon.dll"
             "TargetName" = "8:qsvgicon.dll"
             "Tag" = "8:"
             "Folder" = "8:_D97798E34DCA448BB8DA3C08A746F952"
@@ -470,7 +470,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0DA43F67412F414582078021360EF274"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\opengl32sw.dll"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\opengl32sw.dll"
             "TargetName" = "8:opengl32sw.dll"
             "Tag" = "8:"
             "Folder" = "8:_BB6FE95E6903428FBAEC9FE62CB0FE39"
@@ -490,7 +490,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0DE48B59DBC94FEC8C96C25CAAAEFAB6"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\translations\\qt_pl.qm"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\translations\\qt_pl.qm"
             "TargetName" = "8:qt_pl.qm"
             "Tag" = "8:"
             "Folder" = "8:_CC86214A25E848578B056E8B0C7DF93F"
@@ -510,7 +510,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_12A3F30B97CE41F0815A84642A6717CE"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\translations\\qt_lv.qm"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\translations\\qt_lv.qm"
             "TargetName" = "8:qt_lv.qm"
             "Tag" = "8:"
             "Folder" = "8:_CC86214A25E848578B056E8B0C7DF93F"
@@ -530,7 +530,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_135BB60BCD7D4FA0B115023A3B4BEDDA"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\platforms\\qwindows.dll"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\platforms\\qwindows.dll"
             "TargetName" = "8:qwindows.dll"
             "Tag" = "8:"
             "Folder" = "8:_504C7D1A8F884C06BB98B0FC897AA7A2"
@@ -550,7 +550,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1BCAC82F50454F6FA8D4423CD1A5FE08"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\imageformats\\qjpeg.dll"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\imageformats\\qjpeg.dll"
             "TargetName" = "8:qjpeg.dll"
             "Tag" = "8:"
             "Folder" = "8:_C7F63F2123B94583B0F30CBAB8C44FAC"
@@ -568,70 +568,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_313AB37945054BAEB8EF17B6637DBE77"
-            {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\Qt5Svg.dll"
-            "TargetName" = "8:Qt5Svg.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_BB6FE95E6903428FBAEC9FE62CB0FE39"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_32CD8A13340B4275992F0D6A930F7A31"
-            {
-            "SourcePath" = "8:..\\..\\..\\Qt\\5.10.0\\msvc2017_64\\bin\\Qt5Widgets.dll"
-            "TargetName" = "8:Qt5Widgets.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_BB6FE95E6903428FBAEC9FE62CB0FE39"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3E0AFADE5BD540FCA5287616A92F8A3A"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\walletd.exe"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\walletd.exe"
             "TargetName" = "8:walletd.exe"
-            "Tag" = "8:"
-            "Folder" = "8:_BB6FE95E6903428FBAEC9FE62CB0FE39"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3F91122B487C4639965D5416F7A0BA14"
-            {
-            "SourcePath" = "8:..\\..\\..\\Qt\\5.10.0\\msvc2017_64\\bin\\Qt5Core.dll"
-            "TargetName" = "8:Qt5Core.dll"
             "Tag" = "8:"
             "Folder" = "8:_BB6FE95E6903428FBAEC9FE62CB0FE39"
             "Condition" = "8:"
@@ -650,7 +590,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_44CED5AA68DB4B55A39C31DCBEA48E3B"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\translations\\qt_it.qm"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\translations\\qt_it.qm"
             "TargetName" = "8:qt_it.qm"
             "Tag" = "8:"
             "Folder" = "8:_CC86214A25E848578B056E8B0C7DF93F"
@@ -670,7 +610,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_48D4A1E27FBD45C09F1B09BEE3F14DFA"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\translations\\qt_he.qm"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\translations\\qt_he.qm"
             "TargetName" = "8:qt_he.qm"
             "Tag" = "8:"
             "Folder" = "8:_CC86214A25E848578B056E8B0C7DF93F"
@@ -690,7 +630,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4FDB85C519914B479EA99059664812B9"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\translations\\qt_es.qm"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\translations\\qt_es.qm"
             "TargetName" = "8:qt_es.qm"
             "Tag" = "8:"
             "Folder" = "8:_CC86214A25E848578B056E8B0C7DF93F"
@@ -710,7 +650,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_519AD3588A78412FB1F6FA3F0345C539"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\styles\\qwindowsvistastyle.dll"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\styles\\qwindowsvistastyle.dll"
             "TargetName" = "8:qwindowsvistastyle.dll"
             "Tag" = "8:"
             "Folder" = "8:_33FFE844C8BD495AA690C73EFF447FC6"
@@ -730,7 +670,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_58C0BC1B16E54DDB8E1C86674EB9872D"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\imageformats\\qwbmp.dll"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\imageformats\\qwbmp.dll"
             "TargetName" = "8:qwbmp.dll"
             "Tag" = "8:"
             "Folder" = "8:_C7F63F2123B94583B0F30CBAB8C44FAC"
@@ -750,48 +690,8 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5E0362FCFEC84A85A36680A3DCFAA7C4"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\libEGL.dll"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\libEGL.dll"
             "TargetName" = "8:libEGL.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_BB6FE95E6903428FBAEC9FE62CB0FE39"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_669DD2E91A424161903EA4FB7969DD2C"
-            {
-            "SourcePath" = "8:..\\..\\..\\Qt\\5.10.0\\msvc2017_64\\bin\\Qt5Gui.dll"
-            "TargetName" = "8:Qt5Gui.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_BB6FE95E6903428FBAEC9FE62CB0FE39"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6CCBE62379914727823E3E7050F6251C"
-            {
-            "SourcePath" = "8:..\\..\\..\\Qt\\5.10.0\\msvc2017_64\\bin\\Qt5Network.dll"
-            "TargetName" = "8:Qt5Network.dll"
             "Tag" = "8:"
             "Folder" = "8:_BB6FE95E6903428FBAEC9FE62CB0FE39"
             "Condition" = "8:"
@@ -810,7 +710,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6E9CB246C9F74BBCA1EC3422E1425E5D"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\translations\\qt_fr.qm"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\translations\\qt_fr.qm"
             "TargetName" = "8:qt_fr.qm"
             "Tag" = "8:"
             "Folder" = "8:_CC86214A25E848578B056E8B0C7DF93F"
@@ -830,8 +730,28 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_715B92B7C3F04EFCA6A4BD7538F1AEB7"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\libGLESV2.dll"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\libGLESV2.dll"
             "TargetName" = "8:libGLESV2.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_BB6FE95E6903428FBAEC9FE62CB0FE39"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_75B1365FF49546AEA9E5353463DC61D5"
+            {
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\Qt5Core.dll"
+            "TargetName" = "8:Qt5Core.dll"
             "Tag" = "8:"
             "Folder" = "8:_BB6FE95E6903428FBAEC9FE62CB0FE39"
             "Condition" = "8:"
@@ -850,7 +770,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_75E67CD50F9E40618B5B9E6F81178934"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\bearer\\qgenericbearer.dll"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\bearer\\qgenericbearer.dll"
             "TargetName" = "8:qgenericbearer.dll"
             "Tag" = "8:"
             "Folder" = "8:_EA323EA245EE499B85F5030B0B43A82A"
@@ -870,8 +790,28 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_775D2937B44142639FC68F643D84110A"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\bytecoin-gui.exe"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\bytecoin-gui.exe"
             "TargetName" = "8:bytecoin-gui.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_BB6FE95E6903428FBAEC9FE62CB0FE39"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7EFCC668F6904FD1B039A285F6757445"
+            {
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\Qt5Gui.dll"
+            "TargetName" = "8:Qt5Gui.dll"
             "Tag" = "8:"
             "Folder" = "8:_BB6FE95E6903428FBAEC9FE62CB0FE39"
             "Condition" = "8:"
@@ -890,7 +830,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7F4120E589E14325823C59D41CDDD222"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\translations\\qt_uk.qm"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\translations\\qt_uk.qm"
             "TargetName" = "8:qt_uk.qm"
             "Tag" = "8:"
             "Folder" = "8:_CC86214A25E848578B056E8B0C7DF93F"
@@ -910,7 +850,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_88FE57A6A8354A4E97A7019B72C07FB5"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\translations\\qt_ru.qm"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\translations\\qt_ru.qm"
             "TargetName" = "8:qt_ru.qm"
             "Tag" = "8:"
             "Folder" = "8:_CC86214A25E848578B056E8B0C7DF93F"
@@ -930,7 +870,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_902D9E05D49544E48BC784C9EBED1F8B"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\imageformats\\qtga.dll"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\imageformats\\qtga.dll"
             "TargetName" = "8:qtga.dll"
             "Tag" = "8:"
             "Folder" = "8:_C7F63F2123B94583B0F30CBAB8C44FAC"
@@ -950,7 +890,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_908AD2C2A4B640F59CB51A8D3F5DF23A"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\translations\\qt_de.qm"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\translations\\qt_de.qm"
             "TargetName" = "8:qt_de.qm"
             "Tag" = "8:"
             "Folder" = "8:_CC86214A25E848578B056E8B0C7DF93F"
@@ -970,7 +910,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_93884783620140F8A8B365EE1B5BF4F4"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\translations\\qt_cs.qm"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\translations\\qt_cs.qm"
             "TargetName" = "8:qt_cs.qm"
             "Tag" = "8:"
             "Folder" = "8:_CC86214A25E848578B056E8B0C7DF93F"
@@ -990,7 +930,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_95EA28C236124730A9D75133C147DF70"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\translations\\qt_hu.qm"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\translations\\qt_hu.qm"
             "TargetName" = "8:qt_hu.qm"
             "Tag" = "8:"
             "Folder" = "8:_CC86214A25E848578B056E8B0C7DF93F"
@@ -1010,7 +950,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_960761EF866A42DA82FBB23D42BA1C17"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\translations\\qt_fi.qm"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\translations\\qt_fi.qm"
             "TargetName" = "8:qt_fi.qm"
             "Tag" = "8:"
             "Folder" = "8:_CC86214A25E848578B056E8B0C7DF93F"
@@ -1030,7 +970,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9726E9734DAF439EAD4CE9A87313AF8E"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\imageformats\\qico.dll"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\imageformats\\qico.dll"
             "TargetName" = "8:qico.dll"
             "Tag" = "8:"
             "Folder" = "8:_C7F63F2123B94583B0F30CBAB8C44FAC"
@@ -1050,7 +990,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9A4DCFB50F174B449495FB00D1E1DAD7"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\bearer\\qnativewifibearer.dll"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\bearer\\qnativewifibearer.dll"
             "TargetName" = "8:qnativewifibearer.dll"
             "Tag" = "8:"
             "Folder" = "8:_EA323EA245EE499B85F5030B0B43A82A"
@@ -1070,7 +1010,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9F9F092199BB47A89D76CAA1D1027B6E"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\imageformats\\qtiff.dll"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\imageformats\\qtiff.dll"
             "TargetName" = "8:qtiff.dll"
             "Tag" = "8:"
             "Folder" = "8:_C7F63F2123B94583B0F30CBAB8C44FAC"
@@ -1110,7 +1050,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B146F08012F144E99E9D087255813C95"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\imageformats\\qwebp.dll"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\imageformats\\qwebp.dll"
             "TargetName" = "8:qwebp.dll"
             "Tag" = "8:"
             "Folder" = "8:_C7F63F2123B94583B0F30CBAB8C44FAC"
@@ -1130,7 +1070,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B71851698DCC418DB79B131BFED724F3"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\translations\\qt_ko.qm"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\translations\\qt_ko.qm"
             "TargetName" = "8:qt_ko.qm"
             "Tag" = "8:"
             "Folder" = "8:_CC86214A25E848578B056E8B0C7DF93F"
@@ -1150,7 +1090,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BE1137420D5A48BFB217A8E35488DD64"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\translations\\qt_gd.qm"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\translations\\qt_gd.qm"
             "TargetName" = "8:qt_gd.qm"
             "Tag" = "8:"
             "Folder" = "8:_CC86214A25E848578B056E8B0C7DF93F"
@@ -1168,9 +1108,49 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BEF909DD7F7F4A68A8F44192BEEB23B2"
+            {
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\Qt5Network.dll"
+            "TargetName" = "8:Qt5Network.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_BB6FE95E6903428FBAEC9FE62CB0FE39"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C112ECDC5C69428EA46CA8F0FDC765E0"
+            {
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\Qt5Svg.dll"
+            "TargetName" = "8:Qt5Svg.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_BB6FE95E6903428FBAEC9FE62CB0FE39"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C6CB2B9377E545BC9F927EE42FA0BB1D"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\translations\\qt_sk.qm"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\translations\\qt_sk.qm"
             "TargetName" = "8:qt_sk.qm"
             "Tag" = "8:"
             "Folder" = "8:_CC86214A25E848578B056E8B0C7DF93F"
@@ -1190,7 +1170,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CA2FB00860F84D8F8BC86E8BD6D7F73A"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\d3dcompiler_47.dll"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\d3dcompiler_47.dll"
             "TargetName" = "8:d3dcompiler_47.dll"
             "Tag" = "8:"
             "Folder" = "8:_BB6FE95E6903428FBAEC9FE62CB0FE39"
@@ -1210,7 +1190,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D5E855BCEA934554A96B1560ACB3F65D"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\imageformats\\qicns.dll"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\imageformats\\qicns.dll"
             "TargetName" = "8:qicns.dll"
             "Tag" = "8:"
             "Folder" = "8:_C7F63F2123B94583B0F30CBAB8C44FAC"
@@ -1230,7 +1210,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DD5007E49F1F453191894B877B55E55A"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\imageformats\\qgif.dll"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\imageformats\\qgif.dll"
             "TargetName" = "8:qgif.dll"
             "Tag" = "8:"
             "Folder" = "8:_C7F63F2123B94583B0F30CBAB8C44FAC"
@@ -1250,7 +1230,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DF5100E4F45A4E618B94E705BC2009C3"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\imageformats\\qsvg.dll"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\imageformats\\qsvg.dll"
             "TargetName" = "8:qsvg.dll"
             "Tag" = "8:"
             "Folder" = "8:_C7F63F2123B94583B0F30CBAB8C44FAC"
@@ -1270,7 +1250,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E18D08080847465797E94E676AE85E12"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\translations\\qt_da.qm"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\translations\\qt_da.qm"
             "TargetName" = "8:qt_da.qm"
             "Tag" = "8:"
             "Folder" = "8:_CC86214A25E848578B056E8B0C7DF93F"
@@ -1290,7 +1270,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F36C8615A39E4E719D968137A1427FA7"
             {
-            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2017_64bit-Release\\release\\translations\\qt_ca.qm"
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\translations\\qt_ca.qm"
             "TargetName" = "8:qt_ca.qm"
             "Tag" = "8:"
             "Folder" = "8:_CC86214A25E848578B056E8B0C7DF93F"
@@ -1312,6 +1292,26 @@
             {
             "SourcePath" = "8:..\\..\\bytecoin\\bin\\bytecoind.exe"
             "TargetName" = "8:bytecoind.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_BB6FE95E6903428FBAEC9FE62CB0FE39"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F8897CB5C8F549E6AE8935F6EB8EEB22"
+            {
+            "SourcePath" = "8:..\\build-bytecoin-gui-Desktop_Qt_5_10_0_MSVC2015_32bit-Release\\release\\Qt5Widgets.dll"
+            "TargetName" = "8:Qt5Widgets.dll"
             "Tag" = "8:"
             "Folder" = "8:_BB6FE95E6903428FBAEC9FE62CB0FE39"
             "Condition" = "8:"
@@ -1484,7 +1484,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Bytecoin"
         "ProductCode" = "8:{8589E67D-599D-4959-B521-1F10908FA3F5}"
-        "PackageCode" = "8:{97B81D4E-0610-41F0-9D01-CDECD35E90F1}"
+        "PackageCode" = "8:{27B3D69D-6186-4724-84CD-2C5627792B8D}"
         "UpgradeCode" = "8:{DC5C7D60-BB08-4B97-B634-E87679CCEB3C}"
         "AspNetVersion" = "8:"
         "RestartWWWService" = "11:FALSE"
@@ -1505,7 +1505,7 @@
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
         "UseSystemSearchPath" = "11:TRUE"
-        "TargetPlatform" = "3:1"
+        "TargetPlatform" = "3:0"
         "PreBuildEvent" = "8:"
         "PostBuildEvent" = "8:"
         "RunPostBuildEvent" = "3:0"
@@ -2028,11 +2028,11 @@
         }
         "MergeModule"
         {
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_0394C65EF9544D1093390F27A773B039"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_7DB6004822064C4AADAC250A24321BF5"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:FALSE"
-            "SourcePath" = "8:C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Redist\\MSVC\\14.12.25810\\MergeModules\\Microsoft_VC141_CRT_x64.msm"
+            "SourcePath" = "8:C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Redist\\MSVC\\14.12.25810\\MergeModules\\Microsoft_VC141_CRT_x86.msm"
                 "Properties"
                 {
                 }

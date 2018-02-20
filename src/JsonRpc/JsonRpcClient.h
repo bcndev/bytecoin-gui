@@ -37,6 +37,7 @@ public:
 
 private slots:
     void replyFinished(QNetworkReply* reply);
+    void authenticationRequired(QNetworkReply* reply, QAuthenticator* authenticator);
 
 signals:
 //    void error(const QString& msg, const QString& desc) const;
@@ -47,6 +48,7 @@ signals:
 
     void packetSent(const QByteArray& data);
     void packetReceived(const QByteArray& data);
+    void authRequiredSignal(QAuthenticator* authenticator);
 
 protected:
 //    template<typename... Ts>

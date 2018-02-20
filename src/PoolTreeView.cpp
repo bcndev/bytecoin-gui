@@ -21,11 +21,12 @@
 #include <QMimeData>
 
 #include "PoolTreeView.h"
-#include "Settings/Settings.h"
-#include "Style/Style.h"
-#include "Models/MinerModel.h"
+//#include "Settings/Settings.h"
+//#include "Style/Style.h"
+#include "MinerModel.h"
 
-namespace WalletGui {
+namespace WalletGUI
+{
 
 namespace {
 
@@ -82,11 +83,11 @@ private:
 
 }
 
-PoolTreeView::PoolTreeView(QWidget* _parent) : WalletTreeView(_parent) {
-  QString styleSheetString = styleSheet();
-  styleSheetString.append(POOL_TREE_VIEW_STYLE_SHEET_TEMPLATE);
+PoolTreeView::PoolTreeView(QWidget* _parent) : QTableView(_parent) {
+//  QString styleSheetString = styleSheet();
+//  styleSheetString.append(POOL_TREE_VIEW_STYLE_SHEET_TEMPLATE);
 
-  setStyleSheet(Settings::instance().getCurrentStyle().makeStyleSheet(styleSheetString));
+//  setStyleSheet(Settings::instance().getCurrentStyle().makeStyleSheet(styleSheetString));
   setAcceptDrops(true);
   viewport()->installEventFilter(this);
 }
@@ -99,7 +100,7 @@ bool PoolTreeView::eventFilter(QObject* _object, QEvent* _event) {
     selectionModel()->clearSelection();
   }
 
-  return WalletTreeView::eventFilter(_object, _event);
+  return QTableView::eventFilter(_object, _event);
 }
 
 void PoolTreeView::dragEnterEvent(QDragEnterEvent* _event) {
@@ -131,7 +132,7 @@ void PoolTreeView::dropEvent(QDropEvent* _event) {
 void PoolTreeView::mouseMoveEvent(QMouseEvent* _event) {
   CursorManager cursorMan(this, _event, state() == PoolTreeView::DraggingState);
   if (!(_event->buttons() & Qt::LeftButton)) {
-    WalletTreeView::mouseMoveEvent(_event);
+    QTableView::mouseMoveEvent(_event);
     QModelIndex index = indexAt(_event->pos());
     if (index.isValid() && index.column() != MinerModel::COLUMN_REMOVE) {
       selectionModel()->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
@@ -143,17 +144,17 @@ void PoolTreeView::mouseMoveEvent(QMouseEvent* _event) {
   }
 
   if (!m_pressedIndex.isValid()) {
-    WalletTreeView::mouseMoveEvent(_event);
+    QTableView::mouseMoveEvent(_event);
     return;
   }
 
   if ((_event->pos() - m_pressedPosition).manhattanLength() < QApplication::startDragDistance()) {
-    WalletTreeView::mouseMoveEvent(_event);
+    QTableView::mouseMoveEvent(_event);
     return;
   }
 
   if (m_pressedTime.msecsTo(QDateTime::currentDateTime()) < QApplication::startDragTime()) {
-    WalletTreeView::mouseMoveEvent(_event);
+    QTableView::mouseMoveEvent(_event);
     return;
   }
 
@@ -165,12 +166,12 @@ void PoolTreeView::mousePressEvent(QMouseEvent* _event) {
   m_pressedTime = QDateTime::currentDateTime();
   m_pressedPosition = _event->pos();
   m_pressedIndex = indexAt(m_pressedPosition);
-  WalletTreeView::mousePressEvent(_event);
+  QTableView::mousePressEvent(_event);
 }
 
 void PoolTreeView::mouseReleaseEvent(QMouseEvent* _event) {
   CursorManager cursorMan(this, _event);
-  WalletTreeView::mouseReleaseEvent(_event);
+  QTableView::mouseReleaseEvent(_event);
 }
 
 }

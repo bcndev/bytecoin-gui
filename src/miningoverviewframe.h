@@ -37,9 +37,7 @@ private:
     Ui::MiningOverviewFrame *ui;
 
     MiningManager* miningManager_;
-//    WalletModel* walletModel_;
     QDataWidgetMapper* miningMapper_;
-//    QDataWidgetMapper* stateMapper_;
     bool started_;
 };
 

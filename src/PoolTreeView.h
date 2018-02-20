@@ -18,28 +18,31 @@
 #pragma once
 
 #include <QDateTime>
+#include <QTableView>
 
-#include "Common/WalletTreeView.h"
+//#include "Common/WalletTreeView.h"
 
-namespace WalletGui {
+namespace WalletGUI
+{
 
-class PoolTreeView : public WalletTreeView {
-  Q_OBJECT
-  Q_DISABLE_COPY(PoolTreeView)
+class PoolTreeView : public QTableView
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(PoolTreeView)
 
 public:
-  explicit PoolTreeView(QWidget* _parent);
+  explicit PoolTreeView(QWidget* parent);
   ~PoolTreeView();
 
-  bool eventFilter(QObject* _object, QEvent* _event) override;
+  bool eventFilter(QObject* object, QEvent* event) override;
 
 protected:
-  void dragEnterEvent(QDragEnterEvent* _event) override;
-  void dragMoveEvent(QDragMoveEvent* _event) override;
-  void dropEvent(QDropEvent* _event) override;
-  void mouseMoveEvent(QMouseEvent* _event) override;
-  void mousePressEvent(QMouseEvent* _event) override;
-  void mouseReleaseEvent(QMouseEvent* _event) override;
+  void dragEnterEvent(QDragEnterEvent* event) override;
+  void dragMoveEvent(QDragMoveEvent* event) override;
+  void dropEvent(QDropEvent* event) override;
+  void mouseMoveEvent(QMouseEvent* event) override;
+  void mousePressEvent(QMouseEvent* event) override;
+  void mouseReleaseEvent(QMouseEvent* event) override;
 
 private:
   QDateTime m_pressedTime;

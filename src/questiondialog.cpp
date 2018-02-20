@@ -15,23 +15,23 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with Bytecoin.  If not, see <http://www.gnu.org/licenses/>.
 
-#if 0
+#include "questiondialog.h"
 
-#pragma once
+#include "ui_questiondialog.h"
 
-#include "MagicLabel.h"
+namespace WalletGUI
+{
 
-namespace WalletGui {
-
-class CopyMagicLabel : public MagicLabel {
-  Q_OBJECT
-  Q_DISABLE_COPY(CopyMagicLabel)
-
-public:
-  explicit CopyMagicLabel(QWidget* _parent);
-  ~CopyMagicLabel();
-};
-
+QuestionDialog::QuestionDialog(const QString& title, const QString& text, QWidget* parent)
+    : QDialog(parent, static_cast<Qt::WindowFlags>(Qt::WindowCloseButtonHint))
+    , ui(new Ui::QuestionDialog)
+{
+    ui->setupUi(this);
+    setWindowTitle(title);
+    ui->questionLabel->setText(text);
 }
 
-#endif
+QuestionDialog::~QuestionDialog()
+{}
+
+}

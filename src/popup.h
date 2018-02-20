@@ -9,19 +9,6 @@
 namespace WalletGUI
 {
 
-//class ToolTipMessage : public QWidget
-//{
-//    Q_OBJECT
-
-//public:
-//    explicit ToolTipMessage(QWidget *parent = 0);
-//    void setLabelText(const QString& text);
-
-//private:
-//    QLabel *messageText;
-//};
-
-
 class MagicToolTip : public QWidget
 {
     Q_OBJECT

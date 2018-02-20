@@ -19,7 +19,6 @@
 #include <QUrl>
 
 #include "MiningManager.h"
-//#include "INodeAdapter.h"
 #include "Miner/Miner.h"
 #include "settings.h"
 #include "logger.h"
@@ -27,9 +26,8 @@
 
 namespace WalletGUI {
 
-MiningManager::MiningManager(/*ICryptoNoteAdapter* _cryptoNoteAdapter, IDonationManager* _donationManager,*/ QObject* _parent) :
-  QObject(_parent)/*, m_cryptoNoteAdapter(_cryptoNoteAdapter), m_donationManager(_donationManager)*/, walletModel_(nullptr), m_activeMinerIndex(-1) {
-//  m_donationManager->addObserver(this);
+MiningManager::MiningManager(QObject* _parent) :
+  QObject(_parent), walletModel_(nullptr), m_activeMinerIndex(-1) {
 }
 
 MiningManager::~MiningManager() {
@@ -226,48 +224,6 @@ void MiningManager::disconnectedFromWalletd() {
   Q_EMIT minersUnloadedSignal();
 }
 
-//void MiningManager::donationMiningEnabled(bool _on) {
-//  for (IPoolMiner* miner : m_miners) {
-//    if (_on) {
-//      miner->setAlternateAccount(m_donationManager->getDonationMiningAddress(), m_donationManager->getDonationMiningAmount());
-//    } else {
-//      miner->unsetAlternateAccount();
-//    }
-//  }
-//}
-
-//void MiningManager::donationMiningAddressChanged(const QString& _address) {
-//  for (IPoolMiner* miner : m_miners) {
-//    if (m_donationManager->isDonationMiningEnabled()) {
-//      miner->setAlternateAccount(_address, m_donationManager->getDonationMiningAmount());
-//    } else {
-//      miner->unsetAlternateAccount();
-//    }
-//  }
-//}
-
-//void MiningManager::donationMiningAmountChanged(int _amount) {
-//  for (IPoolMiner* miner : m_miners) {
-//    if (m_donationManager->isDonationMiningEnabled()) {
-//      miner->setAlternateAccount(m_donationManager->getDonationMiningAddress(), _amount);
-//    } else {
-//      miner->unsetAlternateAccount();
-//    }
-//  }
-//}
-
-//void MiningManager::donationChangeEnabled(bool _on) {
-//  // Do nothing
-//}
-
-//void MiningManager::donationChangeAddressChanged(const QString& _address) {
-//  // Do nothing
-//}
-
-//void MiningManager::donationChangeAmountChanged(int _amount) {
-//  // Do nothing
-//}
-
 void MiningManager::switchToNextPool() {
   QList<quintptr> errorMinerIndexes = getErrorMiners();
   if (errorMinerIndexes.size() == m_miners.size()) {
@@ -353,14 +309,10 @@ void MiningManager::updateActiveMinerIndex() {
 }
 
 void MiningManager::addNewMiner(const QString& _host, quint16 _port, quint32 _difficulty) {
-//  IWalletAdapter* walletAdapter = m_cryptoNoteAdapter->getNodeAdapter()->getWalletAdapter();
   Q_ASSERT(walletModel_ != nullptr);
   Miner* miner = new Miner(_host, _port, _difficulty, walletModel_->getAddress(), "x", this);
   miner->addObserver(this);
   m_miners.append(miner);
-//  if (m_donationManager->isDonationMiningEnabled()) {
-//    miner->setAlternateAccount(m_donationManager->getDonationMiningAddress(), m_donationManager->getDonationMiningAmount());
-//  }
 }
 
 void MiningManager::loadMiners() {

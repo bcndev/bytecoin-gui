@@ -90,16 +90,9 @@ QVariant WalletModel::headerData(int section, Qt::Orientation orientation, int r
         break;
     case Qt::TextAlignmentRole:
     {
-//        if (section == COLUMN_TIMESTAMP)
-            return static_cast<int>(Qt::AlignLeft | Qt::AlignVCenter);
-//        return static_cast<int>(Qt::AlignRight | Qt::AlignVCenter);
+        return static_cast<int>(Qt::AlignLeft | Qt::AlignVCenter);
     }
-    case Qt::FontRole:
-    {
-//        QFont font;
-//        font.setPointSize(11);
-//        return font;
-    }
+//    case Qt::FontRole:
     }
 
     return QVariant();
@@ -367,9 +360,6 @@ void WalletModel::stateChanged(RemoteWalletd::State /*oldState*/, RemoteWalletd:
     QVector<int> changedRoles;
     changedRoles << Qt::EditRole << Qt::DisplayRole
         << ROLE_STATE;
-//    if (pimpl_->walletdState != RemoteWalletd::State::CONNECTED && pimpl_->walletdState != RemoteWalletd::State::JSON_ERROR)
-//        statusReceived(RpcApi::Status{});
-//        reset();
 
     emit dataChanged(index(0, COLUMN_STATE), index(0, COLUMN_STATE), changedRoles);
 }

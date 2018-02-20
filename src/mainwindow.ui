@@ -669,10 +669,11 @@
      <string>&amp;Wallet</string>
     </property>
     <addaction name="m_createWalletAction"/>
+    <addaction name="m_importKeysAction"/>
     <addaction name="m_openWalletAction"/>
     <addaction name="m_remoteWalletAction"/>
-    <addaction name="m_openDataFolderAction"/>
     <addaction name="m_changePasswordAction"/>
+    <addaction name="m_openDataFolderAction"/>
     <addaction name="separator"/>
     <addaction name="m_exitAction"/>
    </widget>
@@ -707,7 +708,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>&amp;Create wallet</string>
+    <string>&amp;Create new wallet</string>
    </property>
   </action>
   <action name="m_openWalletAction">
@@ -760,6 +761,11 @@
   <action name="m_openDataFolderAction">
    <property name="text">
     <string>Open data &amp;folder</string>
+   </property>
+  </action>
+  <action name="m_importKeysAction">
+   <property name="text">
+    <string>Create wallet from keys</string>
    </property>
   </action>
  </widget>
@@ -1036,11 +1042,24 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>m_importKeysAction</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>importKeys()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>636</x>
+     <y>411</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
-  <signal>openWalletSignal()</signal>
-  <signal>createWalletSignal()</signal>
-  <signal>remoteWalletSignal()</signal>
   <slot>aboutQt()</slot>
   <slot>showLog()</slot>
   <slot>about()</slot>
@@ -1056,6 +1075,7 @@
   <slot>remoteWallet()</slot>
   <slot>copiedToClipboard()</slot>
   <slot>openDataFolder()</slot>
+  <slot>importKeys()</slot>
  </slots>
  <buttongroups>
   <buttongroup name="m_toolButtonGroup">

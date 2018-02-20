@@ -16,8 +16,6 @@
 // along with Bytecoin.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "okbutton.h"
-//#include "Settings/Settings.h"
-//#include "Style/Style.h"
 
 namespace WalletGUI {
 

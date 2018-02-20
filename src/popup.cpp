@@ -5,23 +5,6 @@
 namespace WalletGUI
 {
 
-//ToolTipMessage::ToolTipMessage(QWidget *parent) : QWidget(parent){
-//    QHBoxLayout *mainLay = new QHBoxLayout(this);
-//    mainLay->addWidget(messageText = new QLabel(this));
-
-//    this->setLayout(mainLay);
-
-//    Qt::WindowFlags flags = Qt::ToolTip;
-//    flags |= Qt::WindowStaysOnTopHint;
-//    this->setWindowFlags(flags);
-//}
-
-//void ToolTipMessage::setLabelText(const QString& text){
-//    messageText->setText(text);
-//    this->setMaximumSize(messageText->size().width(), messageText->size().height());
-//    QTimer::singleShot(3000, this, SLOT(deleteLater()));
-//}
-
 MagicToolTip::MagicToolTip(QWidget *parent)
     : QWidget(parent)
     , opacity_(0.)
@@ -62,11 +45,9 @@ void MagicToolTip::paintEvent(QPaintEvent* /*event*/)
     roundedRect.setWidth(rect().width() - 10);
     roundedRect.setHeight(rect().height() - 10);
 
-//    painter.setBrush(QBrush(QColor(0,0,0,180)));
     painter.setBrush(QBrush(QColor(0xEE4486))); // TODO: make setter
     painter.setPen(Qt::NoPen);
     painter.drawRoundedRect(roundedRect, 7, 7);
-//    painter.drawRoundedRect(rect(), 5, 5);
 }
 
 void MagicToolTip::setToolTip(const QString &text)
@@ -111,12 +92,6 @@ void MagicToolTip::hideAnimation()
     animation_.setEndValue(minOpacity_);
     animation_.start();
 }
-
-//void PopUp::hide()
-//{
-//    if(getPopupOpacity() == 0.0)
-//        QWidget::hide();
-//}
 
 void MagicToolTip::setOpacity(float value)
 {

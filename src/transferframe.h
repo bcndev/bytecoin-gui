@@ -19,7 +19,6 @@
 
 #include <QFrame>
 #include <QAbstractItemModel>
-//#include "Application/IWalletUiItem.h"
 
 class QCompleter;
 
@@ -65,7 +64,6 @@ public:
     void setBigTransactionError(bool error = true);
     void setLabelLikePaymentIdError(bool error = true);
 
-    // QObject
     virtual bool eventFilter(QObject* object, QEvent* event) override;
 
 private:

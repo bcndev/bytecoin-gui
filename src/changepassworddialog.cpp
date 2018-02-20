@@ -10,7 +10,6 @@ ChangePasswordDialog::ChangePasswordDialog(bool askCurrentPassword, QWidget *par
     , ui(new Ui::ChangePasswordDialog)
 {
     ui->setupUi(this);
-//    setWindowTitle("Bytecoin");
 
     ui->currPasswordLabel->setVisible(askCurrentPassword);
     ui->currPasswordEdit->setVisible(askCurrentPassword);

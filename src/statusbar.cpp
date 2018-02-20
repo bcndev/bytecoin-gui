@@ -146,117 +146,6 @@ void WalletStatusBar::setWalletModel(WalletModel* model)
     connect(walletModel_, &QAbstractItemModel::dataChanged, this, &WalletStatusBar::nodeStateChanged);
 }
 
-//void WalletStatusBar::updateStyle()
-//{
-//    if (m_syncMovie->state() == QMovie::Running)
-//        m_syncMovie->stop();
-
-//    m_syncMovie->setFileName(Settings::instance().getCurrentStyle().getWalletSyncGifFile());
-//    if (walletAdapter->isOpen())
-//    {
-//        updateEncryptedState(walletAdapter->isEncrypted());
-//        updateSyncState(m_walletIsSynchronized);
-//    }
-
-//    setStyleSheet(Settings::instance().getCurrentStyle().makeStyleSheet(STATUS_BAR_STYLE_SHEET_TEMPLATE));
-//}
-
-//void WalletStatusBar::walletOpened()
-//{
-//    showMessage(tr("Wallet opened"), TEMP_MESSAGE_DURATION);
-//    m_encryptionStatusIconLabel->show();
-//    m_syncStatusIconLabel->show();
-////    updateEncryptedState(m_cryptoNoteAdapter->getNodeAdapter()->getWalletAdapter()->isEncrypted());
-//    updateSyncState(true);
-//}
-
-//void WalletStatusBar::walletOpenError(int initStatus)
-//{
-//    m_walletIsSynchronized = false;
-//}
-
-//void WalletStatusBar::walletClosed()
-//{
-//  if (m_checkSyncStateTimerId != -1) {
-//    killTimer(m_checkSyncStateTimerId);
-//    m_checkSyncStateTimerId = -1;
-//  }
-
-//  m_syncMovie->stop();
-//  m_encryptionStatusIconLabel->hide();
-//  m_syncStatusIconLabel->hide();
-//  showMessage(tr("Wallet closed"));
-//}
-
-//void WalletStatusBar::passwordChanged() {
-//  showMessage(tr("Password changed"), TEMP_MESSAGE_DURATION);
-//  updateEncryptedState(m_cryptoNoteAdapter->getNodeAdapter()->getWalletAdapter()->isEncrypted());
-//}
-
-//void WalletStatusBar::synchronizationProgressUpdated(quint32 _current, quint32 _total) {
-//  if (m_checkSyncStateTimerId != -1) {
-//    killTimer(m_checkSyncStateTimerId);
-//    m_checkSyncStateTimerId = -1;
-//  }
-
-//  quint64 currentDateTime = QDateTime::currentDateTimeUtc().toMSecsSinceEpoch() / 1000;
-//  quint64 lastBlockTimestamp = m_nodeStateModel->index(0, NodeStateModel::COLUMN_LAST_LOCAL_BLOCK_TIMESTAMP).data(NodeStateModel::ROLE_LAST_LOCAL_BLOCK_TIMESTAMP).value<quint64>();
-//  quint64 timeDiff = currentDateTime - lastBlockTimestamp;
-//  QString formattedTimeDiff = lastBlockTimestamp > 0 ? formatTimeDiff(timeDiff) : tr("unknown");
-//  QString blockchainAge = lastBlockTimestamp > 0 ? QStringLiteral("%1 ago").arg(formattedTimeDiff) : QStringLiteral("%1").arg(formattedTimeDiff);
-
-//  m_walletIsSynchronized = false;
-//  m_syncStatusLabel->setText(tr("Synchronization: %1/%2 (%3)").arg(_current).arg(_total).arg(blockchainAge));
-//  updateSyncState(false);
-//}
-
-//void WalletStatusBar::synchronizationCompleted() {
-//  if (m_checkSyncStateTimerId == -1) {
-//    m_checkSyncStateTimerId = startTimer(MSECS_IN_MINUTE);
-//  }
-
-//  m_walletIsSynchronized = true;
-//  updateStatusDescription();
-//  updateSyncState(true);
-//}
-
-//void WalletStatusBar::balanceUpdated(quint64 _actualBalance, quint64 _pendingBalance) {
-//  // Do nothing
-//}
-
-//void WalletStatusBar::externalTransactionCreated(quintptr _transactionId, const FullTransactionInfo& _transaction) {
-//  // Do nothing
-//}
-
-//void WalletStatusBar::transactionUpdated(quintptr _transactionId, const FullTransactionInfo& _transaction) {
-//  // Do nothing
-//}
-
-//void WalletStatusBar::cryptoNoteAdapterInitCompleted(int _status) {
-//  if (_status == 0) {
-//    m_cryptoNoteAdapter->getNodeAdapter()->getWalletAdapter()->addObserver(this);
-//    if (m_cryptoNoteAdapter->getNodeAdapter()->getWalletAdapter()->isOpen()) {
-//      walletOpened();
-//    }
-//  }
-//}
-
-//void WalletStatusBar::cryptoNoteAdapterDeinitCompleted() {
-//  // Do nothing
-//}
-
-//void WalletStatusBar::timerEvent(QTimerEvent* event)
-//{
-//    Q_ASSERT(jsonClient_ != nullptr);
-//    if (event->timerId() == getStatusTimerID_)
-//    {
-//        jsonClient_.sendGetStatus();
-//        return;
-//    }
-
-//    QStatusBar::timerEvent(event);
-//}
-
 void WalletStatusBar::nodeStateChanged(const QModelIndex& /*topLeft*/, const QModelIndex& /*bottomRight*/, const QVector<int>& roles)
 {
     if (roles.contains(WalletModel::ROLE_TXPOOL_VERSION) || roles.contains(WalletModel::ROLE_TOP_BLOCK_HASH) || roles.contains(WalletModel::ROLE_PEER_COUNT_SUM))
@@ -291,11 +180,9 @@ void WalletStatusBar::updateStatusDescription()
         warningString.append(tr(" No network connection."));
 
     const QString statusText = isSynchronized_ ?
-//                tr("Wallet synchronized. Top block height: %1  /  Time (UTC): %2%3")
                 tr("Wallet synchronized. Top block height: %1  /  Received: %2 ago.%3")
                     .arg(knownBlockHeight)
                     .arg(formattedTimeDiff)
-//                    .arg(QLocale(QLocale::English).toString(lastBlockTimestamp, "dd MMM yyyy, HH:mm:ss"))
                     .arg(warningString) :
                 tr("Synchronization: %1 blocks left (%2)")
                     .arg(knownBlockHeight - lastBlockHeight)
@@ -323,10 +210,6 @@ void WalletStatusBar::updateSyncState()
 
 void WalletStatusBar::updateEncryptedState(bool /*isEncrypted*/)
 {
-//    if (isEncrypted)
-//        m_encryptionStatusIconLabel->setPixmap(Settings::instance().getCurrentStyle().getEncryptedIcon());
-//    else
-//        m_encryptionStatusIconLabel->setPixmap(Settings::instance().getCurrentStyle().getNotEncryptedIcon());
 }
 
 }

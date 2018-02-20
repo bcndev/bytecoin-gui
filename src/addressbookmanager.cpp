@@ -37,7 +37,6 @@ constexpr const char ADDRESS_ITEM_ADDRESS_TAG_NAME[] = "address";
 AddressBookManager::AddressBookManager(QObject* _parent)
     : QObject(_parent)
 {
-//    const QSettings::Format jsonFormat = QSettings::registerFormat("json", readJsonFile, writeJsonFile);
     const QString jsonFile = Settings::instance().getDefaultWorkDir().absoluteFilePath("address_book.json");
 
     addressBook_.reset(new QSettings(jsonFile/*, jsonFormat*/, Settings::instance().getFormat()));
@@ -51,7 +50,6 @@ AddressBookManager::~AddressBookManager()
 
 AddressIndex AddressBookManager::getAddressCount() const
 {
-//  return m_addressBookObject[ADDRESS_BOOK_TAG_NAME].toArray().size();
     return addressBook_->value(ADDRESS_BOOK_TAG_NAME).toList().size();
 }
 
@@ -110,7 +108,6 @@ void AddressBookManager::addAddress(const QString& _label, const QString& _addre
   addressBook_->setValue(ADDRESS_BOOK_TAG_NAME, addressArray);
   addressIndexes_.insert(_address, addressArray.size() - 1);
   labelIndexes_.insert(_label, addressArray.size() - 1);
-//  saveAddressBook();
   emit addressAddedSignal(addressArray.size() - 1);
 }
 
@@ -132,7 +129,6 @@ void AddressBookManager::editAddress(AddressIndex _addressIndex, const QString& 
   labelIndexes_.remove(oldLabel);
   addressIndexes_.insert(_address, _addressIndex);
   labelIndexes_.insert(_label, _addressIndex);
-//  saveAddressBook();
   emit addressEditedSignal(_addressIndex);
 }
 
@@ -158,71 +154,7 @@ void AddressBookManager::removeAddress(AddressIndex _addressIndex)
   }
 
   addressBook_->setValue(ADDRESS_BOOK_TAG_NAME, addressArray);
-//  saveAddressBook();
   emit addressRemovedSignal(_addressIndex);
-}
-
-//void AddressBookManager::addObserver(IAddressBookManagerObserver* _observer) {
-//  QObject* observer = dynamic_cast<QObject*>(_observer);
-//  connect(this, SIGNAL(addressBookOpenedSignal()), observer, SLOT(addressBookOpened()));
-//  connect(this, SIGNAL(addressBookClosedSignal()), observer, SLOT(addressBookClosed()));
-//  connect(this, SIGNAL(addressAddedSignal(AddressIndex)), observer, SLOT(addressAdded(AddressIndex)));
-//  connect(this, SIGNAL(addressEditedSignal(AddressIndex)), observer, SLOT(addressEdited(AddressIndex)));
-//  connect(this, SIGNAL(addressRemovedSignal(AddressIndex)), observer, SLOT(addressRemoved(AddressIndex)));
-//}
-
-//void AddressBookManager::removeObserver(IAddressBookManagerObserver* _observer) {
-//  QObject* observer = dynamic_cast<QObject*>(_observer);
-//  disconnect(this, SIGNAL(addressBookOpenedSignal()), observer, SLOT(addressBookOpened()));
-//  disconnect(this, SIGNAL(addressBookClosedSignal()), observer, SLOT(addressBookClosed()));
-//  disconnect(this, SIGNAL(addressAddedSignal(AddressIndex)), observer, SLOT(addressAdded(AddressIndex)));
-//  disconnect(this, SIGNAL(addressEditedSignal(AddressIndex)), observer, SLOT(addressEdited(AddressIndex)));
-//  disconnect(this, SIGNAL(addressRemovedSignal(AddressIndex)), observer, SLOT(addressRemoved(AddressIndex)));
-//}
-
-//void AddressBookManager::walletOpened() {
-//  QByteArray userData = m_cryptoNoteAdapter->getNodeAdapter()->getWalletAdapter()->getUserData();
-//  bool needOverwrite = false;
-//  if (userData.isEmpty()) {
-//    QFile addressBookFile(Settings::instance().getLegacyAddressBookFile());
-//    if (addressBookFile.open(QIODevice::ReadOnly)) {
-//      needOverwrite = true;
-//      userData = addressBookFile.readAll();
-//    }
-//  }
-
-//  if (!userData.isEmpty()) {
-//    QJsonDocument doc = QJsonDocument::fromBinaryData(qUncompress(userData));
-//    if (doc.isNull()) {
-//      doc = QJsonDocument::fromJson(userData);
-//      if (!doc.isNull()) {
-//        needOverwrite = true;
-//      }
-//    }
-
-//    if (!doc.isNull()) {
-//      if (doc.isArray()) {
-//        m_addressBookObject.insert(ADDRESS_BOOK_TAG_NAME, doc.array());
-//        needOverwrite = true;
-//      } else  {
-//        m_addressBookObject = doc.object();
-//      }
-
-//      if (needOverwrite) {
-//        saveAddressBook();
-//      }
-//    }
-//  }
-
-//  buildIndexes();
-//  Q_EMIT addressBookOpenedSignal();
-//  Q_EMIT donationManagerOpenedSignal();
-//}
-
-void AddressBookManager::saveAddressBook()
-{
-//    m_cryptoNoteAdapter->getNodeAdapter()->getWalletAdapter()->setUserData(qCompress(QJsonDocument(m_addressBookObject).toBinaryData()));
-
 }
 
 void AddressBookManager::buildIndexes() {

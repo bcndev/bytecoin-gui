@@ -19,19 +19,7 @@
 #include <QUrl>
 #include <QUrlQuery>
 
-//#include <Wallet/WalletErrors.h>
-
 #include "sendframe.h"
-//#include "Settings/Settings.h"
-//#include "Common/QuestionDialog.h"
-//#include "ICryptoNoteAdapter.h"
-//#include "IDonationManager.h"
-//#include "INodeAdapter.h"
-//#include "IWallet.h"
-//#include "Models/AddressBookModel.h"
-//#include "Models/WalletStateModel.h"
-//#include "SendGlassFrame.h"
-//#include "Style/Style.h"
 #include "transferframe.h"
 #include "walletmodel.h"
 #include "mainwindow.h"
@@ -89,14 +77,6 @@ const char MIXIN_SLIDER_STYLE_SHEET_TEMPLATE[] =
 
 bool isValidPaymentId(const QString& /*paymentIdString*/)
 {
-//    if (!paymentIdString.trimmed().isEmpty() &&
-//            (paymentIdString.trimmed().size() != sizeof(Crypto::Hash) * 2 ||
-//             QByteArray::fromHex(paymentIdString.toLatin1()).size() != sizeof(Crypto::Hash) ||
-//             QByteArray::fromHex(paymentIdString.toLatin1()).toHex().toLower() != paymentIdString.trimmed().toLower()))
-//    {
-//        return false;
-//    }
-
     return true;
 }
 
@@ -141,17 +121,6 @@ void SendFrame::addRecipient(const QString& address, const QString& label)
             m_transfers.last()->setLabel(label);
     }
 }
-
-//void SendFrame::setMainWindow(QWidget* mainWindow)
-//{
-//    m_mainWindow = mainWindow;
-//    for (auto& transfer : m_transfers)
-//        transfer->setMainWindow(mainWindow);
-
-//    QList<QPushButton*> buttonList = m_mainWindow->findChildren<QPushButton*>("m_transactionsButton");
-//    Q_ASSERT(!buttonList.isEmpty());
-//    connect(this, &SendFrame::showTransactionsFrameSignal, buttonList.first(), &QPushButton::click);
-//}
 
 void SendFrame::setMainWindow(MainWindow* mainWindow)
 {
@@ -261,20 +230,9 @@ void SendFrame::sendClicked()
     Q_ASSERT(walletModel_ != nullptr);
 
     m_ui->m_sendButton->setEnabled(false);
-    m_ui->m_sendButton->setText(tr("Sending..."));
+    m_ui->m_sendButton->setText(tr("Checking..."));
 
     quint64 transferSum = 0;
-//    const QString feeStr = m_ui->m_feeSpin->cleanText();
-//    const double dfee = m_ui->m_feeSpin->value();
-//    if (dfee < 0)
-//    {
-//        setFeeFormatError(true);
-//        m_ui->m_sendScrollarea->ensureWidgetVisible(m_ui->m_feeSpin);
-//        return;
-//    }
-//    const quint64 fee = convertAmountFromHumanReadable(dfee);
-
-//    const qint64 fee = m_cryptoNoteAdapter->parseAmount(m_ui->m_feeSpin->cleanText());
     QList<RpcApi::Transfer> trs;
     for (TransferFrame* transfer : m_transfers)
     {
@@ -284,15 +242,7 @@ void SendFrame::sendClicked()
                                 addressBookManager_->findAddressByLabel(label) == INVALID_ADDRESS_INDEX)
             addressBookManager_->addAddress(label, address);
 
-//        if (!m_cryptoNoteAdapter->isValidAddress(address))
-//        {
-//            transfer->setAddressError();
-//            m_ui->m_sendScrollarea->ensureWidgetVisible(transfer);
-//            return;
-//        }
-
         const double damount = transfer->getAmountString().toDouble();
-//        qint64 amount = m_cryptoNoteAdapter->parseAmount(transfer->getAmountString());
         if (damount <= 0)
         {
             transfer->setAmountFormatError(true);
@@ -317,18 +267,7 @@ void SendFrame::sendClicked()
     tx.anonymity = m_ui->m_mixinSlider->value();
     tx.unlock_time = 0;
 
-
-    emit createTxSignal(tx, getFeeFromSlider(m_ui->m_feeSlider->value())/*m_ui->m_feeValue->text().toULongLong()*/);
-
-//    RpcApi::CreateTransaction::Request req;
-//    req.any_spend_address = true;
-//    req.send_immediately = false;
-//    req.transaction = tx;
-//    req.change_address = m_mainWindow->getAddress();
-//    req.confirmed_height_or_depth = -static_cast<qint32>(CONFIRMATIONS) - 1;
-//    req.fee_per_byte = fee;
-
-//    m_mainWindow->createTransaction(req);
+    emit createTxSignal(tx, getFeeFromSlider(m_ui->m_feeSlider->value()));
 }
 
 void SendFrame::mixinValueChanged(int value)
@@ -412,26 +351,6 @@ void SendFrame::setMixinError(bool error)
 
 void SendFrame::setFeeFormatError(bool /*error*/)
 {
-//    m_ui->m_feeSpin->setProperty("errorState", error);
-//    if (error)
-//    {
-//        m_ui->m_feeTextLabel->setText(tr("WRONG FEE"));
-//        connect(m_ui->m_feeSpin, static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, [this](double fee)
-//            {
-//                if (fee >= 0)
-//                    setFeeFormatError(false);
-//            }, Qt::UniqueConnection);
-//    }
-//    else
-//        m_ui->m_feeTextLabel->setText(tr("FEE"));
-
-//    m_ui->m_feeSpin->style()->unpolish(m_ui->m_feeSpin);
-//    m_ui->m_feeSpin->style()->polish(m_ui->m_feeSpin);
-//    m_ui->m_feeSpin->update();
-
-//    m_ui->m_feeTextLabel->style()->unpolish(m_ui->m_feeTextLabel);
-//    m_ui->m_feeTextLabel->style()->polish(m_ui->m_feeTextLabel);
-//    m_ui->m_feeTextLabel->update();
 }
 
 void SendFrame::updateMixinSliderStyleSheet()

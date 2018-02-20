@@ -20,12 +20,6 @@
 #include <QFrame>
 #include <QScrollArea>
 
-//#include "Application/IWalletUiItem.h"
-//#include "IAddressBookManager.h"
-//#include "IApplicationEventHandler.h"
-//#include "ICryptoNoteAdapter.h"
-//#include "IWalletAdapter.h"
-
 class QAbstractItemModel;
 
 namespace Ui {
@@ -38,8 +32,6 @@ struct Transaction;
 
 namespace WalletGUI {
 
-//class ICryptoNoteAdapter;
-//class SendGlassFrame;
 class TransferFrame;
 class WalletModel;
 class MainWindow;
@@ -55,7 +47,6 @@ public:
     ~SendFrame();
 
     void addRecipient(const QString& address, const QString& label = QString());
-    //  void setMainWindow(QWidget* mainWindow);
     void setWalletModel(WalletModel* model);
     void setMainWindow(MainWindow* mainWindow);
     void setAddressBookModel(QAbstractItemModel* model);
@@ -66,14 +57,12 @@ public:
 
 private:
     QScopedPointer<Ui::SendFrame> m_ui;
-    //  QWidget* m_mainWindow;
     MainWindow* m_mainWindow;
     QList<TransferFrame*> m_transfers;
     WalletModel* walletModel_;
     QAbstractItemModel* addressBookModel_;
     AddressBookManager* addressBookManager_;
 
-    //  void processTranactionSendStatus(IWalletAdapter::SendTransactionStatus status);
     void setPaymentIdError(bool error);
     void setMixinError(bool error);
     void setFeeFormatError(bool error);

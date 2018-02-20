@@ -37,9 +37,6 @@ AddressBookModel::AddressBookModel(AddressBookManager* _addressBookManager, QObj
     , m_columnCount(AddressBookModel::staticMetaObject.enumerator(AddressBookModel::staticMetaObject.indexOfEnumerator("Columns")).keyCount())
     , m_rowCount(0)
 {
-//  m_addressBookManager->addObserver(this);
-//    connect(m_addressBookManager, &AddressBookManager::addressBookOpenedSignal, this, &AddressBookModel::addressBookOpened);
-//    connect(m_addressBookManager, &AddressBookManager::addressBookClosedSignal, this, &AddressBookModel::addressBookClosed);
     connect(m_addressBookManager, &AddressBookManager::addressAddedSignal, this, &AddressBookModel::addressAdded);
     connect(m_addressBookManager, &AddressBookManager::addressEditedSignal, this, &AddressBookModel::addressEdited);
     connect(m_addressBookManager, &AddressBookManager::addressRemovedSignal, this, &AddressBookModel::addressRemoved);
@@ -92,8 +89,6 @@ QVariant AddressBookModel::headerData(int _section, Qt::Orientation _orientation
       return tr("Label");
     case COLUMN_ADDRESS:
       return tr("Address");
-//    case COLUMN_DONATION:
-//      return tr("Donation");
     }
 
     break;
@@ -105,8 +100,6 @@ QVariant AddressBookModel::headerData(int _section, Qt::Orientation _orientation
       return static_cast<int>(Qt::AlignLeft | Qt::AlignVCenter);
     case COLUMN_ADDRESS:
       return static_cast<int>(Qt::AlignRight | Qt::AlignVCenter);
-//    case COLUMN_DONATION:
-//      return static_cast<int>(Qt::AlignCenter);
     }
 
     break;
@@ -186,10 +179,6 @@ QVariant AddressBookModel::getDisplayRole(const QModelIndex& _index) const {
 }
 
 QVariant AddressBookModel::getDecorationRole(const QModelIndex& /*_index*/) const {
-//  if (_index.column() == COLUMN_DONATION && _index.data(ROLE_IS_DONATION_ADDRESS).toBool()) {
-//    return QPixmap(":icons/donation");
-//  }
-
   return QVariant();
 }
 
@@ -200,8 +189,6 @@ QVariant AddressBookModel::getUserRole(const QModelIndex& _index, int _role) con
     return addressItem.label;
   case ROLE_ADDRESS:
     return addressItem.address;
-//  case ROLE_IS_DONATION_ADDRESS:
-//    return addressItem.isDonationAddress;
   case ROLE_COLUMN:
     return headerData(_index.column(), Qt::Horizontal, _role);
   case ROLE_ROW:

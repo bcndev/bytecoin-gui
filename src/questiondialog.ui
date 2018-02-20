@@ -33,7 +33,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0">
    <item>
-    <widget class="QLabel" name="m_questionLabel">
+    <widget class="QLabel" name="questionLabel">
      <property name="text">
       <string/>
      </property>
@@ -55,14 +55,14 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="m_cancelButton">
+      <widget class="QPushButton" name="cancelButton">
        <property name="text">
         <string>No</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="m_okButton">
+      <widget class="QPushButton" name="okButton">
        <property name="text">
         <string>Yes</string>
        </property>
@@ -75,7 +75,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>m_okButton</sender>
+   <sender>okButton</sender>
    <signal>clicked()</signal>
    <receiver>QuestionDialog</receiver>
    <slot>accept()</slot>
@@ -91,7 +91,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>m_cancelButton</sender>
+   <sender>cancelButton</sender>
    <signal>clicked()</signal>
    <receiver>QuestionDialog</receiver>
    <slot>reject()</slot>

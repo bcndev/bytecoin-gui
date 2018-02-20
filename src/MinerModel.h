@@ -19,9 +19,6 @@
 
 #include <QAbstractItemModel>
 
-//#include "ICryptoNoteAdapter.h"
-//#include "IDonationManager.h"
-//#include "IWalletAdapter.h"
 #include "IMiningManager.h"
 
 namespace WalletGUI {
@@ -34,15 +31,13 @@ class MinerModel : public QAbstractItemModel, public IMinerManagerObserver {
 
 public:
   enum Columns {
-    COLUMN_POOL_URL = 0, COLUMN_DIFFICULTY, COLUMN_GOOD_SHARES, COLUMN_BAD_SHARES, COLUMN_DONATED_SHARES,
+    COLUMN_POOL_URL = 0, COLUMN_DIFFICULTY, COLUMN_GOOD_SHARES, COLUMN_BAD_SHARES,
       COLUMN_CONNECTION_ERROR_COUNT, COLUMN_LAST_CONNECTION_ERROR_TIME, COLUMN_REMOVE, COLUMN_HASHRATE,
-      COLUMN_DONATION_HASHRATE
   };
 
   enum Roles {
-    ROLE_POOL_HOST = Qt::UserRole, ROLE_POOL_PORT, ROLE_DIFFICULTY, ROLE_GOOD_SHARES, ROLE_BAD_SHARES, ROLE_DONATED_SHARES,
+    ROLE_POOL_HOST = Qt::UserRole, ROLE_POOL_PORT, ROLE_DIFFICULTY, ROLE_GOOD_SHARES, ROLE_BAD_SHARES,
       ROLE_CONNECTION_ERROR_COUNT, ROLE_LAST_CONNECTION_ERROR_TIME, ROLE_STATE, ROLE_START_MINER, ROLE_HASHRATE,
-      ROLE_DONATION_HASHRATE
   };
 
   MinerModel(IMiningManager* _minerManager, QObject* _parent);

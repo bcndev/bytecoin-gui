@@ -6,6 +6,8 @@
 
 #include "rpcapi.h"
 
+class QAuthenticator;
+
 namespace JsonRpc
 {
     class WalletClient;
@@ -32,13 +34,6 @@ public:
     virtual void run();
     virtual void stop();
 
-//    void sendGetStatus(const QString& topBlockHash, quint32 txPoolVersion = 0);
-//    void sendGetHistory(quint32 blockIndex = 0, quint32 blockCount = std::numeric_limits<quint32>::max());
-//    void sendGetAddresses();
-//    void sendGetUnspent();
-//    void sendCreateTransaction(const QList<QString>& sourceAddresses, const QString& changeAddress, quint32 confirmations, const QVariantMap& transaction, bool sendImmediately);
-
-//    void sendTx(const QString& spendAddress, const QString& changeAddress, quint32 confirmations, const QVariantMap& transaction, bool sendImmediately);
     void createTx(const RpcApi::CreateTransaction::Request& tx);
     void sendTx(const RpcApi::SendTransaction::Request& tx);
     void getTransfers(const RpcApi::GetTransfers::Request& req);
@@ -68,6 +63,8 @@ signals:
     void packetSent(const QByteArray& data);
     void packetReceived(const QByteArray& data);
 
+    void authRequiredSignal(QAuthenticator* authenticator);
+
 private:
     JsonRpc::WalletClient* jsonClient_;
     State state_;
@@ -75,8 +72,8 @@ private:
 
     void setState(State state);
     void rerun();
-//    void rerunImpl();
     virtual void timerEvent(QTimerEvent* event) override;
+    virtual void authRequired(QAuthenticator* authenticator);
 
 private slots:
     void statusReceived(const RpcApi::Status& status);
@@ -93,6 +90,20 @@ private slots:
     void jsonErrorResponse(const QString& id, const QString& errorString);
     void jsonUnknownMessageId(const QString& id);
 
+};
+
+class RandomAuth
+{
+public:
+    RandomAuth();
+
+    const QString& getUser() const;
+    const QString& getPass() const;
+    QString getHttpBasicAuth() const;
+
+private:
+    QString user_;
+    QString pass_;
 };
 
 class BuiltinWalletd : public RemoteWalletd
@@ -124,7 +135,7 @@ public:
     Q_ENUM(ReturnCode)
 
 
-    BuiltinWalletd(const QString& pathToWallet, bool createNew, QObject* parent = nullptr);
+    BuiltinWalletd(const QString& pathToWallet, bool createNew, QByteArray&& keys, QObject* parent = nullptr);
     virtual ~BuiltinWalletd() override;
 
     virtual void run() override;
@@ -159,11 +170,14 @@ private:
     QString password_;
     bool createNew_;
     bool changePassword_;
+    QByteArray keys_;
+    RandomAuth auth_;
 
     void setState(State state);
 
     void run(const QStringList& args);
     void connected();
+    virtual void authRequired(QAuthenticator* authenticator) override;
 
 private slots:
     void daemonStandardOutputReady();
@@ -173,7 +187,7 @@ private slots:
     void daemonErrorOccurred(QProcess::ProcessError error);
     void daemonFinished(int exitCode, QProcess::ExitStatus exitStatus);
 //    void daemonStateChanged(QProcess::ProcessState state);
-
+//    void authRequired(QAuthenticator* authenticator);
 };
 
 }

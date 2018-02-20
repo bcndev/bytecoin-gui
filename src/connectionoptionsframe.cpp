@@ -21,10 +21,6 @@
 //#include <CryptoNoteConfig.h>
 
 #include "connectionoptionsframe.h"
-//#include "Settings/Settings.h"
-//#include "ICryptoNoteAdapter.h"
-//#include "INodeAdapter.h"
-//#include "Style/Style.h"
 #include "settings.h"
 #include "common.h"
 
@@ -70,12 +66,6 @@ ConnectionOptionsFrame::ConnectionOptionsFrame(QWidget* parent)
     , m_ui(new Ui::ConnectionOptionsFrame)
 {
     m_ui->setupUi(this);
-//    m_ui->m_connectionButtonGroup->setId(m_ui->m_builtinRadio, static_cast<int>(ConnectionMethod::BUILTIN));
-//    m_ui->m_connectionButtonGroup->setId(m_ui->m_localRadio, static_cast<int>(ConnectionMethod::LOCAL));
-//    m_ui->m_connectionButtonGroup->setId(m_ui->m_remoteRadio, static_cast<int>(ConnectionMethod::REMOTE));
-//    setStyleSheet(Settings::instance().getCurrentStyle().makeStyleSheet(CONNECTION_OPTIONS_STYLE_SHEET_TEMPLATE));
-//    m_ui->m_validationLabel->setText("");
-//    m_ui->m_validationLabel->setStyleSheet(VALIDATION_LABEL_STYLE_SHEET);
 }
 
 ConnectionOptionsFrame::~ConnectionOptionsFrame()
@@ -83,7 +73,6 @@ ConnectionOptionsFrame::~ConnectionOptionsFrame()
 
 void ConnectionOptionsFrame::load()
 {
-//    m_ui->m_localPortSpin->setValue(Settings::instance().getLocalRpcPort());
     const QUrl remoteUrl = QUrl::fromUserInput(Settings::instance().getRemoteRpcEndPoint());
     if (!remoteUrl.isValid())
         m_ui->m_remotePortSpin->setValue(Settings::instance().getDefaultRpcPort());
@@ -92,39 +81,17 @@ void ConnectionOptionsFrame::load()
         m_ui->m_remoteHostEdit->setText(remoteUrl.host());
         m_ui->m_remotePortSpin->setValue(remoteUrl.port());
     }
-//    const QStringList recentWallets = Settings::instance().getRecentWallets();
-//    m_ui->m_walletFileEdit->setText(recentWallets.empty() ? QString() : recentWallets.first());
-//    m_ui->m_walletFileEdit->setText(Settings::instance().getWalletFile());
-
-//    switch (Settings::instance().getConnectionMethod())
-//    {
-//    case ConnectionMethod::BUILTIN:
-//        m_ui->m_builtinRadio->toggle();
-//        break;
-//    case ConnectionMethod::LOCAL:
-//        m_ui->m_localRadio->toggle();
-//        break;
-//    case ConnectionMethod::REMOTE:
-//        m_ui->m_remoteRadio->toggle();
-//        break;
-//    }
-
-//    walletFileNameChanged(m_ui->m_walletFileEdit->text());
     remoteHostNameChanged(m_ui->m_remoteHostEdit->text());
 }
 
 void ConnectionOptionsFrame::save()
 {
-//    Settings::instance().setConnectionMethod(static_cast<ConnectionMethod>(m_ui->m_connectionButtonGroup->checkedId()));
-//    Settings::instance().setLocalRpcPort(m_ui->m_localPortSpin->value());
     Settings::instance().setConnectionMethod(ConnectionMethod::REMOTE);
     Settings::instance().setRemoteRpcEndPoint(m_ui->m_remoteHostEdit->text(), m_ui->m_remotePortSpin->value());
-//    Settings::instance().setWalletFile(m_ui->m_walletFileEdit->text());
 
     switch (Settings::instance().getConnectionMethod())
     {
     case ConnectionMethod::BUILTIN:
-//        Settings::instance().addRecentWallet(m_ui->m_walletFileEdit->text());
         break;
     case ConnectionMethod::LOCAL:
     case ConnectionMethod::REMOTE:
@@ -135,43 +102,25 @@ void ConnectionOptionsFrame::save()
 
 bool ConnectionOptionsFrame::canAccept() const
 {
-//    if (m_ui->m_remoteRadio->isChecked())
-        return isIpOrHostName(m_ui->m_remoteHostEdit->text());
-//    return true;
+    return isIpOrHostName(m_ui->m_remoteHostEdit->text());
 }
 
 bool ConnectionOptionsFrame::remoteHostNameChanged(const QString& host)
 {
     bool valid = true;
-//    if (m_ui->m_remoteRadio->isChecked())
-//    {
-        valid = isIpOrHostName(host);
-        const QString errMsg = valid ? QString() : tr("Invalid host name.");
-//        m_ui->m_validationLabel->setText(errMsg);
-//    }
+    valid = isIpOrHostName(host);
+//    const QString errMsg = valid ? QString() : tr("Invalid host name.");
     emit disableAcceptButtonSignal(!valid);
     return valid;
 }
 
 bool ConnectionOptionsFrame::walletFileNameChanged(const QString& /*wallet*/)
 {
-//    bool valid = true;
-//    if (m_ui->m_builtinRadio->isChecked())
-//    {
-//        const QFileInfo walletFile(wallet);
-//        valid = walletFile.isFile() && walletFile.exists(wallet);
-//        const QString errMsg = valid ? QString() : tr("The wallet file does not exist.");
-////        m_ui->m_validationLabel->setText(errMsg);
-//    }
-//    emit disableAcceptButtonSignal(!valid);
-//    return valid;
     return true;
 }
 
 void ConnectionOptionsFrame::connectionButtonClicked(int /*buttonId*/)
 {
-//    m_ui->m_validationLabel->setText("");
-//    walletFileNameChanged(m_ui->m_walletFileEdit->text());
     remoteHostNameChanged(m_ui->m_remoteHostEdit->text());
 }
 
@@ -184,8 +133,6 @@ void ConnectionOptionsFrame::showOpenWalletFileDialog()
                 tr("Wallet files (*.wallet);;All files (*)"));
     if (fileName.isEmpty())
         return;
-//    m_ui->m_walletFileEdit->setText(fileName);
-//    walletFileNameChanged(fileName);
 }
 
 void ConnectionOptionsFrame::showCreateWalletFileDialog()
@@ -197,8 +144,6 @@ void ConnectionOptionsFrame::showCreateWalletFileDialog()
                 tr("Wallet files (*.wallet);;All files (*)"));
     if (fileName.isEmpty())
         return;
-//    m_ui->m_walletFileEdit->setText(fileName);
-//    walletFileNameChanged(fileName);
 }
 
 }

@@ -34,15 +34,9 @@
 
 #include "mainwindow.h"
 
-//#include "Settings/Settings.h"
 #include "logger.h"
 #include "aboutdialog.h"
-//#include "statusmodel.h"
-//#include "historymodel.h"
-//#include "addressesmodel.h"
-//#include "unspentsmodel.h"
 #include "walletmodel.h"
-#include "optionsdialog.h"
 #include "settings.h"
 #include "common.h"
 #include "JsonRpc/JsonRpcClient.h"
@@ -69,8 +63,6 @@ const char REPORT_ISSUE_URL[] = "https://bytecoin.org/contact";
 const char BUTTON_STYLE_SHEET[] =
         "QPushButton {border: none;}"
         "QPushButton:checked {background-color: #EE4486; color: #FFFFFF}";
-//        "QPushButton:pressed {background-color: #EE4486;}";
-
 }
 
 MainWindow::MainWindow(
@@ -94,7 +86,6 @@ MainWindow::MainWindow(
 
     setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, this->size(), qApp->desktop()->availableGeometry()));
     setWindowIcon(QIcon(":images/bytecoin_lin"));
-//    setTitle();
     clearTitle();
 
     m_ui->m_overviewButton->setStyleSheet(BUTTON_STYLE_SHEET);
@@ -311,6 +302,11 @@ void MainWindow::encryptWallet()
     emit encryptWalletSignal(this);
 }
 
+void MainWindow::importKeys()
+{
+    emit importKeysSignal(this);
+}
+
 void MainWindow::communityForumTriggered()
 {
     QDesktopServices::openUrl(QUrl::fromUserInput(COMMUNITY_FORUM_URL));
@@ -341,8 +337,8 @@ void MainWindow::addDaemonError(const QString& msg)
 void MainWindow::showLog()
 {
     m_ui->m_logButton->setChecked(true);
-    activateWindow();
-    raise();
+//    activateWindow();
+//    raise();
 }
 
 void MainWindow::setTitle()
@@ -354,7 +350,6 @@ void MainWindow::setTitle()
 #ifdef Q_OS_MAC
     setWindowFilePath(fileName);
 #else
-//    setWindowTitle(fileName + tr(" — Bytecoin Wallet %1-%2-%3").arg(Settings::getVersion()).arg(Settings::getVersionSuffix()).arg(Settings::getRevision()));
     setWindowTitle(fileName);
 #endif
 }
@@ -378,7 +373,6 @@ void MainWindow::setConnectedState()
         m_ui->m_overviewButton->click();
 
     setTitle();
-//    clearTitle();
 #ifdef Q_OS_MAC
     if (Settings::instance().getConnectionMethod() == ConnectionMethod::BUILTIN)
         setWindowFilePath(Settings::instance().getWalletFile());
@@ -403,7 +397,6 @@ void MainWindow::setDisconnectedState()
     m_ui->m_changePasswordAction->setEnabled(false);
 
     clearTitle();
-//    setTitle();
 #ifdef Q_OS_MAC
     setWindowFilePath(QString());
 #endif
@@ -445,7 +438,5 @@ void MainWindow::packetReceived(const QByteArray& data)
 {
     m_ui->m_logFrame->addNetworkMessage(QString("<-- ") + QString::fromUtf8(data) + '\n');
 }
-
-
 
 }

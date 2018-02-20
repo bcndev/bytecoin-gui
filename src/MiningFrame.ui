@@ -337,7 +337,7 @@
       <number>20</number>
      </property>
      <item>
-      <widget class="QTableView" name="m_poolView">
+      <widget class="WalletGUI::PoolTreeView" name="m_poolView">
        <property name="focusPolicy">
         <enum>Qt::NoFocus</enum>
        </property>
@@ -346,6 +346,9 @@
        </property>
        <property name="sizeAdjustPolicy">
         <enum>QAbstractScrollArea::AdjustToContents</enum>
+       </property>
+       <property name="showDropIndicator" stdset="0">
+        <bool>false</bool>
        </property>
        <property name="dragEnabled">
         <bool>false</bool>
@@ -486,6 +489,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>WalletGUI::PoolTreeView</class>
+   <extends>QTableView</extends>
+   <header>PoolTreeView.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
@@ -581,6 +591,22 @@
     <hint type="destinationlabel">
      <x>566</x>
      <y>273</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>m_poolView</sender>
+   <signal>clicked(QModelIndex)</signal>
+   <receiver>MiningFrame</receiver>
+   <slot>deleteClicked(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>434</x>
+     <y>271</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>434</x>
+     <y>249</y>
     </hint>
    </hints>
   </connection>

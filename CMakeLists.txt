@@ -38,7 +38,6 @@ set(SOURCES
     src/logger.cpp 
     src/okbutton.cpp 
     src/statusbar.cpp 
-    src/tableview.cpp 
     src/windoweditemmodel.cpp 
     src/walletmodel.cpp 
     src/sendframe.cpp 
@@ -46,7 +45,6 @@ set(SOURCES
     src/resizablescrollarea.cpp 
     src/common.cpp 
     src/connectionoptionsframe.cpp 
-    src/optionsdialog.cpp 
     src/settings.cpp 
     src/Miner/Miner.cpp 
     src/Miner/StratumClient.cpp 
@@ -56,7 +54,6 @@ set(SOURCES
     src/MiningFrame.cpp 
     src/MiningManager.cpp 
     src/PoolHeaderView.cpp 
-    src/QuestionDialog.cpp 
     src/connectselectiondialog.cpp 
     src/walletd.cpp 
     src/rpcapi.cpp 
@@ -76,6 +73,10 @@ set(SOURCES
     src/popup.cpp
     src/logframe.cpp
     src/askpassworddialog.cpp
+    src/importkeydialog.cpp
+    src/questiondialog.cpp
+    src/PoolTreeView.cpp
+
 )
 
 include_directories(${CMAKE_BINARY_DIR} src )

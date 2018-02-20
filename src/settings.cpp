@@ -28,7 +28,7 @@ constexpr char LOCAL_HOST[] = "127.0.0.1";
 
 constexpr char VERSION[] = "2.0.0";
 constexpr char VERSION_SUFFIX[] = "beta";
-constexpr char REVISION[] = "20180206";
+constexpr char REVISION[] = "20180219";
 
 #if defined(Q_OS_LINUX)
 constexpr char DEFAULT_WORK_DIR[] = ".bytecoin";
@@ -63,8 +63,6 @@ int getCoreCount()
 }
 
 Settings::Settings()
-//    : settings_("bytecoin.org", "bytecoin", this)
-//    : settings_(getDefaultWorkDir().absoluteFilePath("config.json"), QSettings::registerFormat("json", readJsonFile, writeJsonFile))
 {
     const QSettings::Format jsonFormat = QSettings::registerFormat("json", readJsonFile, writeJsonFile);
     QSettings::setDefaultFormat(jsonFormat);
@@ -72,7 +70,6 @@ Settings::Settings()
     const QString jsonFile = getDefaultWorkDir().absoluteFilePath("bytecoin-gui.config");
 
     settings_.reset(new QSettings(jsonFile, jsonFormat));
-//    QSettings settings("test.json", QSettings::registerFormat("json", readJsonFile, writeJsonFile));
 }
 
 Settings& Settings::instance()
@@ -324,12 +321,6 @@ void Settings::restoreDefaultPoolList()
 
 QStringList Settings::getStringList(const QString& key, const QVariant& defaultValue) const
 {
-//    QStringList result;
-//    const QVariantList vpoolList = settings_->value(key, defaultValue).toList();
-//    for (const QVariant& vpool : vpoolList)
-//        result << vpool.toString();
-//    return result;
-
     return settings_->value(key, defaultValue).value<QStringList>();
 }
 

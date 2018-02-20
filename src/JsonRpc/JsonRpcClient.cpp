@@ -1,3 +1,5 @@
+#include <QAuthenticator>
+
 #include "JsonRpcClient.h"
 #include "common.h"
 #include "rpcapi.h"
@@ -57,6 +59,7 @@ Client::Client(QObject* parent)
     , idCount_(0)
 {
     connect(httpClient_, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
+    connect(httpClient_, &QNetworkAccessManager::authenticationRequired, this, &Client::authenticationRequired);
 }
 
 void Client::setUrl(const QString& endPoint)
@@ -175,6 +178,11 @@ void Client::replyFinished(QNetworkReply* reply)
         it.value()(result);
         responseHandlers_.erase(it);
     }
+}
+
+void Client::authenticationRequired(QNetworkReply* /*reply*/, QAuthenticator* authenticator)
+{
+    emit authRequiredSignal(authenticator);
 }
 
 void Client::sendJson(const QByteArray& json)

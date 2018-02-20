@@ -2,7 +2,9 @@
 #include <QTimer>
 #include <QMetaEnum>
 #include <QTimerEvent>
+#include <QAuthenticator>
 
+#include <random>
 #include "walletd.h"
 #include "JsonRpc/JsonRpcClient.h"
 #include "settings.h"
@@ -131,6 +133,8 @@ RemoteWalletd::RemoteWalletd(const QString& endPoint, QObject* parent)
     connect(jsonClient_, &JsonRpc::WalletClient::packetSent, this, &RemoteWalletd::packetSent);
     connect(jsonClient_, &JsonRpc::WalletClient::packetReceived, this, &RemoteWalletd::packetReceived);
 
+    connect(jsonClient_, &JsonRpc::WalletClient::authRequiredSignal, this, &RemoteWalletd::authRequired);
+
     connect(this, &RemoteWalletd::errorOccurred, this, &RemoteWalletd::rerun);
 }
 
@@ -146,7 +150,6 @@ void RemoteWalletd::run()
     if (isConnected())
         return;
 
-//    connect(this, &RemoteWalletd::errorOccurred, this, &RemoteWalletd::rerun);
     setState(State::CONNECTING);
 
     onceCallOrDieConnect(
@@ -168,7 +171,6 @@ void RemoteWalletd::run()
 /*virtual*/
 void RemoteWalletd::stop()
 {
-//    disconnect(this, &RemoteWalletd::errorOccurred, this, &RemoteWalletd::rerun);
     if (rerunTimerId_ != -1)
     {
         killTimer(rerunTimerId_);
@@ -196,27 +198,14 @@ void RemoteWalletd::statusReceived(const RpcApi::Status& status)
                     status.incoming_peer_count});
 
         jsonClient_->sendGetBalance(RpcApi::GetBalance::Request{QString{}, -1});
-//        jsonClient_->sendGetTransfers(RpcApi::GetTransfers::Request{});
-//        RpcApi::GetTransfers::Request req;
-//        req.desired_transactions_count = 200;
-//        req.from_height = status.top_known_block_height > (CONFIRMATIONS + 2) ? (status.top_known_block_height - CONFIRMATIONS - 2) : 0;
-//        jsonClient_->sendGetTransfers(req);
     }
 }
 
 void RemoteWalletd::rerun()
 {
-//    QTimer::singleShot(RERUN_TIMER_MSEC, [this]() { RemoteWalletd::run(); }); // could not call the 'run' as a slot because it is virtual, but we want to use it here as non-virtual function
-//    if (state_ != State::STOPPED)
-//    QTimer::singleShot(RERUN_TIMER_MSEC, this, &RemoteWalletd::rerunImpl); // could not call the 'run' as a slot because it is virtual, but we want to use it here as non-virtual function
     if (rerunTimerId_ == -1)
         rerunTimerId_ = startTimer(RERUN_TIMER_MSEC);
 }
-
-//void RemoteWalletd::rerunImpl()
-//{
-//    return RemoteWalletd::run();
-//}
 
 void RemoteWalletd::timerEvent(QTimerEvent* event)
 {
@@ -345,14 +334,20 @@ void RemoteWalletd::getTransfers(const RpcApi::GetTransfers::Request& req)
     jsonClient_->sendGetTransfers(req);
 }
 
+void RemoteWalletd::authRequired(QAuthenticator* authenticator)
+{
+    emit authRequiredSignal(authenticator);
+}
 
-BuiltinWalletd::BuiltinWalletd(const QString& pathToWallet, bool createNew, QObject* parent)
+
+BuiltinWalletd::BuiltinWalletd(const QString& pathToWallet, bool createNew, QByteArray&& keys, QObject* parent)
     : RemoteWalletd(Settings::instance().getBuilinRpcEndPoint(), parent)
     , walletd_(new QProcess(this))
     , state_(State::STOPPED)
     , pathToWallet_(pathToWallet)
     , createNew_(createNew)
     , changePassword_(false)
+    , keys_(std::move(keys))
 {
     walletd_->setProgram(Settings::getDefaultWalletdPath());
     connect(walletd_, &QProcess::readyReadStandardOutput, this, &BuiltinWalletd::daemonStandardOutputReady);
@@ -383,10 +378,13 @@ void BuiltinWalletd::run()
 {
     QStringList args;
     args << QString("--wallet-file=%1").arg(pathToWallet_);
+    args << QString("--walletd-authorization=%1").arg(auth_.getHttpBasicAuth());
     if (createNew_)
         args << "--generate-wallet";
-//    if (!password_.isEmpty())
-//        args << QString("--wallet-password=%1").arg(password_);
+
+    const bool importKeys = !keys_.isEmpty();
+    if (importKeys)
+        args << "--import-keys";
 
     run(args);
 
@@ -394,6 +392,9 @@ void BuiltinWalletd::run()
         emit requestPasswordWithConfirmationSignal();
     else
         emit requestPasswordSignal();
+
+    if (importKeys)
+        walletd_->write(keys_.toHex() + QString{'\n'}.toUtf8());
 
     walletd_->write((password_ + '\n').toUtf8());
     if (createNew_)
@@ -457,12 +458,7 @@ void BuiltinWalletd::changeWalletPassword(QString&& oldPassword, QString&& newPa
             [this, &oldPassword, &newPassword]()
             {
                 QStringList args;
-//                if (!password_.isEmpty())
-//                    args << QString("--wallet-password=%1").arg(oldPassword);
                 args << QString("--wallet-file=%1").arg(pathToWallet_);
-////                args << QString("--wallet-password=%1").arg(oldPassword);
-//                args << QString("--set-password=%1").arg(newPassword);
-
                 args << QString("--set-password");
                 run(args);
                 walletd_->write((oldPassword + '\n').toUtf8());
@@ -502,7 +498,6 @@ void BuiltinWalletd::daemonErrorOccurred(QProcess::ProcessError error)
 
 void BuiltinWalletd::daemonFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
-//    const State state = (state_ == State::FINISHING || exitStatus == QProcess::NormalExit) ? State::STOPPED : State::CRASHED;
     const State state = (state_ == State::FINISHING || state_ == State::STOPPED) ? State::STOPPED : State::CRASHED;
     setState(state);
     RemoteWalletd::stop();
@@ -547,10 +542,6 @@ void BuiltinWalletd::daemonStandardOutputReady()
     emit daemonStandardOutputSignal(QString(data));
 }
 
-//void BuiltinWalletd::daemonStateChanged(QProcess::ProcessState state)
-//{
-//}
-
 QString BuiltinWalletd::errorString() const
 {
     return walletd_->errorString();
@@ -565,5 +556,48 @@ void BuiltinWalletd::connected()
 {
     createNew_ = false;
 }
+
+void BuiltinWalletd::authRequired(QAuthenticator* authenticator)
+{
+    authenticator->setUser(auth_.getUser());
+    authenticator->setPassword(auth_.getPass());
+}
+
+
+static QString generatePass()
+{
+    static constexpr size_t length = 25;
+    static constexpr char alphabet[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+    std::default_random_engine generator;
+    generator.seed(QDateTime::currentMSecsSinceEpoch() / 1000);
+    std::uniform_int_distribution<size_t> distribution(0, sizeof(alphabet) - 2);
+    QString res;
+    for (size_t i = 0; i < length; ++i)
+        res += alphabet[distribution(generator)];
+
+    return res;
+}
+
+RandomAuth::RandomAuth()
+    : user_("user")
+    , pass_(generatePass())
+{}
+
+const QString& RandomAuth::getUser() const
+{
+    return user_;
+}
+
+const QString& RandomAuth::getPass() const
+{
+    return pass_;
+}
+
+QString RandomAuth::getHttpBasicAuth() const
+{
+    const QString concatenated = user_ + ":" + pass_;
+    return QString::fromLatin1(concatenated.toLocal8Bit().toBase64());
+}
+
 
 }

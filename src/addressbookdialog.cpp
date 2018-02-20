@@ -17,7 +17,6 @@
 
 #include "addressbookdialog.h"
 #include "addressbookmodel.h"
-//#include "Common/RightAlignmentColumnDelegate.h"
 
 #include "ui_addressbookdialog.h"
 

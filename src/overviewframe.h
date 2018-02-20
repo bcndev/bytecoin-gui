@@ -18,8 +18,6 @@
 #pragma once
 
 #include <QFrame>
-//#include "Application/IWalletUiItem.h"
-//#include "Settings/Settings.h"
 
 class QAbstractItemModel;
 
@@ -29,12 +27,11 @@ class OverviewFrame;
 
 namespace WalletGUI {
 
-//class ICryptoNoteAdapter;
 class WalletModel;
 class MiningManager;
 class CopiedToolTip;
 
-class OverviewFrame : public QFrame//, public IWalletUiItem, public ISettingsObserver
+class OverviewFrame : public QFrame
 {
     Q_OBJECT
     Q_DISABLE_COPY(OverviewFrame)

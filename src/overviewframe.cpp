@@ -21,7 +21,6 @@
 #include <QMouseEvent>
 
 #include "overviewframe.h"
-//#include "historymodel.h"
 #include "walletmodel.h"
 
 #include "ui_overviewframe.h"
@@ -144,47 +143,13 @@ void OverviewFrame::setMinerModel(QAbstractItemModel* model)
     m_ui->m_miningOverviewFrame->setMinerModel(model);
 }
 
-//void OverviewFrame::setSortedTransactionsModel(QAbstractItemModel* model)
-//{
-//    RecentTransactionsModel* recentTransactionsModel = new RecentTransactionsModel(model, this);
-//    int newTransactionColumn = TransactionsModel::findProxyColumn(recentTransactionsModel, TransactionsModel::COLUMN_NEW_TRANSACTION);
-//    int amountColumn = TransactionsModel::findProxyColumn(recentTransactionsModel, TransactionsModel::COLUMN_AMOUNT);
-//    int hashColumn = TransactionsModel::findProxyColumn(recentTransactionsModel, TransactionsModel::COLUMN_HASH);
-//    int timeColumn = TransactionsModel::findProxyColumn(recentTransactionsModel, TransactionsModel::COLUMN_TIME);
-//    m_ui->m_recentTransactionsView->setModel(recentTransactionsModel);
-//    m_ui->m_recentTransactionsView->setLinkLikeColumnSet(QSet<int>() << hashColumn);
-//    m_ui->m_recentTransactionsView->setHorizontalHeader(new TransactionsHeaderView(this));
-//    m_ui->m_recentTransactionsView->setItemDelegateForColumn(newTransactionColumn, new NewTransactionDelegate(this));
-//    m_ui->m_recentTransactionsView->setItemDelegateForColumn(timeColumn, new TransactionsTimeDelegate(this));
-//    m_ui->m_recentTransactionsView->setItemDelegateForColumn(amountColumn, new TransactionsAmountDelegate(true, this));
-//    m_ui->m_recentTransactionsView->horizontalHeader()->setSectionResizeMode(newTransactionColumn, QHeaderView::Fixed);
-//    m_ui->m_recentTransactionsView->horizontalHeader()->setSectionResizeMode(timeColumn, QHeaderView::Fixed);
-//    m_ui->m_recentTransactionsView->horizontalHeader()->setSectionResizeMode(amountColumn, QHeaderView::Fixed);
-//    m_ui->m_recentTransactionsView->horizontalHeader()->setSectionResizeMode(hashColumn, QHeaderView::Stretch);
-//    m_ui->m_recentTransactionsView->horizontalHeader()->resizeSection(newTransactionColumn, 6);
-//    m_ui->m_recentTransactionsView->horizontalHeader()->resizeSection(timeColumn, 180);
-//    m_ui->m_recentTransactionsView->horizontalHeader()->resizeSection(amountColumn, 220);
-
-//    connect(recentTransactionsModel, &QAbstractItemModel::rowsInserted, this, &OverviewFrame::rowsInserted);
-//}
-
 void OverviewFrame::rowsInserted(const QModelIndex& /*parent*/, int /*first*/, int /*last*/)
 {
-//    if (first != last)
-//        return;
-
-//    QModelIndex index = m_ui->m_recentTransactionsView->model()->index(first, TransactionsModel::COLUMN_NEW_TRANSACTION);
-//    if (index.data(TransactionsModel::ROLE_NUMBER_OF_CONFIRMATIONS).value<quint32>() == 0)
-//        m_ui->m_recentTransactionsView->openPersistentEditor(index);
 }
 
 void OverviewFrame::setMainWindow(QWidget* mainWindow)
 {
     m_mainWindow = mainWindow;
-//    QList<QPushButton*> buttonList = m_mainWindow->findChildren<QPushButton*>("m_transactionsButton");
-//    Q_ASSERT(!buttonList.isEmpty());
-//    connect(m_ui->m_allTransactionsButton, &WalletTinyLinkLikeButton::clicked, buttonList.first(), &QPushButton::click);
-//    m_ui->m_overviewHeaderFrame->setMainWindow(m_mainWindow);
 }
 
 bool OverviewFrame::eventFilter(QObject* object, QEvent* event)

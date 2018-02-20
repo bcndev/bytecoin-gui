@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Installer", "Installer.vdproj", "{301C59C1-45B8-4C42-9696-555FBB855FD6}"
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Bytecoin", "Installer.vdproj", "{301C59C1-45B8-4C42-9696-555FBB855FD6}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Bytecoin(32)", "Installer32.vdproj", "{0E4F4AED-6460-4A0A-A77F-C3E093DF3825}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{301C59C1-45B8-4C42-9696-555FBB855FD6}.Debug|Default.Build.0 = Debug
 		{301C59C1-45B8-4C42-9696-555FBB855FD6}.Release|Default.ActiveCfg = Release
 		{301C59C1-45B8-4C42-9696-555FBB855FD6}.Release|Default.Build.0 = Release
+		{0E4F4AED-6460-4A0A-A77F-C3E093DF3825}.Debug|Default.ActiveCfg = Debug
+		{0E4F4AED-6460-4A0A-A77F-C3E093DF3825}.Debug|Default.Build.0 = Debug
+		{0E4F4AED-6460-4A0A-A77F-C3E093DF3825}.Release|Default.ActiveCfg = Release
+		{0E4F4AED-6460-4A0A-A77F-C3E093DF3825}.Release|Default.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

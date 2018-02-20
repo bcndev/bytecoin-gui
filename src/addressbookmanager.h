@@ -51,16 +51,11 @@ public:
   void editAddress(AddressIndex _addressIndex, const QString& _label, const QString& _address);
   void removeAddress(AddressIndex _addressIndex);
 
-//  void addObserver(IAddressBookManagerObserver* _observer);
-//  void removeObserver(IAddressBookManagerObserver* _observer);
-
 private:
-//  QJsonObject addressBookObject_;
   QScopedPointer<QSettings> addressBook_;
   QHash<QString, AddressIndex> addressIndexes_;
   QHash<QString, AddressIndex> labelIndexes_;
 
-  void saveAddressBook();
   void buildIndexes();
 
 signals:

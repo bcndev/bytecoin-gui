@@ -23,22 +23,18 @@
 #include <QObject>
 
 #include "IMiningManager.h"
-//#include "ICryptoNoteAdapter.h"
-//#include "IDonationManager.h"
 #include "IPoolMiner.h"
-//#include "IWalletAdapter.h"
 
 namespace WalletGUI {
 
-//class ICryptoNoteAdapter;
 class WalletModel;
 
-class MiningManager : public QObject, public IMiningManager, public IPoolMinerObserver/*, public IDonationManagerObserver*/ {
+class MiningManager : public QObject, public IMiningManager, public IPoolMinerObserver {
   Q_OBJECT
   Q_DISABLE_COPY(MiningManager)
 
 public:
-  MiningManager(/*ICryptoNoteAdapter* _cryptoNoteAdapter, IDonationManager* _donationManager,*/ QObject* _parent);
+  MiningManager(QObject* _parent);
   ~MiningManager();
 
   // IMinerManager
@@ -69,22 +65,10 @@ public:
   Q_SLOT virtual void connectionErrorCountChanged(quint32 _connectionErrorCount) override;
   Q_SLOT virtual void lastConnectionErrorTimeChanged(const QDateTime& _lastConnectionErrorTime) override;
 
-  // IDonationManagerObserver
-//  Q_SLOT virtual void donationManagerOpened() override;
-//  Q_SLOT virtual void donationManagerClosed() override;
-//  Q_SLOT virtual void donationMiningEnabled(bool _on) override;
-//  Q_SLOT virtual void donationMiningAddressChanged(const QString& _address) override;
-//  Q_SLOT virtual void donationMiningAmountChanged(int _amount) override;
-//  Q_SLOT virtual void donationChangeEnabled(bool _on) override;
-//  Q_SLOT virtual void donationChangeAddressChanged(const QString& _address) override;
-//  Q_SLOT virtual void donationChangeAmountChanged(int _amount) override;
-
   void connectedToWalletd();
   void disconnectedFromWalletd();
 
 private:
-//  ICryptoNoteAdapter* m_cryptoNoteAdapter;
-//  IDonationManager* m_donationManager;
   WalletModel* walletModel_;
   QList<IPoolMiner*> m_miners;
   QMap<IMinerManagerObserver*, QList<QMetaObject::Connection>> m_observerConnections;

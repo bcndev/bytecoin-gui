@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include <QMetaEnum>
 #include <QMessageBox>
+#include <QAuthenticator>
 
 #include "application.h"
 #include "signalhandler.h"
@@ -21,6 +22,7 @@
 #include "changepassworddialog.h"
 #include "askpassworddialog.h"
 #include "crashdialog.h"
+#include "importkeydialog.h"
 
 namespace WalletGUI {
 
@@ -74,13 +76,13 @@ bool WalletApplication::init()
     makeDataDir(logsDir);
     WalletLogger::init(logsDir, true, this);
     WalletLogger::info(tr("[Application] Initializing..."));
-    QString path = dataDir.absoluteFilePath("bytecoinwallet.lock");
+    QString path = dataDir.absoluteFilePath("bytecoin-gui.lock");
     m_lockFile.reset(new QLockFile(path));
 
     if (!m_lockFile->tryLock())
     {
-        WalletLogger::warning(tr("[Application] Bytecoin wallet already running"));
-        QMessageBox::warning(nullptr, QObject::tr("Fail"), "Bytecoin wallet already running");
+        WalletLogger::warning(tr("[Application] Bytecoin wallet GUI already running"));
+        QMessageBox::warning(nullptr, QObject::tr("Fail"), "Bytecoin wallet GUI already running");
         return false;
     }
 
@@ -107,6 +109,7 @@ bool WalletApplication::init()
     connect(m_mainWindow, &MainWindow::restartDaemon, this, &WalletApplication::restartDaemon);
 
     connect(m_mainWindow, &MainWindow::createWalletSignal, this, &WalletApplication::createWallet);
+    connect(m_mainWindow, &MainWindow::importKeysSignal, this, &WalletApplication::importKeys);
     connect(m_mainWindow, &MainWindow::openWalletSignal, this, &WalletApplication::openWallet);
     connect(m_mainWindow, &MainWindow::remoteWalletSignal, this, &WalletApplication::remoteWallet);
     connect(m_mainWindow, &MainWindow::encryptWalletSignal, this, &WalletApplication::encryptWallet);
@@ -141,6 +144,8 @@ void WalletApplication::subscribeToWalletd()
     connect(walletd_, &RemoteWalletd::networkErrorSignal, m_miningManager, &MiningManager::disconnectedFromWalletd);
     connect(walletd_, &RemoteWalletd::packetSent, m_mainWindow, &MainWindow::packetSent);
     connect(walletd_, &RemoteWalletd::packetReceived, m_mainWindow, &MainWindow::packetReceived);
+
+    connect(walletd_, &RemoteWalletd::authRequiredSignal, this, &WalletApplication::requestWalletdAuth);
 }
 
 /* static */
@@ -213,7 +218,7 @@ void WalletApplication::createWalletd()
     {
         const QString& walletFile = Settings::instance().getWalletFile();
         Q_ASSERT(!walletFile.isEmpty());
-        runBuiltinWalletd(walletFile, false);
+        runBuiltinWalletd(walletFile, false, QByteArray{});
     }
     else
         connectToRemoteWalletd();
@@ -230,7 +235,7 @@ void WalletApplication::splashMsg(const QString& msg)
         m_mainWindow->splashMsg(msg);
 }
 
-void WalletApplication::runBuiltinWalletd(const QString& walletFile, bool createNew)
+void WalletApplication::runBuiltinWalletd(const QString& walletFile, bool createNew, QByteArray&& keys)
 {
     if (walletd_)
     {
@@ -239,7 +244,7 @@ void WalletApplication::runBuiltinWalletd(const QString& walletFile, bool create
     }
 
     splashMsg(tr("Running walletd..."));
-    BuiltinWalletd* walletd = new BuiltinWalletd(walletFile, createNew, this);
+    BuiltinWalletd* walletd = new BuiltinWalletd(walletFile, createNew, std::move(keys), this);
     walletd_ = walletd;
 
     connect(walletd, &BuiltinWalletd::daemonStandardOutputSignal, m_mainWindow, &MainWindow::addDaemonOutput);
@@ -388,7 +393,7 @@ void WalletApplication::createWallet(QWidget* parent)
     if (fileName.isEmpty())
         return;
 
-    runBuiltinWalletd(fileName, true);
+    runBuiltinWalletd(fileName, true, QByteArray{});
 }
 
 void WalletApplication::openWallet(QWidget* parent)
@@ -401,7 +406,7 @@ void WalletApplication::openWallet(QWidget* parent)
     if (fileName.isEmpty())
         return;
 
-    runBuiltinWalletd(fileName, false);
+    runBuiltinWalletd(fileName, false, QByteArray{});
 }
 
 void WalletApplication::remoteWallet(QWidget* parent)
@@ -423,9 +428,27 @@ void WalletApplication::encryptWallet(QWidget *parent)
     walletd->changeWalletPassword(dlg.getOldPassword(), dlg.getNewPassword());
 }
 
+void WalletApplication::importKeys(QWidget* parent)
+{
+    ImportKeyDialog dlg(parent);
+    if (dlg.exec() != QDialog::Accepted)
+        return;
+
+    const QString fileName = QFileDialog::getSaveFileName(
+                parent,
+                tr("Create wallet file"),
+                QDir::homePath(),
+                tr("Wallet files (*.wallet);;All files (*)"));
+    if (fileName.isEmpty())
+        return;
+
+    QByteArray keys = dlg.getKey();
+    runBuiltinWalletd(fileName, true, std::move(keys));
+}
+
 void WalletApplication::requestPassword()
 {
-    AskPasswordDialog dlg(m_mainWindow);
+    AskPasswordDialog dlg(false, m_mainWindow);
     if (dlg.exec() == QDialog::Accepted)
         static_cast<BuiltinWalletd*>(walletd_)->setPassword(dlg.getPassword());
     else
@@ -439,6 +462,21 @@ void WalletApplication::requestPasswordWithConfirmation()
         static_cast<BuiltinWalletd*>(walletd_)->setPassword(dlg.getNewPassword());
     else
         walletd_->stop();
+}
+
+void WalletApplication::requestWalletdAuth(QAuthenticator* authenticator)
+{
+    AskPasswordDialog dlg(true, m_mainWindow);
+    if (dlg.exec() == QDialog::Accepted)
+    {
+        authenticator->setUser(dlg.getUser());
+        authenticator->setPassword(dlg.getPassword());
+    }
+    else
+    {
+        walletd_->stop();
+        detached();
+    }
 }
 
 }

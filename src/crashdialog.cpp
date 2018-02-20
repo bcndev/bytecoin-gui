@@ -10,7 +10,6 @@ CrashDialog::CrashDialog(QWidget *parent)
     , mainWindow_(nullptr)
 {
     ui->setupUi(this);
-//    setWindowTitle("Bytecoin");
 }
 
 CrashDialog::~CrashDialog()
@@ -39,7 +38,6 @@ QString CrashDialog::getPassword() const
 
 void CrashDialog::showDaemonConsole()
 {
-//    consoleDlg_.show();
     if (mainWindow_)
         mainWindow_->showLog();
 }

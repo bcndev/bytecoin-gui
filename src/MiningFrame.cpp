@@ -24,16 +24,12 @@
 
 #include "MiningFrame.h"
 #include "settings.h"
-//#include "ApplicationEventHandler.h"
-#include "QuestionDialog.h"
-//#include "Common/RightAlignmentColumnDelegate.h"
+#include "questiondialog.h"
 #include "IMiningManager.h"
 #include "IPoolMiner.h"
 #include "MinerDelegate.h"
-//#include "Models/AddressBookModel.h"
 #include "MinerModel.h"
 #include "PoolHeaderView.h"
-//#include "Style/Style.h"
 
 #include "ui_MiningFrame.h"
 
@@ -81,18 +77,15 @@ bool isIpOrHostName(const QString& _string) {
 MiningFrame::MiningFrame(QWidget* _parent)
     : QFrame(_parent)
     , m_ui(new Ui::MiningFrame)
-//    , m_cryptoNoteAdapter(nullptr)
     , m_miningManager(nullptr)
-//    , m_donationManager(nullptr)
     , m_minerModel(nullptr)
     , m_dataMapper(new QDataWidgetMapper(this))
     , m_restorePoolListButton(new /*WalletLargeBlueButton*/QPushButton(this))
 {
   m_ui->setupUi(this);
   m_ui->m_hashRateFrame->hide();
-//  m_ui->m_lockedScreenMiningCheck->hide();
   m_ui->m_poolView->setHorizontalHeader(new /*PoolHeaderView*/QHeaderView(Qt::Horizontal, this));
-  m_ui->m_poolView->setAcceptDrops(true);
+//  m_ui->m_poolView->setAcceptDrops(true);
 
   m_restorePoolListButton->setFixedWidth(200);
   m_restorePoolListButton->setText(tr("Restore default pool list"));
@@ -105,19 +98,6 @@ MiningFrame::MiningFrame(QWidget* _parent)
 
 MiningFrame::~MiningFrame() {
 }
-
-//void MiningFrame::setCryptoNoteAdapter(ICryptoNoteAdapter* _cryptoNoteAdapter) {
-//  m_cryptoNoteAdapter = _cryptoNoteAdapter;
-//}
-
-//void MiningFrame::setApplicationEventHandler(IApplicationEventHandler* _applicationEventHandler) {
-//  _applicationEventHandler->addObserver(this);
-//}
-
-//void MiningFrame::setDonationManager(IDonationManager* _donationManager) {
-//  m_donationManager = _donationManager;
-//  m_donationManager->addObserver(this);
-//}
 
 void MiningFrame::setMiningManager(IMiningManager* _miningManager) {
   m_miningManager = _miningManager;
@@ -142,26 +122,22 @@ void MiningFrame::setMinerModel(QAbstractItemModel* _model) {
   m_ui->m_poolView->setItemDelegateForColumn(MinerModel::COLUMN_DIFFICULTY, delegate);
   m_ui->m_poolView->setItemDelegateForColumn(MinerModel::COLUMN_GOOD_SHARES, delegate);
   m_ui->m_poolView->setItemDelegateForColumn(MinerModel::COLUMN_BAD_SHARES, delegate);
-  m_ui->m_poolView->setItemDelegateForColumn(MinerModel::COLUMN_DONATED_SHARES, delegate);
   m_ui->m_poolView->setItemDelegateForColumn(MinerModel::COLUMN_CONNECTION_ERROR_COUNT, delegate);
   m_ui->m_poolView->setItemDelegateForColumn(MinerModel::COLUMN_LAST_CONNECTION_ERROR_TIME, delegate);
   m_ui->m_poolView->horizontalHeader()->setSectionResizeMode(MinerModel::COLUMN_POOL_URL, QHeaderView::Stretch);
   m_ui->m_poolView->horizontalHeader()->setSectionResizeMode(MinerModel::COLUMN_DIFFICULTY, QHeaderView::Fixed);
   m_ui->m_poolView->horizontalHeader()->setSectionResizeMode(MinerModel::COLUMN_GOOD_SHARES, QHeaderView::Fixed);
   m_ui->m_poolView->horizontalHeader()->setSectionResizeMode(MinerModel::COLUMN_BAD_SHARES, QHeaderView::Fixed);
-  m_ui->m_poolView->horizontalHeader()->setSectionResizeMode(MinerModel::COLUMN_DONATED_SHARES, QHeaderView::Fixed);
   m_ui->m_poolView->horizontalHeader()->setSectionResizeMode(MinerModel::COLUMN_CONNECTION_ERROR_COUNT, QHeaderView::Fixed);
   m_ui->m_poolView->horizontalHeader()->setSectionResizeMode(MinerModel::COLUMN_LAST_CONNECTION_ERROR_TIME, QHeaderView::Fixed);
   m_ui->m_poolView->horizontalHeader()->setSectionResizeMode(MinerModel::COLUMN_REMOVE, QHeaderView::Fixed);
   m_ui->m_poolView->horizontalHeader()->resizeSection(MinerModel::COLUMN_DIFFICULTY, 90);
   m_ui->m_poolView->horizontalHeader()->resizeSection(MinerModel::COLUMN_GOOD_SHARES, 120);
   m_ui->m_poolView->horizontalHeader()->resizeSection(MinerModel::COLUMN_BAD_SHARES, 120);
-  m_ui->m_poolView->horizontalHeader()->resizeSection(MinerModel::COLUMN_DONATED_SHARES, 130);
   m_ui->m_poolView->horizontalHeader()->resizeSection(MinerModel::COLUMN_CONNECTION_ERROR_COUNT, 160);
   m_ui->m_poolView->horizontalHeader()->resizeSection(MinerModel::COLUMN_LAST_CONNECTION_ERROR_TIME, 160);
   m_ui->m_poolView->horizontalHeader()->resizeSection(MinerModel::COLUMN_REMOVE, 60);
   m_ui->m_poolView->horizontalHeader()->hideSection(MinerModel::COLUMN_HASHRATE);
-  m_ui->m_poolView->horizontalHeader()->hideSection(MinerModel::COLUMN_DONATION_HASHRATE);
 //  m_ui->m_poolView->setLinkLikeColumnSet(QSet<int>() << MinerModel::COLUMN_REMOVE);
   m_ui->m_poolView->setItemDelegateForColumn(MinerModel::COLUMN_REMOVE, new MinerRemoveDelegate(m_ui->m_poolView, this));
 
@@ -170,48 +146,6 @@ void MiningFrame::setMinerModel(QAbstractItemModel* _model) {
 
   connect(m_minerModel, &MinerModel::rowsRemoved, this, &MiningFrame::showRestoreButton);
 }
-
-//void MiningFrame::donationManagerOpened() {
-//  donationMiningEnabled(m_donationManager->isDonationMiningEnabled());
-//}
-
-//void MiningFrame::donationManagerClosed() {
-//  if (m_ui->m_startMiningButton->isChecked()) {
-//    m_ui->m_startMiningButton->click();
-//  }
-//}
-
-//void MiningFrame::donationMiningEnabled(bool _on) {
-//  if (_on) {
-//    m_ui->m_poolView->header()->showSection(MinerModel::COLUMN_DONATED_SHARES);
-//    m_ui->m_donationHashRateTextLabel->show();
-//    m_ui->m_donationHashRateLabel->show();
-//  } else {
-//    m_ui->m_poolView->header()->hideSection(MinerModel::COLUMN_DONATED_SHARES);
-//    m_ui->m_donationHashRateTextLabel->hide();
-//    m_ui->m_donationHashRateLabel->hide();
-//  }
-//}
-
-//void MiningFrame::donationMiningAddressChanged(const QString& _address) {
-//  // Do nothing
-//}
-
-//void MiningFrame::donationMiningAmountChanged(int _amount) {
-//  // Do nothing
-//}
-
-//void MiningFrame::donationChangeEnabled(bool _on) {
-//  // Do nothing
-//}
-
-//void MiningFrame::donationChangeAddressChanged(const QString& _address) {
-//  // Do nothing
-//}
-
-//void MiningFrame::donationChangeAmountChanged(int _amount) {
-//  // Do nothing
-//}
 
 void MiningFrame::minersLoaded() {
   if (m_miningManager->getMinerCount() == 0) {
@@ -311,22 +245,6 @@ void MiningFrame::lastConnectionErrorTimeChanged(quintptr /*_minerIndex*/, const
   // Do nothing
 }
 
-//void MiningFrame::urlReceived(const QUrl& _url) {
-//  // Do nothing
-//}
-
-//void MiningFrame::screenLocked() {
-//  if (m_ui->m_lockedScreenMiningCheck->isChecked() && !m_ui->m_startMiningButton->isChecked()) {
-//    m_ui->m_startMiningButton->click();
-//  }
-//}
-
-//void MiningFrame::screenUnlocked() {
-//  if (m_ui->m_lockedScreenMiningCheck->isChecked() && m_ui->m_startMiningButton->isChecked()) {
-//    m_ui->m_startMiningButton->click();
-//  }
-//}
-
 void MiningFrame::resizeEvent(QResizeEvent* _event) {
   QFrame::resizeEvent(_event);
   if (m_restorePoolListButton->isVisible()) {
@@ -397,10 +315,6 @@ void MiningFrame::deleteClicked(const QModelIndex& _index) {
     m_miningManager->removeMiner(_index.row());
   }
 }
-
-//void MiningFrame::miningOnLockedScreenChecked(bool _enabled) {
-//  Settings::instance().setMiningOnLockedScreenEnabled(_enabled);
-//}
 
 void MiningFrame::newPoolUrlChanged() {
   m_ui->m_addPoolButton->setEnabled(isIpOrHostName(m_ui->m_newPoolHostEdit->text().trimmed()));

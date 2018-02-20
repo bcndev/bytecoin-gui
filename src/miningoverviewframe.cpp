@@ -75,22 +75,14 @@ void MiningOverviewFrame::startMiningClicked()
 
 void MiningOverviewFrame::miningStarted()
 {
-//    ui->m_startMiningButton->setText(tr("Stop mining"));
     ui->m_miningStateLabel->setText(tr("ON"));
     started_ = true;
-//    ui->m_miningStateLabel->setProperty("miningRunning", true);
-//    ui->m_miningStateLabel->style()->unpolish(m_ui->m_miningStateLabel);
-//    ui->m_miningStateLabel->style()->polish(m_ui->m_miningStateLabel);
 }
 
 void MiningOverviewFrame::miningStopped()
 {
-//    ui->m_startMiningButton->setText(tr("Start mining"));
     ui->m_miningStateLabel->setText(tr("OFF"));
     started_ = false;
-//    ui->m_miningStateLabel->setProperty("miningRunning", true);
-//    ui->m_miningStateLabel->style()->unpolish(m_ui->m_miningStateLabel);
-//    ui->m_miningStateLabel->style()->polish(m_ui->m_miningStateLabel);
 }
 
 void MiningOverviewFrame::activeMinerChanged(quintptr _minerIndex)
