@@ -18,7 +18,7 @@ TODO
 
 TODO
 
-### Linux
+### Linux & BSD's 
 ```
 $ git clone https://github.com/bcndev/bytecoin.git
 $ cd bytecoin
