@@ -1,3 +1,6 @@
+// Copyright (c) 2015-2018, The Bytecoin developers.
+// Licensed under the GNU Lesser General Public License. See LICENSE for details.
+
 #ifndef WALLETMODEL
 #define WALLETMODEL
 
@@ -35,6 +38,7 @@ public:
         COLUMN_BLOCK_HEIGHT,
         COLUMN_BLOCK_HASH,
         COLUMN_TIMESTAMP,
+        COLUMN_PROOF,
 
         COLUMN_TOP_BLOCK_HEIGHT, // getStatus
         COLUMN_TOP_BLOCK_TIMESTAMP,
@@ -42,6 +46,7 @@ public:
         COLUMN_TOP_BLOCK_HASH,
         COLUMN_TOP_BLOCK_DIFFICULTY,
         COLUMN_NETWORK_HASHRATE,
+        COLUMN_LOWER_LEVEL_ERROR,
         COLUMN_NEXT_BLOCK_EFFECTIVE_MEDIAN_SIZE,
         COLUMN_TXPOOL_VERSION,
         COLUMN_PEER_COUNT_OUTGOING,
@@ -74,6 +79,7 @@ public:
         ROLE_BLOCK_HEIGHT,
         ROLE_BLOCK_HASH,
         ROLE_TIMESTAMP,
+        ROLE_PROOF,
 
         ROLE_TOP_BLOCK_HEIGHT, // getStatus
         ROLE_TOP_BLOCK_TIMESTAMP,
@@ -81,6 +87,7 @@ public:
         ROLE_TOP_BLOCK_HASH,
         ROLE_TOP_BLOCK_DIFFICULTY,
         ROLE_NETWORK_HASHRATE,
+        ROLE_LOWER_LEVEL_ERROR,
         ROLE_NEXT_BLOCK_EFFECTIVE_MEDIAN_SIZE,
         ROLE_TXPOOL_VERSION,
         ROLE_PEER_COUNT_OUTGOING,
@@ -122,6 +129,7 @@ public:
     quint32 getPeerCountOutgoing() const;
     quint32 getPeerCountIncoming() const;
     quint32 getPeerCountSum() const;
+    QString getLowerLevelError() const;
 
 signals:
     void getTransfersSignal(const RpcApi::GetTransfers::Request& req);
@@ -163,6 +171,7 @@ private:
 
     quint32 getTopConfirmedBlock() const;
     quint32 getBottomConfirmedBlock() const;
+    quint32 getHighestKnownConfirmedBlock() const;
 
     const int columnCount_;
     QScopedPointer<WalletModelState> pimpl_;

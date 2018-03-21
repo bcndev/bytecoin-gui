@@ -1,3 +1,6 @@
+// Copyright (c) 2015-2018, The Bytecoin developers.
+// Licensed under the GNU Lesser General Public License. See LICENSE for details.
+
 #pragma once
 
 #include <functional>
@@ -86,6 +89,8 @@ public:
     void sendGetViewKey();
     void sendCreateTx(const RpcApi::CreateTransaction::Request& req);
     void sendSendTx(const RpcApi::SendTransaction::Request& req);
+    void sendCreateProof(const RpcApi::CreateSendProof::Request& req);
+    void sendCheckProof(const RpcApi::CheckSendProof::Request& req);
 
 signals:
     void statusReceived(const RpcApi::Status& result) const;
@@ -96,6 +101,8 @@ signals:
     void unspentReceived(const RpcApi::Unspents& result) const;
     void createTxReceived(const RpcApi::CreatedTx& result) const;
     void sendTxReceived(const RpcApi::SentTx& result) const;
+    void proofsReceived(const RpcApi::Proofs& result) const;
+    void checkProofReceived(const RpcApi::ProofCheck& result) const;
 
 private:
     void statusHandler(const QVariantMap& result) const;
@@ -106,6 +113,8 @@ private:
 //    void unspentHandler(const QVariantMap& result) const;
     void createTxHandler(const QVariantMap& result) const;
     void sendTxHandler(const QVariantMap& result) const;
+    void proofsHandler(const QVariantMap& result) const;
+    void checkProofHandler(const QVariantMap& result) const;
 };
 
 //class StratumClient : public Client

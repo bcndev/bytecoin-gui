@@ -1,3 +1,6 @@
+// Copyright (c) 2015-2018, The Bytecoin developers.
+// Licensed under the GNU Lesser General Public License. See LICENSE for details.
+
 #include <QAuthenticator>
 
 #include "JsonRpcClient.h"
@@ -141,7 +144,7 @@ void Client::replyFinished(QNetworkReply* reply)
     if (!jsonDocument.isObject())
     {
         qDebug("[JsonRpcClient] JSON document is not an object.");
-        emit jsonParsingError("JSON document is not an object.");
+        emit jsonParsingError(tr("JSON document is not an object."));
         return;
     }
     const QJsonObject json = jsonDocument.object();
@@ -274,6 +277,18 @@ void WalletClient::sendSendTx(const RpcApi::SendTransaction::Request& req)
     insertResponseHandler(requestID, std::bind(&WalletClient::sendTxHandler, this, _1));
 }
 
+void WalletClient::sendCreateProof(const RpcApi::CreateSendProof::Request& req)
+{
+    const QString requestID = sendRequest(RpcApi::CreateSendProof::METHOD, req.toJson());
+    insertResponseHandler(requestID, std::bind(&WalletClient::proofsHandler, this, _1));
+}
+
+void WalletClient::sendCheckProof(const RpcApi::CheckSendProof::Request& req)
+{
+    const QString requestID = sendRequest(RpcApi::CheckSendProof::METHOD, req.toJson());
+    insertResponseHandler(requestID, std::bind(&WalletClient::checkProofHandler, this, _1));
+}
+
 void WalletClient::statusHandler(const QVariantMap& result) const
 {
     emit statusReceived(RpcApi::Status::fromJson(result));
@@ -311,6 +326,16 @@ void WalletClient::sendTxHandler(const QVariantMap& result) const
 void WalletClient::viewKeyHandler(const QVariantMap& result) const
 {
     emit viewKeyReceived(RpcApi::ViewKey::fromJson(result));
+}
+
+void WalletClient::proofsHandler(const QVariantMap &result) const
+{
+    emit proofsReceived(RpcApi::Proofs::fromJson(result));
+}
+
+void WalletClient::checkProofHandler(const QVariantMap& result) const
+{
+    emit checkProofReceived(RpcApi::ProofCheck::fromJson(result));
 }
 
 

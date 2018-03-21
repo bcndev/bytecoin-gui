@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>WalletdParamsDialog</class>
+ <widget class="QDialog" name="WalletdParamsDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>902</width>
+    <height>344</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Wallet daemon parameters</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Command line options:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTextEdit" name="paramsEdit">
+     <property name="acceptRichText">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_2">
+     <property name="cursor">
+      <cursorShape>IBeamCursor</cursorShape>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Options:&lt;br/&gt;--data-folder=&amp;lt;fullpath&amp;gt; Folder for wallet cache, blockchain, logs and peer DB. [default: see documentation]&lt;br/&gt;--bytecoind-remote-address=&amp;lt;ip:port&amp;gt; Connect to remote bytecoind and suppress running built-in bytecoind.&lt;br/&gt;--bytecoind-authorization=&amp;lt;usr:pass&amp;gt; HTTP authorization&lt;br/&gt;--testnet Configure for testnet.&lt;/p&gt;&lt;p&gt;Options for built-in bytecoind (run when no --bytecoind-remote-address specified):&lt;br/&gt;--allow-local-ip Allow local ip add to peer list, mostly in debug purposes.&lt;br/&gt;--p2p-bind-address=&amp;lt;ip:port&amp;gt; Interface and port for P2P network protocol [default: 0.0.0.0:8080].&lt;br/&gt;--p2p-external-port=&amp;lt;port&amp;gt; External port for P2P network protocol, if port forwarding used with NAT [default: 8080].&lt;br/&gt;--bytecoind-bind-address=&amp;lt;ip:port&amp;gt; Interface and port for bytecoind RPC [default: 0.0.0.0:8081].&lt;br/&gt;--seed-node-address=&amp;lt;ip:port&amp;gt; Specify list (one or more) of nodes to start connecting to.&lt;br/&gt;--priority-node-address=&amp;lt;ip:port&amp;gt; Specify list (one or more) of nodes to connect to and attempt to keep the connection open.&lt;br/&gt;--exclusive-node-address=&amp;lt;ip:port&amp;gt; Specify list (one or more) of nodes to connect to only. All other nodes including seed nodes will be ignored.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="applyButton">
+       <property name="text">
+        <string>Apply</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="cancelButton">
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>cancelButton</sender>
+   <signal>clicked()</signal>
+   <receiver>WalletdParamsDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>851</x>
+     <y>312</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>450</x>
+     <y>166</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>applyButton</sender>
+   <signal>clicked()</signal>
+   <receiver>WalletdParamsDialog</receiver>
+   <slot>applyParams()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>140</x>
+     <y>312</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>450</x>
+     <y>166</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>applyButton</sender>
+   <signal>clicked()</signal>
+   <receiver>WalletdParamsDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>140</x>
+     <y>312</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>450</x>
+     <y>166</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>saveParams()</slot>
+  <slot>applyParams()</slot>
+ </slots>
+</ui>

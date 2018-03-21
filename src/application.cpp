@@ -1,3 +1,6 @@
+// Copyright (c) 2015-2018, The Bytecoin developers.
+// Licensed under the GNU Lesser General Public License. See LICENSE for details.
+
 #include <QFontDatabase>
 #include <QDir>
 #include <QLockFile>
@@ -23,6 +26,9 @@
 #include "askpassworddialog.h"
 #include "crashdialog.h"
 #include "importkeydialog.h"
+#include "createproofdialog.h"
+#include "checkproofdialog.h"
+#include "walletdparamsdialog.h"
 
 namespace WalletGUI {
 
@@ -43,6 +49,8 @@ WalletApplication::WalletApplication(int& argc, char** argv)
     setQuitOnLastWindowClosed(false);
     QLocale::setDefault(QLocale::c());
     loadFonts();
+
+    connect(this, &WalletApplication::createWalletdSignal, this, &WalletApplication::createWalletd, Qt::QueuedConnection);
 }
 
 WalletApplication::~WalletApplication()
@@ -82,12 +90,12 @@ bool WalletApplication::init()
     if (!m_lockFile->tryLock())
     {
         WalletLogger::warning(tr("[Application] Bytecoin wallet GUI already running"));
-        QMessageBox::warning(nullptr, QObject::tr("Fail"), "Bytecoin wallet GUI already running");
+        QMessageBox::warning(nullptr, QObject::tr("Fail"), tr("Bytecoin wallet GUI already running"));
         return false;
     }
 
     QObject::connect(&SignalHandler::instance(), &SignalHandler::quitSignal, this, &WalletApplication::quit);
-    initSystemTrayIcon();
+//    initSystemTrayIcon();
 
     const bool connectionSelected = Settings::instance().connectionMethodSet();
     const bool walletFileSet = !Settings::instance().getWalletFile().isEmpty();
@@ -107,6 +115,9 @@ bool WalletApplication::init()
     connect(m_mainWindow, &MainWindow::createTxSignal, this, &WalletApplication::createTx);
     connect(m_mainWindow, &MainWindow::sendTxSignal, this, &WalletApplication::sendTx);
     connect(m_mainWindow, &MainWindow::restartDaemon, this, &WalletApplication::restartDaemon);
+    connect(m_mainWindow, &MainWindow::createProofSignal, this, &WalletApplication::createProof);
+    connect(m_mainWindow, &MainWindow::checkProofSignal, this, &WalletApplication::checkProof);
+    connect(m_mainWindow, &MainWindow::showWalletdParamsSignal, this, &WalletApplication::showWalletdParams);
 
     connect(m_mainWindow, &MainWindow::createWalletSignal, this, &WalletApplication::createWallet);
     connect(m_mainWindow, &MainWindow::importKeysSignal, this, &WalletApplication::importKeys);
@@ -119,7 +130,8 @@ bool WalletApplication::init()
     if(isFirstRun)
         firstRun();
     else
-        createWalletd();
+//        createWalletd();
+        emit createWalletdSignal(QPrivateSignal{});
     return true;
 }
 
@@ -133,6 +145,8 @@ void WalletApplication::subscribeToWalletd()
     connect(walletd_, &RemoteWalletd::viewKeyReceivedSignal, walletModel_, &WalletModel::viewKeyReceived);
     connect(walletd_, &RemoteWalletd::unspentsReceivedSignal, walletModel_, &WalletModel::unspentsReceived);
 //    connect(walletd_, &RemoteWalletd::sendTxReceivedSignal, walletModel_, &WalletModel::transactionSent);
+//    connect(walletd_, &RemoteWalletd::proofsReceivedSignal, this, &WalletApplication::showProof);
+//    connect(walletd_, &RemoteWalletd::checkProofReceivedSignal, this, &WalletApplication::showCheckProof);
 
     connect(walletd_, &RemoteWalletd::stateChangedSignal, walletModel_, &WalletModel::stateChanged);
     connect(walletd_, &RemoteWalletd::connectedSignal, this, &WalletApplication::connectedToWalletd);
@@ -212,6 +226,18 @@ void WalletApplication::sendTx(const RpcApi::SendTransaction::Request& req)
     walletd_->sendTx(req);
 }
 
+void WalletApplication::sendCreateProof(const QString& txHash, const QString& message)
+{
+    const RpcApi::CreateSendProof::Request req{txHash, message, QStringList{}};
+    walletd_->createProof(req);
+}
+
+void WalletApplication::sendCheckProof(const QString& proof)
+{
+    const RpcApi::CheckSendProof::Request req{proof};
+    walletd_->checkSendProof(req);
+}
+
 void WalletApplication::createWalletd()
 {
     if (Settings::instance().getConnectionMethod() == ConnectionMethod::BUILTIN)
@@ -226,7 +252,8 @@ void WalletApplication::createWalletd()
 
 void WalletApplication::restartDaemon()
 {
-    createWalletd();
+//    createWalletd();
+    emit createWalletdSignal(QPrivateSignal{});
 }
 
 void WalletApplication::splashMsg(const QString& msg)
@@ -358,9 +385,10 @@ void WalletApplication::daemonFinished(int exitCode, QProcess::ExitStatus /*exit
 
     if (crashDialog_->execWithReason(msg, showPasswordEdit) == QDialog::Accepted)
     {
-        if (showPasswordEdit)
-            walletd->setPassword(crashDialog_->getPassword());
-        walletd->run();
+//        if (showPasswordEdit)
+//            walletd->setPassword(crashDialog_->getPassword());
+//        walletd->run();
+        restartDaemon();
     }
 }
 
@@ -449,8 +477,10 @@ void WalletApplication::importKeys(QWidget* parent)
 void WalletApplication::requestPassword()
 {
     AskPasswordDialog dlg(false, m_mainWindow);
+    BuiltinWalletd* walletd = static_cast<BuiltinWalletd*>(walletd_);
+    connect(walletd, &BuiltinWalletd::daemonErrorOccurredSignal, &dlg, &AskPasswordDialog::reject);
     if (dlg.exec() == QDialog::Accepted)
-        static_cast<BuiltinWalletd*>(walletd_)->setPassword(dlg.getPassword());
+        walletd->setPassword(dlg.getPassword());
     else
         walletd_->stop();
 }
@@ -458,8 +488,10 @@ void WalletApplication::requestPassword()
 void WalletApplication::requestPasswordWithConfirmation()
 {
     ChangePasswordDialog dlg(false, m_mainWindow);
+    BuiltinWalletd* walletd = static_cast<BuiltinWalletd*>(walletd_);
+    connect(walletd, &BuiltinWalletd::daemonErrorOccurredSignal, &dlg, &ChangePasswordDialog::reject);
     if (dlg.exec() == QDialog::Accepted)
-        static_cast<BuiltinWalletd*>(walletd_)->setPassword(dlg.getNewPassword());
+        walletd->setPassword(dlg.getNewPassword());
     else
         walletd_->stop();
 }
@@ -477,6 +509,41 @@ void WalletApplication::requestWalletdAuth(QAuthenticator* authenticator)
         walletd_->stop();
         detached();
     }
+}
+
+void WalletApplication::createProof(const QString& txHash)
+{
+    CreateProofDialog dlg{txHash, m_mainWindow};
+    connect(&dlg, &CreateProofDialog::generateProofSignal, this, &WalletApplication::sendCreateProof);
+    connect(walletd_, &RemoteWalletd::proofsReceivedSignal,
+            &dlg,
+            [&dlg](const RpcApi::Proofs& proofs)
+            {
+                dlg.addProofs(proofs.send_proofs);
+            });
+    dlg.exec();
+}
+
+void WalletApplication::checkProof()
+{
+    CheckProofDialog dlg{m_mainWindow};
+    connect(&dlg, &CheckProofDialog::checkProofSignal, this, &WalletApplication::sendCheckProof);
+    connect(walletd_, &RemoteWalletd::checkProofReceivedSignal,
+            &dlg,
+            [&dlg](const RpcApi::ProofCheck& check)
+            {
+                dlg.showCheckResult(check.validation_error);
+            });
+    dlg.exec();
+}
+
+void WalletApplication::showWalletdParams()
+{
+    WalletdParamsDialog dlg(Settings::instance().getConnectionMethod() == ConnectionMethod::BUILTIN, m_mainWindow);
+    connect(&dlg, &WalletdParamsDialog::restartWalletd, this, &WalletApplication::restartDaemon);
+    BuiltinWalletd* walletd = static_cast<BuiltinWalletd*>(walletd_);
+    connect(walletd, &BuiltinWalletd::daemonErrorOccurredSignal, &dlg, &WalletdParamsDialog::reject);
+    dlg.exec();
 }
 
 }

@@ -1,19 +1,5 @@
-// Copyright (c) 2015-2017, The Bytecoin developers
-//
-// This file is part of Bytecoin.
-//
-// Bytecoin is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Bytecoin is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public License
-// along with Bytecoin.  If not, see <http://www.gnu.org/licenses/>.
+// Copyright (c) 2015-2018, The Bytecoin developers.
+// Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include <QDataWidgetMapper>
 #include <QDateTime>
@@ -33,7 +19,6 @@ namespace WalletGUI {
 namespace {
 
 const QDateTime EPOCH_DATE_TIME = QDateTime::fromTime_t(0).toUTC();
-const int TEMP_MESSAGE_DURATION = 3000; // msecs
 const int MSECS_IN_MINUTE = 60 * 1000;
 const int MSECS_IN_HOUR = 60 * MSECS_IN_MINUTE;
 
@@ -104,16 +89,17 @@ WalletStatusBar::WalletStatusBar(QWidget* parent)
     , walletModel_(nullptr)
     , m_syncStatusLabel(new QLabel(this))
     , m_syncStatusIconLabel(new QLabel(this))
-    , m_encryptionStatusIconLabel(new QLabel(this))
+//    , m_encryptionStatusIconLabel(new QLabel(this))
     , m_peerCountLabel(new QLabel(this))
     , m_walletConnectionLabel(new QLabel(this))
+    , m_bytecoindConnectionLabel(new QLabel(this))
     , m_syncMovie(new QMovie(this))
     , stateMapper_(new QDataWidgetMapper(this))
     , isSynchronized_(false)
 {
     m_syncStatusLabel->setObjectName("m_syncStatusLabel");
     m_syncStatusIconLabel->setObjectName("m_syncStatusIconLabel");
-    m_encryptionStatusIconLabel->setObjectName("m_encryptionStatusIconLabel");
+//    m_encryptionStatusIconLabel->setObjectName("m_encryptionStatusIconLabel");
     m_peerCountLabel->setObjectName("m_peerCountLabel");
     m_walletConnectionLabel->setObjectName("m_walletConnectionLabel");
     m_syncMovie->setFileName(QString(":icons/light/wallet-sync"));
@@ -121,7 +107,8 @@ WalletStatusBar::WalletStatusBar(QWidget* parent)
     addWidget(m_syncStatusLabel);
     addPermanentWidget(m_peerCountLabel);
     addPermanentWidget(m_walletConnectionLabel);
-    addPermanentWidget(m_encryptionStatusIconLabel);
+    addPermanentWidget(m_bytecoindConnectionLabel);
+//    addPermanentWidget(m_encryptionStatusIconLabel);
     addPermanentWidget(m_syncStatusIconLabel);
 
 //    setStyleSheet(Settings::instance().getCurrentStyle().makeStyleSheet(STATUS_BAR_STYLE_SHEET_TEMPLATE));
@@ -141,6 +128,7 @@ void WalletStatusBar::setWalletModel(WalletModel* model)
     stateMapper_->setModel(walletModel_); // clears all previously set mappings
     stateMapper_->addMapping(m_peerCountLabel, WalletModel::COLUMN_PEER_COUNT_SUM, "text");
     stateMapper_->addMapping(m_walletConnectionLabel, WalletModel::COLUMN_STATE, "text");
+    stateMapper_->addMapping(m_bytecoindConnectionLabel, WalletModel::COLUMN_LOWER_LEVEL_ERROR, "text");
     stateMapper_->toFirst();
     connect(walletModel_, &QAbstractItemModel::modelReset, stateMapper_, &QDataWidgetMapper::toFirst);
     connect(walletModel_, &QAbstractItemModel::dataChanged, this, &WalletStatusBar::nodeStateChanged);
@@ -148,8 +136,11 @@ void WalletStatusBar::setWalletModel(WalletModel* model)
 
 void WalletStatusBar::nodeStateChanged(const QModelIndex& /*topLeft*/, const QModelIndex& /*bottomRight*/, const QVector<int>& roles)
 {
-    if (roles.contains(WalletModel::ROLE_TXPOOL_VERSION) || roles.contains(WalletModel::ROLE_TOP_BLOCK_HASH) || roles.contains(WalletModel::ROLE_PEER_COUNT_SUM))
-        updateStatusDescription();
+    if (roles.contains(WalletModel::ROLE_TXPOOL_VERSION) ||
+        roles.contains(WalletModel::ROLE_TOP_BLOCK_HASH) ||
+        roles.contains(WalletModel::ROLE_PEER_COUNT_SUM) ||
+        roles.contains(WalletModel::ROLE_LOWER_LEVEL_ERROR))
+            updateStatusDescription();
 }
 
 void WalletStatusBar::updateStatusDescription()
@@ -159,6 +150,7 @@ void WalletStatusBar::updateStatusDescription()
     const quint32 lastBlockHeight = walletModel_->getLastBlockHeight();
     const QDateTime lastBlockTimestampReceived = walletModel_->getLastBlockTimestamp();
     const quint32 peerCount = walletModel_->getPeerCountSum();
+    const QString lowerLevelError = walletModel_->getLowerLevelError();
 
     const QDateTime currentDateTime = QDateTime::currentDateTimeUtc();
     const QDateTime lastBlockTimestamp = qMin(lastBlockTimestampReceived, currentDateTime);
@@ -169,7 +161,7 @@ void WalletStatusBar::updateStatusDescription()
     const QString formattedTimeDiff = isThereAnyBlock ? formatTimeDiff(secsSinceLastBlock) : tr("unknown");
     const QString blockchainAge = isThereAnyBlock ? tr("%1 ago").arg(formattedTimeDiff) : tr("%1").arg(formattedTimeDiff);
 
-    isSynchronized_ = isThereAnyBlock && lastBlockHeight == knownBlockHeight;
+    isSynchronized_ = lowerLevelError.isEmpty() && isThereAnyBlock && lastBlockHeight == knownBlockHeight;
     updateSyncState();
 
     QString warningString;
@@ -179,13 +171,14 @@ void WalletStatusBar::updateStatusDescription()
     if (peerCount == 0)
         warningString.append(tr(" No network connection."));
 
+    const quint32 blocksLeft = knownBlockHeight >= lastBlockHeight ? knownBlockHeight - lastBlockHeight : 0;
     const QString statusText = isSynchronized_ ?
                 tr("Wallet synchronized. Top block height: %1  /  Received: %2 ago.%3")
                     .arg(knownBlockHeight)
                     .arg(formattedTimeDiff)
                     .arg(warningString) :
-                tr("Synchronization: %1 blocks left (%2)")
-                    .arg(knownBlockHeight - lastBlockHeight)
+                tr("Synchronization: %1 blocks left (%2).")
+                    .arg(blocksLeft)
                     .arg(blockchainAge);
 
     m_syncStatusLabel->setText(statusText);

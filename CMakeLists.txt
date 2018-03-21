@@ -53,7 +53,6 @@ set(SOURCES
     src/MinerModel.cpp 
     src/MiningFrame.cpp 
     src/MiningManager.cpp 
-    src/PoolHeaderView.cpp 
     src/connectselectiondialog.cpp 
     src/walletd.cpp 
     src/rpcapi.cpp 
@@ -76,6 +75,9 @@ set(SOURCES
     src/importkeydialog.cpp
     src/questiondialog.cpp
     src/PoolTreeView.cpp
+    src/createproofdialog.cpp
+    src/checkproofdialog.cpp
+    src/walletdparamsdialog.cpp
 
 )
 

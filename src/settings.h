@@ -1,3 +1,6 @@
+// Copyright (c) 2015-2018, The Bytecoin developers.
+// Licensed under the GNU Lesser General Public License. See LICENSE for details.
+
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
@@ -37,7 +40,6 @@ public:
     static QString getVersionSuffix();
     static QString getRevision();
 
-
     QSettings::Format getFormat() const;
 
     quint16 getLocalRpcPort() const;
@@ -55,7 +57,9 @@ public:
 
     QStringList getRecentWallets() const;
 
+    QStringList getWalletdParams() const;
 
+    void setWalletdParams(const QString& params);
     void setLocalRpcPort(quint16 port);
     void setRemoteRpcEndPoint(const QString& host, quint16 port);
     void setConnectionMethod(ConnectionMethod method);

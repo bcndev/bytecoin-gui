@@ -143,7 +143,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Wallet will connect to Bytecoin node in the local or global network. Please specify IP address or domain name and the port.</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wallet GUI will connect to Wallet daemon (walletd) in the local or global network. Please specify IP address or domain name and the port.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>

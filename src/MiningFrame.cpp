@@ -1,19 +1,5 @@
-// Copyright (c) 2015-2017, The Bytecoin developers
-//
-// This file is part of Bytecoin.
-//
-// Bytecoin is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Bytecoin is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public License
-// along with Bytecoin.  If not, see <http://www.gnu.org/licenses/>.
+// Copyright (c) 2015-2018, The Bytecoin developers.
+// Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include <QAbstractButton>
 #include <QDataWidgetMapper>
@@ -29,7 +15,6 @@
 #include "IPoolMiner.h"
 #include "MinerDelegate.h"
 #include "MinerModel.h"
-#include "PoolHeaderView.h"
 
 #include "ui_MiningFrame.h"
 
@@ -37,34 +22,34 @@ namespace WalletGUI {
 
 namespace  {
 
-const char MINING_FRAME_STYLE_SHEET_TEMPLATE[] =
-  "* {"
-    "font-family: %fontFamily%;"
-  "}"
+//const char MINING_FRAME_STYLE_SHEET_TEMPLATE[] =
+//  "* {"
+//    "font-family: %fontFamily%;"
+//  "}"
 
-  "WalletGui--MiningFrame {"
-    "background-color: #ffffff;"
-  "}"
+//  "WalletGui--MiningFrame {"
+//    "background-color: #ffffff;"
+//  "}"
 
-  "WalletGui--MiningFrame #m_miningManageFrame {"
-    "background-color: %backgroundColorGray%;"
-    "border: none;"
-    "border-bottom: 1px solid %borderColor%;"
-  "}"
+//  "WalletGui--MiningFrame #m_miningManageFrame {"
+//    "background-color: %backgroundColorGray%;"
+//    "border: none;"
+//    "border-bottom: 1px solid %borderColor%;"
+//  "}"
 
-  "WalletGui--MiningFrame #m_miningManageFrame #m_cpuCoresCombo {"
-    "background-color: #ffffff;"
-    "min-width: 40px;"
-    "max-width: 40px;"
-  "}"
+//  "WalletGui--MiningFrame #m_miningManageFrame #m_cpuCoresCombo {"
+//    "background-color: #ffffff;"
+//    "min-width: 40px;"
+//    "max-width: 40px;"
+//  "}"
 
-  "WalletGui--MiningFrame #m_addPoolFrame {"
-    "border: none;"
-    "border-top: 1px solid %borderColor%;"
-  "}";
+//  "WalletGui--MiningFrame #m_addPoolFrame {"
+//    "border: none;"
+//    "border-top: 1px solid %borderColor%;"
+//  "}";
 
 
-const int NAVIGATION_SECTION_WIDTH = 50;
+//const int NAVIGATION_SECTION_WIDTH = 50;
 
 bool isIpOrHostName(const QString& _string) {
   QRegExp ipRegExp("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");

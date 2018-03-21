@@ -1,3 +1,6 @@
+// Copyright (c) 2015-2018, The Bytecoin developers.
+// Licensed under the GNU Lesser General Public License. See LICENSE for details.
+
 #pragma once
 
 #include <QApplication>
@@ -62,11 +65,17 @@ private:
 signals:
     void builtinRunSignal();
     void remoteConnectedSignal();
+    void createWalletdSignal(QPrivateSignal);
 
 public slots:
     void createTx(const RpcApi::CreateTransaction::Request& req);
     void sendTx(const RpcApi::SendTransaction::Request& req);
+    void createProof(const QString& txHash);
+    void sendCreateProof(const QString& txHash, const QString& message);
+    void checkProof();
+    void sendCheckProof(const QString& proof);
     void restartDaemon();
+    void showWalletdParams();
 
     void connectToRemoteWalletd();
 

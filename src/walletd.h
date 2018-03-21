@@ -1,3 +1,6 @@
+// Copyright (c) 2015-2018, The Bytecoin developers.
+// Licensed under the GNU Lesser General Public License. See LICENSE for details.
+
 #ifndef WALLETD_H
 #define WALLETD_H
 
@@ -37,6 +40,8 @@ public:
     void createTx(const RpcApi::CreateTransaction::Request& tx);
     void sendTx(const RpcApi::SendTransaction::Request& tx);
     void getTransfers(const RpcApi::GetTransfers::Request& req);
+    void createProof(const RpcApi::CreateSendProof::Request& req);
+    void checkSendProof(const RpcApi::CheckSendProof::Request& proof);
 
     State getState() const;
     bool isConnected() const;
@@ -50,6 +55,8 @@ signals:
     void unspentsReceivedSignal(const RpcApi::Unspents& unspents);
     void createTxReceivedSignal(const RpcApi::CreatedTx& tx);
     void sendTxReceivedSignal(const RpcApi::SentTx& tx);
+    void proofsReceivedSignal(const RpcApi::Proofs& proofs);
+    void checkProofReceivedSignal(const RpcApi::ProofCheck& proofCheck);
 
     void networkErrorSignal(const QString& errorString);
     void jsonParsingErrorSignal(const QString& message);
@@ -84,6 +91,8 @@ private slots:
     void unspentsReceived(const RpcApi::Unspents& unspents);
     void createTxReceived(const RpcApi::CreatedTx& tx);
     void sendTxReceived(const RpcApi::SentTx& tx);
+    void proofsReceived(const RpcApi::Proofs& result);
+    void checkProofReceived(const RpcApi::ProofCheck& result);
 
     void networkError(const QString& errorString);
     void jsonParsingError(const QString& message);
@@ -100,6 +109,7 @@ public:
     const QString& getUser() const;
     const QString& getPass() const;
     QString getHttpBasicAuth() const;
+    QString getConcatenated() const;
 
 private:
     QString user_;

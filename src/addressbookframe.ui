@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>870</width>
+    <width>1070</width>
     <height>500</height>
    </rect>
   </property>
@@ -24,21 +24,27 @@
     <number>0</number>
    </property>
    <property name="leftMargin">
-    <number>25</number>
+    <number>0</number>
    </property>
    <property name="topMargin">
-    <number>23</number>
+    <number>0</number>
    </property>
    <property name="rightMargin">
-    <number>25</number>
+    <number>0</number>
    </property>
    <property name="bottomMargin">
-    <number>23</number>
+    <number>10</number>
    </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <property name="spacing">
       <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>6</number>
+     </property>
+     <property name="rightMargin">
+      <number>6</number>
      </property>
      <item>
       <widget class="QLabel" name="m_addressBookTextLabel">
@@ -136,8 +142,11 @@
      <property name="spacing">
       <number>0</number>
      </property>
-     <property name="topMargin">
-      <number>0</number>
+     <property name="leftMargin">
+      <number>6</number>
+     </property>
+     <property name="rightMargin">
+      <number>6</number>
      </property>
      <item>
       <spacer name="horizontalSpacer">

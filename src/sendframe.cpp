@@ -1,19 +1,5 @@
-// Copyright (c) 2015-2017, The Bytecoin developers
-//
-// This file is part of Bytecoin.
-//
-// Bytecoin is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Bytecoin is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public License
-// along with Bytecoin.  If not, see <http://www.gnu.org/licenses/>.
+// Copyright (c) 2015-2018, The Bytecoin developers.
+// Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include <QMetaMethod>
 #include <QUrl>
@@ -34,38 +20,38 @@ namespace WalletGUI
 
 namespace {
 
-const char SEND_FRAME_STYLE_SHEET[] =
-  "WalletGui--SendFrame {"
-    "background-color: #ffffff;"
-    "border: none;"
-  "}"
+//const char SEND_FRAME_STYLE_SHEET[] =
+//  "WalletGui--SendFrame {"
+//    "background-color: #ffffff;"
+//    "border: none;"
+//  "}"
 
-  "WalletGui--SendFrame #m_sendScrollarea {"
-    "background-color: %backgroundColorGray%;"
-    "border: none;"
-    "border-bottom: 1px solid %borderColor%;"
-  "}"
+//  "WalletGui--SendFrame #m_sendScrollarea {"
+//    "background-color: %backgroundColorGray%;"
+//    "border: none;"
+//    "border-bottom: 1px solid %borderColor%;"
+//  "}"
 
-  "WalletGui--SendFrame #m_sendScrollarea QScrollBar:vertical {"
-    "margin-top: 0px;"
-    "border-top: none;"
-  "}"
+//  "WalletGui--SendFrame #m_sendScrollarea QScrollBar:vertical {"
+//    "margin-top: 0px;"
+//    "border-top: none;"
+//  "}"
 
-  "WalletGui--SendFrame #scrollAreaWidgetContents {"
-    "background-color: #ffffff;"
-    "border: none;"
-  "}"
+//  "WalletGui--SendFrame #scrollAreaWidgetContents {"
+//    "background-color: #ffffff;"
+//    "border: none;"
+//  "}"
 
-  "WalletGui--SendFrame #m_sendFeeFrame {"
-    "border: none;"
-    "border-top: 1px solid %borderColor%;"
-    "border-bottom: 1px solid %borderColor%;"
-  "}";
+//  "WalletGui--SendFrame #m_sendFeeFrame {"
+//    "border: none;"
+//    "border-top: 1px solid %borderColor%;"
+//    "border-bottom: 1px solid %borderColor%;"
+//  "}";
 
-const char PAYMENT_URL_AMOUNT_TAG[] = "amount";
-const char PAYMENT_URL_PAYMENT_ID_TAG[] = "payment_id";
-const char PAYMENT_URL_MESSAGE_TAG[] = "message";
-const char PAYMENT_URL_LABEL_TAG[] = "label";
+//const char PAYMENT_URL_AMOUNT_TAG[] = "amount";
+//const char PAYMENT_URL_PAYMENT_ID_TAG[] = "payment_id";
+//const char PAYMENT_URL_MESSAGE_TAG[] = "message";
+//const char PAYMENT_URL_LABEL_TAG[] = "label";
 const char MIXIN_CRITICAL_COLOR[] = "#ea161f";
 const char MIXIN_NORMAL_COLOR[] = "#fdce00";
 const char MIXIN_GOOD_COLOR[] = "#6ca025";

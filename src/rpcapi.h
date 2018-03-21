@@ -1,3 +1,6 @@
+// Copyright (c) 2015-2018, The Bytecoin developers.
+// Licensed under the GNU Lesser General Public License. See LICENSE for details.
+
 #ifndef RPCAPI_H
 #define RPCAPI_H
 
@@ -186,6 +189,27 @@ struct Block
     }
 };
 
+struct Proof
+{
+    QString message;
+    QString address;
+    Amount amount = 0;
+    QString transaction_hash;
+    QString proof;
+
+    static Proof fromJson(const QVariantMap& json);
+
+    auto tie() const
+    {
+        return std::tie(
+            message,
+            address,
+            amount,
+            transaction_hash,
+            proof);
+    }
+};
+
 struct GetStatus
 {
     static constexpr char METHOD[] = "get_status";
@@ -196,6 +220,7 @@ struct GetStatus
         quint32 transaction_pool_version = 0;
         quint32 outgoing_peer_count = 0;
         quint32 incoming_peer_count = 0;
+        QString lower_level_error;
 
         QVariantMap toJson() const;
     };
@@ -206,6 +231,7 @@ struct GetStatus
         quint32 transaction_pool_version = 0;
         quint32 outgoing_peer_count = 0;
         quint32 incoming_peer_count = 0;
+        QString lower_level_error{"Disconnected"};
 
         Height top_block_height = 0;
         Difficulty top_block_difficulty = 0;
@@ -224,6 +250,7 @@ struct GetStatus
                 transaction_pool_version,
                 outgoing_peer_count,
                 incoming_peer_count,
+                lower_level_error,
                 top_block_height,
                 top_block_difficulty,
                 top_block_timestamp,
@@ -389,6 +416,46 @@ struct SendTransaction
     };
 };
 
+struct CreateSendProof
+{
+    static constexpr char METHOD[] = "create_send_proof";
+
+    struct Request
+    {
+        QString transaction_hash;
+        QString message;
+        QStringList addresses;
+
+        QVariantMap toJson() const;
+    };
+
+    struct Response
+    {
+        QStringList send_proofs;
+
+        static Response fromJson(const QVariantMap& json);
+    };
+};
+
+struct CheckSendProof
+{
+    static constexpr char METHOD[] = "check_send_proof";
+
+    struct Request
+    {
+        QString send_proof;
+
+        QVariantMap toJson() const;
+    };
+
+    struct Response
+    {
+        QString validation_error;
+
+        static Response fromJson(const QVariantMap& json);
+    };
+};
+
 using Status = GetStatus::Response;
 using Transfers = GetTransfers::Response;
 using Addresses = GetAddresses::Response;
@@ -397,6 +464,8 @@ using ViewKey = GetViewKey::Response;
 using Unspents = GetUnspents::Response;
 using CreatedTx = CreateTransaction::Response;
 using SentTx = SendTransaction::Response;
+using Proofs = CreateSendProof::Response;
+using ProofCheck = CheckSendProof::Response;
 
 inline bool operator == (const Status& lhs, const Status& rhs)
 { return lhs.tie() == rhs.tie(); }

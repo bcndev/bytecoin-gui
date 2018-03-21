@@ -1,19 +1,5 @@
-// Copyright (c) 2015-2017, The Bytecoin developers
-//
-// This file is part of Bytecoin.
-//
-// Bytecoin is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Bytecoin is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public License
-// along with Bytecoin.  If not, see <http://www.gnu.org/licenses/>.
+// Copyright (c) 2015-2018, The Bytecoin developers.
+// Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include <QClipboard>
 #include <QPushButton>
@@ -29,27 +15,27 @@ namespace WalletGUI {
 
 namespace {
 
-const char OVERVIEW_STYLE_SHEET_TEMPLATE[] =
-  "* {"
-    "font-family: %fontFamily%;"
-  "}"
+//const char OVERVIEW_STYLE_SHEET_TEMPLATE[] =
+//  "* {"
+//    "font-family: %fontFamily%;"
+//  "}"
 
-  "WalletGui--OverviewFrame {"
-    "background-color: #ffffff;"
-    "border: none;"
-  "}"
+//  "WalletGui--OverviewFrame {"
+//    "background-color: #ffffff;"
+//    "border: none;"
+//  "}"
 
-  "WalletGui--OverviewFrame #m_allTransactionsButton {"
-    "margin-top: 2px;"
-  "}"
+//  "WalletGui--OverviewFrame #m_allTransactionsButton {"
+//    "margin-top: 2px;"
+//  "}"
 
-  "WalletGui--OverviewFrame #m_newsFrame {"
-    "min-height: 130px;"
-    "max-height: 130px;"
-    "border: none;"
-    "border-top: 1px solid %borderColor%;"
-    "background-color: %backgroundColorGray%;"
-  "}";
+//  "WalletGui--OverviewFrame #m_newsFrame {"
+//    "min-height: 130px;"
+//    "max-height: 130px;"
+//    "border: none;"
+//    "border-top: 1px solid %borderColor%;"
+//    "background-color: %backgroundColorGray%;"
+//  "}";
 
 }
 
@@ -79,19 +65,22 @@ void OverviewFrame::setTransactionsModel(QAbstractItemModel* model)
          { WalletModel::COLUMN_BLOCK_HEIGHT, 3 },
          { WalletModel::COLUMN_BLOCK_HASH, 4 },
          { WalletModel::COLUMN_TIMESTAMP, 5 },
-         { WalletModel::COLUMN_UNLOCK_TIME, 6 }};
+         { WalletModel::COLUMN_UNLOCK_TIME, 6 },
+         { WalletModel::COLUMN_PROOF, 7}};
 
     m_transactionsModel = model;
     m_ui->m_recentTransactionsView->setModel(m_transactionsModel);
 
     QHeaderView& header = *m_ui->m_recentTransactionsView->horizontalHeader();
+    header.setResizeContentsPrecision(-1);
     header.moveSection(header.visualIndex(WalletModel::COLUMN_AMOUNT), indices[WalletModel::COLUMN_AMOUNT]);
     header.moveSection(header.visualIndex(WalletModel::COLUMN_FEE), indices[WalletModel::COLUMN_FEE]);
     header.moveSection(header.visualIndex(WalletModel::COLUMN_BLOCK_HEIGHT), indices[WalletModel::COLUMN_BLOCK_HEIGHT]);
-    header.moveSection(header.visualIndex(WalletModel::COLUMN_TIMESTAMP), indices[WalletModel::COLUMN_TIMESTAMP]);
     header.moveSection(header.visualIndex(WalletModel::COLUMN_HASH), indices[WalletModel::COLUMN_HASH]);
     header.moveSection(header.visualIndex(WalletModel::COLUMN_BLOCK_HASH), indices[WalletModel::COLUMN_BLOCK_HASH]);
     header.moveSection(header.visualIndex(WalletModel::COLUMN_UNLOCK_TIME), indices[WalletModel::COLUMN_UNLOCK_TIME]);
+    header.moveSection(header.visualIndex(WalletModel::COLUMN_PROOF), indices[WalletModel::COLUMN_PROOF]);
+    header.moveSection(header.visualIndex(WalletModel::COLUMN_TIMESTAMP), indices[WalletModel::COLUMN_TIMESTAMP]);
 
     const int columns = m_transactionsModel->columnCount();
     // hide all columns
@@ -106,6 +95,7 @@ void OverviewFrame::setTransactionsModel(QAbstractItemModel* model)
     m_ui->m_recentTransactionsView->setColumnHidden(WalletModel::COLUMN_BLOCK_HASH, false);
     m_ui->m_recentTransactionsView->setColumnHidden(WalletModel::COLUMN_TIMESTAMP, false);
     m_ui->m_recentTransactionsView->setColumnHidden(WalletModel::COLUMN_UNLOCK_TIME, false);
+    m_ui->m_recentTransactionsView->setColumnHidden(WalletModel::COLUMN_PROOF, false);
 
     header.setSectionResizeMode(WalletModel::COLUMN_AMOUNT, QHeaderView::ResizeToContents);
     header.setSectionResizeMode(WalletModel::COLUMN_FEE,  QHeaderView::ResizeToContents);
@@ -114,6 +104,7 @@ void OverviewFrame::setTransactionsModel(QAbstractItemModel* model)
     header.setSectionResizeMode(WalletModel::COLUMN_BLOCK_HASH,  QHeaderView::Stretch);
     header.setSectionResizeMode(WalletModel::COLUMN_TIMESTAMP,  QHeaderView::ResizeToContents);
     header.setSectionResizeMode(WalletModel::COLUMN_UNLOCK_TIME,  QHeaderView::ResizeToContents);
+    header.setSectionResizeMode(WalletModel::COLUMN_PROOF,  QHeaderView::ResizeToContents);
 
 //    header.setSectionResizeMode(WalletModel::COLUMN_AMOUNT, QHeaderView::Fixed);
 //    header.setSectionResizeMode(WalletModel::COLUMN_FEE, QHeaderView::Fixed);
@@ -145,6 +136,7 @@ void OverviewFrame::setMinerModel(QAbstractItemModel* model)
 
 void OverviewFrame::rowsInserted(const QModelIndex& /*parent*/, int /*first*/, int /*last*/)
 {
+//    m_ui->m_recentTransactionsView->resizeColumnsToContents();
 }
 
 void OverviewFrame::setMainWindow(QWidget* mainWindow)
@@ -174,25 +166,38 @@ bool OverviewFrame::eventFilter(QObject* object, QEvent* event)
         QMouseEvent* e = (QMouseEvent*)event;
         QModelIndex modelIndex = view->indexAt(e->pos());
 
-        const bool valid =
-                modelIndex.isValid() &&
-                (modelIndex.column() == WalletModel::COLUMN_HASH ||
-                    modelIndex.column() == WalletModel::COLUMN_BLOCK_HASH);
+        if (!modelIndex.isValid())
+            return false;
+        const bool copyableColumns =
+                modelIndex.column() == WalletModel::COLUMN_HASH ||
+                (modelIndex.column() == WalletModel::COLUMN_BLOCK_HASH && !m_transactionsModel->data(modelIndex, WalletModel::ROLE_BLOCK_HASH).toString().isEmpty());
+        const bool proofColumn = (modelIndex.column() == WalletModel::COLUMN_PROOF && m_transactionsModel->data(modelIndex, WalletModel::ROLE_PROOF).toBool());
+        const bool valid = copyableColumns || proofColumn;
         if(!valid)
             return false;
 
-        QApplication::clipboard()->setText(m_transactionsModel->data(modelIndex).toString());
-        emit copiedToClipboardSignal();
+        if (copyableColumns)
+        {
+            QApplication::clipboard()->setText(m_transactionsModel->data(modelIndex).toString());
+            emit copiedToClipboardSignal();
+        }
+        if (proofColumn)
+        {
+            const QString txHash = m_transactionsModel->data(modelIndex, WalletModel::ROLE_HASH).toString();
+            emit createProofSignal(txHash);
+        }
     }
     else if (event->type() == QEvent::MouseMove)
     {
         QMouseEvent* e = (QMouseEvent*)event;
         QModelIndex modelIndex = view->indexAt(e->pos());
 
-        if(modelIndex.column() != WalletModel::COLUMN_HASH && modelIndex.column() != WalletModel::COLUMN_BLOCK_HASH)
-            setCursor(Qt::ArrowCursor);
-        else
-            setCursor(Qt::PointingHandCursor);
+        const bool showHandCursor =
+                modelIndex.column() == WalletModel::COLUMN_HASH ||
+                (modelIndex.column() == WalletModel::COLUMN_BLOCK_HASH && !m_transactionsModel->data(modelIndex, WalletModel::ROLE_BLOCK_HASH).toString().isEmpty()) ||
+                (modelIndex.column() == WalletModel::COLUMN_PROOF && m_transactionsModel->data(modelIndex, WalletModel::ROLE_PROOF).toBool());
+
+        setCursor(showHandCursor ? Qt::PointingHandCursor : Qt::ArrowCursor);
     }
     else if (event->type() == QEvent::Leave)
         setCursor(Qt::ArrowCursor);

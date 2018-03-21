@@ -1,19 +1,5 @@
-// Copyright (c) 2015-2017, The Bytecoin developers
-//
-// This file is part of Bytecoin.
-//
-// Bytecoin is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Bytecoin is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public License
-// along with Bytecoin.  If not, see <http://www.gnu.org/licenses/>.
+// Copyright (c) 2015-2018, The Bytecoin developers.
+// Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include <cstring>
 
@@ -55,7 +41,7 @@ namespace WalletGUI {
 
 namespace {
 
-const int MAX_RECENT_WALLET_COUNT = 10;
+//const int MAX_RECENT_WALLET_COUNT = 10;
 //const char COMMUNITY_FORUM_URL[] = "https://bytecointalk.org";
 const char COMMUNITY_FORUM_URL[] = "https://bytecoin.org";
 const char REPORT_ISSUE_URL[] = "https://bytecoin.org/contact";
@@ -369,6 +355,7 @@ void MainWindow::setConnectedState()
     m_ui->m_miningButton->setEnabled(true);
     m_ui->m_overviewButton->setEnabled(true);
     m_ui->m_addressBookButton->setEnabled(true);
+    m_ui->m_checkProofAction->setEnabled(true);
     if (m_ui->m_logFrame->isVisible())
         m_ui->m_overviewButton->click();
 
@@ -395,6 +382,7 @@ void MainWindow::setDisconnectedState()
 
     m_miningManager->stopMining();
     m_ui->m_changePasswordAction->setEnabled(false);
+    m_ui->m_checkProofAction->setEnabled(false);
 
     clearTitle();
 #ifdef Q_OS_MAC
@@ -411,7 +399,7 @@ void MainWindow::jsonErrorResponse(const QString& /*id*/, const QString& errorSt
 {
     QMessageBox msg(this);
     msg.setIcon(QMessageBox::Critical);
-    msg.setWindowTitle(tr("Error."));
+    msg.setWindowTitle(tr("Error"));
     msg.setText(errorString);
     msg.exec();
 
@@ -437,6 +425,21 @@ void MainWindow::packetSent(const QByteArray& data)
 void MainWindow::packetReceived(const QByteArray& data)
 {
     m_ui->m_logFrame->addNetworkMessage(QString("<-- ") + QString::fromUtf8(data) + '\n');
+}
+
+void MainWindow::createProof(const QString& txHash)
+{
+    emit createProofSignal(txHash);
+}
+
+void MainWindow::checkProof()
+{
+    emit checkProofSignal();
+}
+
+void MainWindow::showWalletdParams()
+{
+    emit showWalletdParamsSignal();
 }
 
 }

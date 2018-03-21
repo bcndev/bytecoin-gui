@@ -1,19 +1,5 @@
-// Copyright (c) 2015-2017, The Bytecoin developers
-//
-// This file is part of Bytecoin.
-//
-// Bytecoin is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Bytecoin is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public License
-// along with Bytecoin.  If not, see <http://www.gnu.org/licenses/>.
+// Copyright (c) 2015-2018, The Bytecoin developers.
+// Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include <QUrl>
 #include <QFileDialog>
@@ -30,21 +16,21 @@ namespace WalletGUI {
 
 namespace {
 
-const char CONNECTION_OPTIONS_STYLE_SHEET_TEMPLATE[] =
-  "WalletGui--ConnectionOptionsFrame {"
-    "background: #ffffff;"
-  "}"
+//const char CONNECTION_OPTIONS_STYLE_SHEET_TEMPLATE[] =
+//  "WalletGui--ConnectionOptionsFrame {"
+//    "background: #ffffff;"
+//  "}"
 
-  "WalletGui--ConnectionOptionsFrame QRadioButton {"
-    "spacing: 20px;"
-  "}"
+//  "WalletGui--ConnectionOptionsFrame QRadioButton {"
+//    "spacing: 20px;"
+//  "}"
 
-  "WalletGui--ConnectionOptionsFrame QRadioButton,"
-  "WalletGui--ConnectionOptionsFrame QLineEdit,"
-  "WalletGui--ConnectionOptionsFrame QSpinBox {"
-    "min-height: 25px;"
-    "max-height: 25px;"
-  "}";
+//  "WalletGui--ConnectionOptionsFrame QRadioButton,"
+//  "WalletGui--ConnectionOptionsFrame QLineEdit,"
+//  "WalletGui--ConnectionOptionsFrame QSpinBox {"
+//    "min-height: 25px;"
+//    "max-height: 25px;"
+//  "}";
 
 //const char VALIDATION_LABEL_STYLE_SHEET[] =
 //    "WalletGUI--ConnectionOptionsFrame QLabel"

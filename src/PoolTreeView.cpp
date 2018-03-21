@@ -1,19 +1,5 @@
-// Copyright (c) 2015-2017, The Bytecoin developers
-//
-// This file is part of Bytecoin.
-//
-// Bytecoin is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Bytecoin is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public License
-// along with Bytecoin.  If not, see <http://www.gnu.org/licenses/>.
+// Copyright (c) 2015-2018, The Bytecoin developers.
+// Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include <QApplication>
 #include <QDrag>
@@ -30,31 +16,31 @@ namespace WalletGUI
 
 namespace {
 
-const char POOL_TREE_VIEW_STYLE_SHEET_TEMPLATE[] =
-  "WalletGui--PoolTreeView::item:selected {"
-    "color: %fontColorGray%;"
-    "background: %backgroundColorAlternate%;"
-  "}"
+//const char POOL_TREE_VIEW_STYLE_SHEET_TEMPLATE[] =
+//  "WalletGui--PoolTreeView::item:selected {"
+//    "color: %fontColorGray%;"
+//    "background: %backgroundColorAlternate%;"
+//  "}"
 
-  "WalletGui--PoolTreeView::item:alternate:selected {"
-    "color: %fontColorGray%;"
-    "background: #ffffff;"
-  "}"
+//  "WalletGui--PoolTreeView::item:alternate:selected {"
+//    "color: %fontColorGray%;"
+//    "background: #ffffff;"
+//  "}"
 
-  "WalletGui--PoolTreeView::item:!selected {"
-    "color: #000000;"
-    "background: %backgroundColorAlternate%;"
-  "}"
+//  "WalletGui--PoolTreeView::item:!selected {"
+//    "color: #000000;"
+//    "background: %backgroundColorAlternate%;"
+//  "}"
 
-  "WalletGui--PoolTreeView::item:alternate:!selected {"
-    "color: #000000;"
-    "background: #ffffff;"
-  "}";
+//  "WalletGui--PoolTreeView::item:alternate:!selected {"
+//    "color: #000000;"
+//    "background: #ffffff;"
+//  "}";
 
 class CursorManager {
 public:
-  CursorManager(QAbstractItemView* _view, QEvent* _event, bool _isDragging = false) : m_view(_view),
-    m_event(_event), m_isDragging(_isDragging) {
+  CursorManager(QAbstractItemView* _view, QEvent* _event/*, bool _isDragging = false*/) : m_view(_view),
+    m_event(_event)/*, m_isDragging(_isDragging)*/ {
   }
 
   ~CursorManager() {
@@ -70,7 +56,7 @@ public:
 private:
   QAbstractItemView* m_view;
   QEvent* m_event;
-  bool m_isDragging;
+//  bool m_isDragging;
 
   void processMouseMoveEvent() {
     QMouseEvent* mouseEvent = reinterpret_cast<QMouseEvent*>(m_event);
@@ -130,7 +116,7 @@ void PoolTreeView::dropEvent(QDropEvent* _event) {
 }
 
 void PoolTreeView::mouseMoveEvent(QMouseEvent* _event) {
-  CursorManager cursorMan(this, _event, state() == PoolTreeView::DraggingState);
+  CursorManager cursorMan(this, _event/*, state() == PoolTreeView::DraggingState*/);
   if (!(_event->buttons() & Qt::LeftButton)) {
     QTableView::mouseMoveEvent(_event);
     QModelIndex index = indexAt(_event->pos());

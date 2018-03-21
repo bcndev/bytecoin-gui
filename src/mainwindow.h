@@ -1,19 +1,5 @@
-// Copyright (c) 2015-2017, The Bytecoin developers
-//
-// This file is part of Bytecoin.
-//
-// Bytecoin is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Bytecoin is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public License
-// along with Bytecoin.  If not, see <http://www.gnu.org/licenses/>.
+// Copyright (c) 2015-2018, The Bytecoin developers.
+// Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #pragma once
 
@@ -121,9 +107,16 @@ private:
     Q_SLOT void remoteWallet();
     Q_SLOT void encryptWallet();
 
+    Q_SLOT void createProof(const QString& txHash);
+    Q_SLOT void checkProof();
+    Q_SLOT void showWalletdParams();
+
 signals:
     void createTxSignal(const RpcApi::CreateTransaction::Request& req, QPrivateSignal);
     void sendTxSignal(const RpcApi::SendTransaction::Request& req, QPrivateSignal);
+    void createProofSignal(const QString& txHash);
+    void checkProofSignal();
+    void showWalletdParamsSignal();
     void restartDaemon(QPrivateSignal);
 
     void createWalletSignal(QWidget* parent);

@@ -1,3 +1,6 @@
+// Copyright (c) 2015-2018, The Bytecoin developers.
+// Licensed under the GNU Lesser General Public License. See LICENSE for details.
+
 #include <QMovie>
 #include <QDataWidgetMapper>
 #include <QTimer>
@@ -7,12 +10,6 @@
 #include "ui_balanceoverviewframe.h"
 #include "walletmodel.h"
 #include "popup.h"
-
-namespace {
-
-constexpr int SHOW_COPIED_TIMEOUT_MSECS = 1500;
-
-}
 
 namespace WalletGUI {
 

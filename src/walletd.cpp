@@ -1,3 +1,6 @@
+// Copyright (c) 2015-2018, The Bytecoin developers.
+// Licensed under the GNU Lesser General Public License. See LICENSE for details.
+
 #include <QProcess>
 #include <QTimer>
 #include <QMetaEnum>
@@ -124,6 +127,8 @@ RemoteWalletd::RemoteWalletd(const QString& endPoint, QObject* parent)
     connect(jsonClient_, &JsonRpc::WalletClient::unspentReceived, this, &RemoteWalletd::unspentsReceived);
     connect(jsonClient_, &JsonRpc::WalletClient::createTxReceived, this, &RemoteWalletd::createTxReceived);
     connect(jsonClient_, &JsonRpc::WalletClient::sendTxReceived, this, &RemoteWalletd::sendTxReceived);
+    connect(jsonClient_, &JsonRpc::WalletClient::proofsReceived, this, &RemoteWalletd::proofsReceived);
+    connect(jsonClient_, &JsonRpc::WalletClient::checkProofReceived, this, &RemoteWalletd::checkProofReceived);
 
     connect(jsonClient_, &JsonRpc::WalletClient::networkError, this, &RemoteWalletd::networkError);
     connect(jsonClient_, &JsonRpc::WalletClient::jsonParsingError, this, &RemoteWalletd::jsonParsingError);
@@ -195,7 +200,8 @@ void RemoteWalletd::statusReceived(const RpcApi::Status& status)
                     status.top_block_hash,
                     status.transaction_pool_version,
                     status.outgoing_peer_count,
-                    status.incoming_peer_count});
+                    status.incoming_peer_count,
+                    status.lower_level_error});
 
         jsonClient_->sendGetBalance(RpcApi::GetBalance::Request{QString{}, -1});
     }
@@ -254,6 +260,16 @@ void RemoteWalletd::createTxReceived(const RpcApi::CreatedTx& tx)
 void RemoteWalletd::sendTxReceived(const RpcApi::SentTx& tx)
 {
     emit sendTxReceivedSignal(tx);
+}
+
+void RemoteWalletd::proofsReceived(const RpcApi::Proofs& proofs)
+{
+    emit proofsReceivedSignal(proofs);
+}
+
+void RemoteWalletd::checkProofReceived(const RpcApi::ProofCheck& proofCheck)
+{
+    emit checkProofReceivedSignal(proofCheck);
 }
 
 void RemoteWalletd::networkError(const QString& errorString)
@@ -334,6 +350,16 @@ void RemoteWalletd::getTransfers(const RpcApi::GetTransfers::Request& req)
     jsonClient_->sendGetTransfers(req);
 }
 
+void RemoteWalletd::createProof(const RpcApi::CreateSendProof::Request& req)
+{
+    jsonClient_->sendCreateProof(req);
+}
+
+void RemoteWalletd::checkSendProof(const RpcApi::CheckSendProof::Request& proof)
+{
+    jsonClient_->sendCheckProof(proof);
+}
+
 void RemoteWalletd::authRequired(QAuthenticator* authenticator)
 {
     emit authRequiredSignal(authenticator);
@@ -378,9 +404,10 @@ void BuiltinWalletd::run()
 {
     QStringList args;
     args << QString("--wallet-file=%1").arg(pathToWallet_);
-    args << QString("--walletd-authorization=%1").arg(auth_.getHttpBasicAuth());
+//    args << QString("--walletd-authorization=%1").arg(auth_.getHttpBasicAuth());
+//    args << QString("--walletd-authorization");
     if (createNew_)
-        args << "--generate-wallet";
+        args << "--create-wallet";
 
     const bool importKeys = !keys_.isEmpty();
     if (importKeys)
@@ -388,19 +415,21 @@ void BuiltinWalletd::run()
 
     run(args);
 
-    if (createNew_)
-        emit requestPasswordWithConfirmationSignal();
-    else
-        emit requestPasswordSignal();
+//    if (createNew_)
+//        emit requestPasswordWithConfirmationSignal();
+//    else
+//        emit requestPasswordSignal();
 
-    if (importKeys)
-        walletd_->write(keys_.toHex() + QString{'\n'}.toUtf8());
+//    if (importKeys)
+//        walletd_->write(keys_.toHex() + QString{'\n'}.toUtf8());
 
-    walletd_->write((password_ + '\n').toUtf8());
-    if (createNew_)
-        walletd_->write((password_ + '\n').toUtf8()); // write confirmation
-    password_.fill('0', 200);
-    password_.clear();
+//    walletd_->write((password_ + '\n').toUtf8());
+//    if (createNew_)
+//        walletd_->write((password_ + '\n').toUtf8()); // write confirmation
+//    password_.fill('0', 200);
+//    password_.clear();
+
+//    walletd_->write((auth_.getConcatenated() + '\n').toUtf8());
 }
 
 void BuiltinWalletd::run(const QStringList& args)
@@ -426,7 +455,8 @@ void BuiltinWalletd::run(const QStringList& args)
             });
 #endif
 
-    walletd_->setArguments(args);
+    QStringList savedArgs = Settings::instance().getWalletdParams();
+    walletd_->setArguments(savedArgs + args);
     walletd_->start();
 
     qDebug("[Walletd] Waiting for walletd running...");
@@ -484,6 +514,24 @@ void BuiltinWalletd::setPassword(QString&& password)
 void BuiltinWalletd::daemonStarted()
 {
     setState(State::RUNNING);
+
+    if (createNew_)
+        emit requestPasswordWithConfirmationSignal();
+    else
+        emit requestPasswordSignal();
+
+    const bool importKeys = !keys_.isEmpty();
+    if (importKeys)
+        walletd_->write(keys_.toHex() + QString{'\n'}.toUtf8());
+
+    walletd_->write((password_ + '\n').toUtf8());
+    if (createNew_)
+        walletd_->write((password_ + '\n').toUtf8()); // write confirmation
+    password_.fill('0', 200);
+    password_.clear();
+
+    walletd_->write((auth_.getConcatenated() + '\n').toUtf8());
+
     emit daemonStartedSignal();
 }
 
@@ -597,6 +645,11 @@ QString RandomAuth::getHttpBasicAuth() const
 {
     const QString concatenated = user_ + ":" + pass_;
     return QString::fromLatin1(concatenated.toLocal8Bit().toBase64());
+}
+
+QString RandomAuth::getConcatenated() const
+{
+    return user_ + ":" + pass_;
 }
 
 

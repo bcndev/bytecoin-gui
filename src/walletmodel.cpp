@@ -1,3 +1,6 @@
+// Copyright (c) 2015-2018, The Bytecoin developers.
+// Licensed under the GNU Lesser General Public License. See LICENSE for details.
+
 #include <QLocale>
 #include <QFont>
 #include <QDateTime>
@@ -7,7 +10,7 @@
 #include "walletmodel.h"
 #include "common.h"
 
-#include "rpcapi.h" // ??
+#include "rpcapi.h"
 #include "settings.h"
 
 namespace WalletGUI
@@ -184,7 +187,7 @@ void WalletModel::addressesReceived(const RpcApi::Addresses& response)
 
 void WalletModel::transfersReceived(const RpcApi::Transfers& history)
 {
-    const quint32 highestConfirmedBlock = pimpl_->status.top_known_block_height - CONFIRMATIONS - 2;
+    const quint32 highestConfirmedBlock = getHighestKnownConfirmedBlock();
     if (history.next_from_height >= highestConfirmedBlock)
     {
         QList<RpcApi::Transaction> txs;
@@ -269,6 +272,8 @@ void WalletModel::statusReceived(const RpcApi::Status& status)
         changedRoles << ROLE_TOP_BLOCK_HEIGHT;
     if (status.top_block_difficulty != pimpl_->status.top_block_difficulty)
         changedRoles << ROLE_TOP_BLOCK_DIFFICULTY << ROLE_NETWORK_HASHRATE;
+    if (status.lower_level_error != pimpl_->status.lower_level_error)
+        changedRoles << ROLE_LOWER_LEVEL_ERROR;
     if (status.top_block_timestamp != pimpl_->status.top_block_timestamp)
         changedRoles << ROLE_TOP_BLOCK_TIMESTAMP;
     if (status.top_block_timestamp_median != pimpl_->status.top_block_timestamp_median)
@@ -293,19 +298,18 @@ void WalletModel::statusReceived(const RpcApi::Status& status)
 
     emit dataChanged(index(0, COLUMN_TOP_BLOCK_HEIGHT), index(0, COLUMN_PEER_COUNT_SUM), changedRoles);
 
-    const quint32 highestConfirmedBlock = pimpl_->status.top_known_block_height - CONFIRMATIONS - 2;
     if (needToRequestConfirmed)
     {
         RpcApi::GetTransfers::Request req;
         req.from_height = getTopConfirmedBlock();
-        req.to_height = highestConfirmedBlock;
+        req.to_height = getHighestKnownConfirmedBlock();
         emit getTransfersSignal(req);
     }
 
     if (needToRequestUnconfirmed)
     {
         RpcApi::GetTransfers::Request req;
-        req.from_height = highestConfirmedBlock;
+        req.from_height = getHighestKnownConfirmedBlock();
         emit getTransfersSignal(req);
     }
 }
@@ -318,6 +322,12 @@ quint32 WalletModel::getTopConfirmedBlock() const
 quint32 WalletModel::getBottomConfirmedBlock() const
 {
     return pimpl_->unconfimedSize < pimpl_->txs.size() ? pimpl_->txs.last().block_height : std::numeric_limits<quint32>::max();
+}
+
+quint32 WalletModel::getHighestKnownConfirmedBlock() const
+{
+    const quint32 topKnownBlockHeight = pimpl_->status.top_known_block_height;
+    return topKnownBlockHeight < CONFIRMATIONS + 2 ? 0 : topKnownBlockHeight - CONFIRMATIONS - 2;
 }
 
 void WalletModel::balanceReceived(const RpcApi::Balance& balance)
@@ -372,7 +382,7 @@ QVariant WalletModel::getDisplayRoleData(const QModelIndex& index) const
     if (index.column() >= COLUMN_ADDRESS && index.column() <= COLUMN_ADDRESS)
         return getDisplayRoleAddresses(index);
 
-    if (index.column() >= COLUMN_UNLOCK_TIME && index.column() <= COLUMN_TIMESTAMP)
+    if (index.column() >= COLUMN_UNLOCK_TIME && index.column() <= COLUMN_PROOF)
         return getDisplayRoleHistory(index);
 
     if (index.column() >= COLUMN_TOP_BLOCK_HEIGHT && index.column() <= COLUMN_PEER_COUNT_SUM)
@@ -392,7 +402,7 @@ QVariant WalletModel::getUserRoleData(const QModelIndex& index, int role) const
     if (role >= ROLE_ADDRESS && role <= ROLE_ADDRESS)
         return getUserRoleAddresses(index, role);
 
-    if (role >= ROLE_UNLOCK_TIME && role <= ROLE_TIMESTAMP)
+    if (role >= ROLE_UNLOCK_TIME && role <= ROLE_PROOF)
         return getUserRoleHistory(index, role);
 
     if (role >= ROLE_TOP_BLOCK_HEIGHT && role <= ROLE_PEER_COUNT_SUM)
@@ -535,6 +545,16 @@ QVariant WalletModel::getDisplayRoleHistory(const QModelIndex& index) const
             return tr("Unknown");
         return tx.timestamp.toString(Qt::SystemLocaleShortDate);
     }
+    case COLUMN_PROOF:
+    {
+        bool proof = false;
+        for (const RpcApi::Transfer& tr : tx.transfers)
+        {
+            if (!tr.ours)
+                proof = true;
+        }
+        return proof ? QVariant(tr("Proof")) : QVariant(/*tr("Try")*/);
+    }
     }
 
     return QVariant();
@@ -580,6 +600,16 @@ QVariant WalletModel::getUserRoleHistory(const QModelIndex& index, int role) con
         return tx.block_hash;
     case ROLE_TIMESTAMP:
         return tx.timestamp;
+    case ROLE_PROOF:
+    {
+        bool proof = false;
+        for (const RpcApi::Transfer& tr : tx.transfers)
+        {
+            if (!tr.ours)
+                proof = true;
+        }
+        return proof;
+    }
     }
 
     return QVariant();
@@ -617,6 +647,9 @@ QVariant WalletModel::getDisplayRoleStatus(const QModelIndex& index) const
             return tr("-", "n/a");
         return formatHashRate(pimpl_->status.top_block_difficulty / DIFFICULTY_TARGET);
     }
+    case COLUMN_LOWER_LEVEL_ERROR:
+//        return pimpl_->status.lower_level_error;
+        return pimpl_->status.lower_level_error.isEmpty() ? tr("Connected to bytecoind") : tr("Bytecoind status: %1").arg(pimpl_->status.lower_level_error);
     case COLUMN_NEXT_BLOCK_EFFECTIVE_MEDIAN_SIZE:
         return pimpl_->status.next_block_effective_median_size;
     case COLUMN_TXPOOL_VERSION:
@@ -652,6 +685,8 @@ QVariant WalletModel::getUserRoleStatus(const QModelIndex& /*index*/, int role) 
         return pimpl_->status.top_block_difficulty;
     case ROLE_NETWORK_HASHRATE:
         return pimpl_->status.top_block_difficulty / DIFFICULTY_TARGET;
+    case ROLE_LOWER_LEVEL_ERROR:
+        return pimpl_->status.lower_level_error;
     case ROLE_NEXT_BLOCK_EFFECTIVE_MEDIAN_SIZE:
         return pimpl_->status.next_block_effective_median_size;
     case ROLE_TXPOOL_VERSION:
@@ -805,6 +840,11 @@ quint32 WalletModel::getPeerCountSum() const
     return pimpl_->status.incoming_peer_count + pimpl_->status.outgoing_peer_count;
 }
 
+QString WalletModel::getLowerLevelError() const
+{
+    return pimpl_->status.lower_level_error;
+}
+
 QString WalletModel::getAddress() const
 {
     if (pimpl_->addresses.isEmpty())
@@ -817,6 +857,47 @@ void WalletModel::reset()
     beginResetModel();
     pimpl_.reset(new WalletModelState);
     endResetModel();
+
+
+    QVector<int> changedRoles;
+    changedRoles << Qt::EditRole << Qt::DisplayRole
+        << ROLE_UNLOCK_TIME
+        << ROLE_PAYMENT_ID
+        << ROLE_ANONYMITY
+        << ROLE_HASH
+        << ROLE_FEE
+        << ROLE_PK
+        << ROLE_EXTRA
+        << ROLE_COINBASE
+        << ROLE_AMOUNT
+        << ROLE_BLOCK_HEIGHT
+        << ROLE_BLOCK_HASH
+        << ROLE_TIMESTAMP
+        << ROLE_PROOF
+
+        << ROLE_TOP_BLOCK_HEIGHT
+        << ROLE_TOP_BLOCK_TIMESTAMP
+        << ROLE_TOP_BLOCK_TIMESTAMP_MEDIAN
+        << ROLE_TOP_BLOCK_HASH
+        << ROLE_TOP_BLOCK_DIFFICULTY
+        << ROLE_NETWORK_HASHRATE
+        << ROLE_LOWER_LEVEL_ERROR
+        << ROLE_NEXT_BLOCK_EFFECTIVE_MEDIAN_SIZE
+        << ROLE_TXPOOL_VERSION
+        << ROLE_PEER_COUNT_OUTGOING
+        << ROLE_PEER_COUNT_INCOMING
+        << ROLE_RECOMMENDED_FEE_PER_BYTE
+        << ROLE_KNOWN_TOP_BLOCK_HEIGHT
+        << ROLE_PEER_COUNT_SUM
+
+        << ROLE_STATE
+
+        << ROLE_SPENDABLE
+        << ROLE_SPENDABLE_DUST
+        << ROLE_LOCKED_OR_UNCONFIRMED
+        << ROLE_TOTAL;
+
+    emit dataChanged(index(0, COLUMN_UNLOCK_TIME), index(0, COLUMN_TOTAL), changedRoles);
 }
 
 void WalletModel::fetchMore(const QModelIndex& parent)

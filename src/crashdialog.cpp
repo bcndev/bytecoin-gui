@@ -1,3 +1,6 @@
+// Copyright (c) 2015-2018, The Bytecoin developers.
+// Licensed under the GNU Lesser General Public License. See LICENSE for details.
+
 #include "crashdialog.h"
 #include "ui_crashdialog.h"
 #include "mainwindow.h"

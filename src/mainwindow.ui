@@ -189,7 +189,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="label">
+             <widget class="QLabel" name="m_viewOnlyLabel">
               <property name="text">
                <string/>
               </property>
@@ -661,7 +661,7 @@
      <x>0</x>
      <y>0</y>
      <width>1273</width>
-     <height>23</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -673,7 +673,6 @@
     <addaction name="m_openWalletAction"/>
     <addaction name="m_remoteWalletAction"/>
     <addaction name="m_changePasswordAction"/>
-    <addaction name="m_openDataFolderAction"/>
     <addaction name="separator"/>
     <addaction name="m_exitAction"/>
    </widget>
@@ -685,7 +684,16 @@
     <addaction name="m_aboutBytecoinAction"/>
     <addaction name="m_aboutQtAction"/>
    </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>&amp;Tools</string>
+    </property>
+    <addaction name="m_checkProofAction"/>
+    <addaction name="m_openDataFolderAction"/>
+    <addaction name="m_paramsAction"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuTools"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="WalletGUI::WalletStatusBar" name="statusBar"/>
@@ -740,7 +748,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Connect to &amp;remote daemon</string>
+    <string>Connect to &amp;remote wallet daemon</string>
    </property>
   </action>
   <action name="m_communityForumAction">
@@ -760,12 +768,22 @@
   </action>
   <action name="m_openDataFolderAction">
    <property name="text">
-    <string>Open data &amp;folder</string>
+    <string>Open default data &amp;folder</string>
    </property>
   </action>
   <action name="m_importKeysAction">
    <property name="text">
-    <string>Create wallet from keys</string>
+    <string>Create wallet from &amp;keys</string>
+   </property>
+  </action>
+  <action name="m_checkProofAction">
+   <property name="text">
+    <string>&amp;Check send proof</string>
+   </property>
+  </action>
+  <action name="m_paramsAction">
+   <property name="text">
+    <string>Wallet daemon &amp;parameters</string>
    </property>
   </action>
  </widget>
@@ -777,6 +795,7 @@
    <container>1</container>
    <slots>
     <signal>copiedToClipboardSignal()</signal>
+    <signal>createProofSignal(QString)</signal>
    </slots>
   </customwidget>
   <customwidget>
@@ -1058,6 +1077,54 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>m_overviewFrame</sender>
+   <signal>createProofSignal(QString)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>createProof(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>318</x>
+     <y>456</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>636</x>
+     <y>411</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>m_checkProofAction</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>checkProof()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>636</x>
+     <y>411</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>m_paramsAction</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showWalletdParams()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>636</x>
+     <y>411</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>aboutQt()</slot>
@@ -1076,6 +1143,9 @@
   <slot>copiedToClipboard()</slot>
   <slot>openDataFolder()</slot>
   <slot>importKeys()</slot>
+  <slot>createProof(QString)</slot>
+  <slot>checkProof()</slot>
+  <slot>showWalletdParams()</slot>
  </slots>
  <buttongroups>
   <buttongroup name="m_toolButtonGroup">

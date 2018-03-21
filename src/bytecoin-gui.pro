@@ -15,7 +15,7 @@ TEMPLATE = app
 macx: QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.11
 macx: ICON = images/bytecoin.icns
 win32: RC_ICONS = images/bytecoin.ico
-win32: VERSION = 2.18.2.19
+win32: VERSION = 2.18.3.20
 
 #QMAKE_CXXFLAGS += -fno-omit-frame-pointer -fsanitize=address,undefined
 #LIBS += -lasan -lubsan
@@ -73,7 +73,6 @@ SOURCES += main.cpp\
     MinerModel.cpp \
     MiningFrame.cpp \
     MiningManager.cpp \
-    PoolHeaderView.cpp \
     connectselectiondialog.cpp \
     walletd.cpp \
     rpcapi.cpp \
@@ -95,7 +94,10 @@ SOURCES += main.cpp\
     askpassworddialog.cpp \
     importkeydialog.cpp \
     questiondialog.cpp \
-    PoolTreeView.cpp
+    PoolTreeView.cpp \
+    createproofdialog.cpp \
+    checkproofdialog.cpp \
+    walletdparamsdialog.cpp
 
 HEADERS  += mainwindow.h \
     signalhandler.h \
@@ -126,7 +128,6 @@ HEADERS  += mainwindow.h \
     MinerModel.h \
     MiningFrame.h \
     MiningManager.h \
-    PoolHeaderView.h \
     IMinerWorker.h \
     IMiningManager.h \
     IPoolClient.h \
@@ -152,7 +153,10 @@ HEADERS  += mainwindow.h \
     askpassworddialog.h \
     importkeydialog.h \
     questiondialog.h \
-    PoolTreeView.h
+    PoolTreeView.h \
+    createproofdialog.h \
+    checkproofdialog.h \
+    walletdparamsdialog.h
 
 FORMS    += mainwindow.ui \
     overviewframe.ui \
@@ -173,7 +177,10 @@ FORMS    += mainwindow.ui \
     logframe.ui \
     askpassworddialog.ui \
     importkeydialog.ui \
-    questiondialog.ui
+    questiondialog.ui \
+    createproofdialog.ui \
+    checkproofdialog.ui \
+    walletdparamsdialog.ui
 
 RESOURCES += \
     resources.qrc \

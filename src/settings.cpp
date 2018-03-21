@@ -1,3 +1,6 @@
+// Copyright (c) 2015-2018, The Bytecoin developers.
+// Licensed under the GNU Lesser General Public License. See LICENSE for details.
+
 #include <QSettings>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -22,19 +25,18 @@ constexpr char OPTION_MINING_POOL_SWITCH_STRATEGY[] = "miningPoolSwitchStrategy"
 constexpr char OPTION_MINING_CPU_CORE_COUNT[] = "miningCpuCoreCount";
 constexpr char OPTION_MINING_POOL_LIST[] = "miningPoolList";
 constexpr char OPTION_RECENT_WALLETS[] = "recentWallets";
+constexpr char OPTION_WALLETD_PARAMS[] = "walletdParams";
 
 constexpr quint16 DEFAULT_LOCAL_RPC_PORT = 8070;
 constexpr char LOCAL_HOST[] = "127.0.0.1";
 
 constexpr char VERSION[] = "2.0.0";
-constexpr char VERSION_SUFFIX[] = "beta";
-constexpr char REVISION[] = "20180219";
+constexpr char VERSION_SUFFIX[] = "stable";
+constexpr char REVISION[] = "20180320";
 
 #if defined(Q_OS_LINUX)
 constexpr char DEFAULT_WORK_DIR[] = ".bytecoin";
 #endif
-
-constexpr char DEFAULT_WALLETD_PATH[] = "./walletd";
 
 const constexpr char* DEFAULT_MINING_POOLS[] = { "pool.bytecoin.party:3333", "bytecoin.uk:3333", "bytecoin-pool.org:3333", "bcn.pool.minergate.com:45550" };
 
@@ -157,6 +159,16 @@ QString Settings::getWalletFile() const
     return settings_->value(OPTION_WALLET_FILE).toString();
 }
 
+QStringList Settings::getWalletdParams() const
+{
+    return settings_->value(OPTION_WALLETD_PARAMS).toString().split(QChar(' '), QString::SkipEmptyParts);
+}
+
+
+void Settings::setWalletdParams(const QString& params)
+{
+    settings_->setValue(OPTION_WALLETD_PARAMS, params);
+}
 
 void Settings::setLocalRpcPort(quint16 port)
 {
@@ -240,7 +252,6 @@ QDir Settings::getDefaultWorkDir()
 /*static*/
 QString Settings::getDefaultWalletdPath()
 {
-//    return DEFAULT_WALLETD_PATH;
     const QString dir = qApp->applicationDirPath();
 #ifdef Q_OS_WIN32
     return dir + '/' + "walletd.exe";

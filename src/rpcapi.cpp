@@ -1,3 +1,6 @@
+// Copyright (c) 2015-2018, The Bytecoin developers.
+// Licensed under the GNU Lesser General Public License. See LICENSE for details.
+
 #include <QVariantMap>
 
 #include "rpcapi.h"
@@ -14,6 +17,8 @@ constexpr char GetBalance::METHOD[];
 constexpr char GetUnspents::METHOD[];
 constexpr char CreateTransaction::METHOD[];
 constexpr char SendTransaction::METHOD[];
+constexpr char CreateSendProof::METHOD[];
+constexpr char CheckSendProof::METHOD[];
 
 #define RPCAPI_SERIALIZE_FIELD(obj, json, fieldName) \
     do \
@@ -113,6 +118,7 @@ GetStatus::Response::fromJson(const QVariantMap& json)
     RPCAPI_DESERIALIZE_FIELD(value, json, transaction_pool_version);
     RPCAPI_DESERIALIZE_FIELD(value, json, outgoing_peer_count);
     RPCAPI_DESERIALIZE_FIELD(value, json, incoming_peer_count);
+    RPCAPI_DESERIALIZE_FIELD(value, json, lower_level_error);
     RPCAPI_DESERIALIZE_FIELD(value, json, top_block_height);
     RPCAPI_DESERIALIZE_FIELD(value, json, top_block_difficulty);
 
@@ -136,6 +142,7 @@ GetStatus::Request::toJson() const
     RPCAPI_SERIALIZE_FIELD(value, json, transaction_pool_version);
     RPCAPI_SERIALIZE_FIELD(value, json, outgoing_peer_count);
     RPCAPI_SERIALIZE_FIELD(value, json, incoming_peer_count);
+    RPCAPI_SERIALIZE_FIELD(value, json, lower_level_error);
 
     return json;
 }
@@ -430,6 +437,68 @@ Transaction::toJson() const
 
     RPCAPI_SERIALIZE_LIST(value, json, transfers);
     RPCAPI_SERIALIZE_TIMESTAMP(value, json, timestamp);
+
+    return json;
+}
+
+/*static*/
+Proof
+Proof::fromJson(const QVariantMap& json)
+{
+    Proof value;
+
+    RPCAPI_DESERIALIZE_FIELD(value, json, message);
+    RPCAPI_DESERIALIZE_FIELD(value, json, address);
+    RPCAPI_DESERIALIZE_FIELD(value, json, amount);
+    RPCAPI_DESERIALIZE_FIELD(value, json, transaction_hash);
+    RPCAPI_DESERIALIZE_FIELD(value, json, proof);
+
+    return value;
+}
+
+
+/*static*/
+CreateSendProof::Response
+CreateSendProof::Response::fromJson(const QVariantMap& json)
+{
+    CreateSendProof::Response value;
+
+    RPCAPI_DESERIALIZE_FIELD(value, json, send_proofs);
+
+    return value;
+}
+
+QVariantMap
+CreateSendProof::Request::toJson() const
+{
+    const CreateSendProof::Request& value = *this;
+    QVariantMap json;
+
+    RPCAPI_SERIALIZE_FIELD(value, json, transaction_hash);
+    RPCAPI_SERIALIZE_FIELD(value, json, message);
+    RPCAPI_SERIALIZE_FIELD(value, json, addresses);
+
+    return json;
+}
+
+/*static*/
+CheckSendProof::Response
+CheckSendProof::Response::fromJson(const QVariantMap& json)
+{
+    CheckSendProof::Response value;
+
+    RPCAPI_DESERIALIZE_FIELD(value, json, validation_error);
+
+    return value;
+}
+
+QVariantMap
+CheckSendProof::Request::toJson() const
+{
+    const CheckSendProof::Request& value = *this;
+    QVariantMap json;
+
+    RPCAPI_SERIALIZE_FIELD(value, json, send_proof);
 
     return json;
 }
