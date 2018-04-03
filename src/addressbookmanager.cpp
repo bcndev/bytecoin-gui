@@ -127,6 +127,8 @@ void AddressBookManager::removeAddress(AddressIndex _addressIndex)
     const QString oldLabel = addressObject[ADDRESS_ITEM_LABEL_TAG_NAME].toString();
   WalletLogger::debug(tr("[AddressBook] Remove address: label=\"%1\" address=\"%2\"").arg(oldLabel).arg(oldAddress));
 
+  emit beginRemoveAddressSignal(_addressIndex);
+
   addressArray.removeAt(_addressIndex);
   addressIndexes_.remove(oldAddress);
   labelIndexes_.remove(oldLabel);
@@ -140,7 +142,8 @@ void AddressBookManager::removeAddress(AddressIndex _addressIndex)
   }
 
   addressBook_->setValue(ADDRESS_BOOK_TAG_NAME, addressArray);
-  emit addressRemovedSignal(_addressIndex);
+//  emit addressRemovedSignal(_addressIndex);
+  emit endRemoveAddressSignal();
 }
 
 void AddressBookManager::buildIndexes() {

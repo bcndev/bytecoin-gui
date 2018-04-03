@@ -65,6 +65,8 @@ public:
     Q_SLOT void packetSent(const QByteArray& data);
     Q_SLOT void packetReceived(const QByteArray& data);
     Q_SLOT void importKeys();
+    Q_SLOT void exportViewOnlyKeys();
+    Q_SLOT void exportKeys();
 
 protected:
     void changeEvent(QEvent* event) override;
@@ -107,16 +109,18 @@ private:
     Q_SLOT void remoteWallet();
     Q_SLOT void encryptWallet();
 
-    Q_SLOT void createProof(const QString& txHash);
+    Q_SLOT void createProof(const QString& txHash, bool needToFind);
     Q_SLOT void checkProof();
     Q_SLOT void showWalletdParams();
 
 signals:
     void createTxSignal(const RpcApi::CreateTransaction::Request& req, QPrivateSignal);
     void sendTxSignal(const RpcApi::SendTransaction::Request& req, QPrivateSignal);
-    void createProofSignal(const QString& txHash);
+    void createProofSignal(const QString& txHash, bool needToFind);
     void checkProofSignal();
     void showWalletdParamsSignal();
+    void exportViewOnlyKeysSignal();
+    void exportKeysSignal();
     void restartDaemon(QPrivateSignal);
 
     void createWalletSignal(QWidget* parent);

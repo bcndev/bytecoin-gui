@@ -30,9 +30,9 @@ constexpr char OPTION_WALLETD_PARAMS[] = "walletdParams";
 constexpr quint16 DEFAULT_LOCAL_RPC_PORT = 8070;
 constexpr char LOCAL_HOST[] = "127.0.0.1";
 
-constexpr char VERSION[] = "2.0.0";
+constexpr char VERSION[] = "2.0.1";
 constexpr char VERSION_SUFFIX[] = "stable";
-constexpr char REVISION[] = "20180320";
+constexpr char REVISION[] = "20180329";
 
 #if defined(Q_OS_LINUX)
 constexpr char DEFAULT_WORK_DIR[] = ".bytecoin";

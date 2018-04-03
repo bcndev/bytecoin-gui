@@ -11,6 +11,9 @@ namespace WalletGUI {
 ChangePasswordDialog::ChangePasswordDialog(bool askCurrentPassword, QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::ChangePasswordDialog)
+    , oldPassword_("")
+    , newPassword_("")
+    , confirmation_("")
 {
     ui->setupUi(this);
 

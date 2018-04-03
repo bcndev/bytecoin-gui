@@ -672,6 +672,8 @@
     <addaction name="m_importKeysAction"/>
     <addaction name="m_openWalletAction"/>
     <addaction name="m_remoteWalletAction"/>
+    <addaction name="m_exportViewOnlyKeysAction"/>
+    <addaction name="m_exportKeysAction"/>
     <addaction name="m_changePasswordAction"/>
     <addaction name="separator"/>
     <addaction name="m_exitAction"/>
@@ -786,6 +788,16 @@
     <string>Wallet daemon &amp;parameters</string>
    </property>
   </action>
+  <action name="m_exportViewOnlyKeysAction">
+   <property name="text">
+    <string>Export view only wallet</string>
+   </property>
+  </action>
+  <action name="m_exportKeysAction">
+   <property name="text">
+    <string>Export keys</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -795,7 +807,7 @@
    <container>1</container>
    <slots>
     <signal>copiedToClipboardSignal()</signal>
-    <signal>createProofSignal(QString)</signal>
+    <signal>createProofSignal(QString,bool)</signal>
    </slots>
   </customwidget>
   <customwidget>
@@ -1079,9 +1091,9 @@
   </connection>
   <connection>
    <sender>m_overviewFrame</sender>
-   <signal>createProofSignal(QString)</signal>
+   <signal>createProofSignal(QString,bool)</signal>
    <receiver>MainWindow</receiver>
-   <slot>createProof(QString)</slot>
+   <slot>createProof(QString,bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>318</x>
@@ -1125,6 +1137,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>m_exportViewOnlyKeysAction</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>exportViewOnlyKeys()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>636</x>
+     <y>411</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>m_exportKeysAction</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>exportKeys()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>636</x>
+     <y>411</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>aboutQt()</slot>
@@ -1143,9 +1187,11 @@
   <slot>copiedToClipboard()</slot>
   <slot>openDataFolder()</slot>
   <slot>importKeys()</slot>
-  <slot>createProof(QString)</slot>
+  <slot>createProof(QString,bool)</slot>
   <slot>checkProof()</slot>
   <slot>showWalletdParams()</slot>
+  <slot>exportViewOnlyKeys()</slot>
+  <slot>exportKeys()</slot>
  </slots>
  <buttongroups>
   <buttongroup name="m_toolButtonGroup">

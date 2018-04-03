@@ -78,6 +78,7 @@ set(SOURCES
     src/createproofdialog.cpp
     src/checkproofdialog.cpp
     src/walletdparamsdialog.cpp
+    src/exportkeydialog.cpp
 
 )
 

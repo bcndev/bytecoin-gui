@@ -6,17 +6,21 @@
 #include <QMetaEnum>
 #include <QTimerEvent>
 #include <QAuthenticator>
+#include <QMessageBox>
+#include <QFileDialog>
 
 #include <random>
 #include "walletd.h"
 #include "JsonRpc/JsonRpcClient.h"
 #include "settings.h"
 #include "common.h"
+#include "exportkeydialog.h"
 
 namespace
 {
 
 constexpr int RERUN_TIMER_MSEC = 3000;
+constexpr int STATUS_TIMER_MSEC = 4000;
 constexpr int WAITING_TIMEOUT_MSEC = 10000;
 
 template <typename Func1>
@@ -117,10 +121,11 @@ RemoteWalletd::RemoteWalletd(const QString& endPoint, QObject* parent)
     : QObject(parent)
     , jsonClient_(new JsonRpc::WalletClient(endPoint, this))
     , state_(State::STOPPED)
-    , rerunTimerId_(-1)
+//    , rerunTimerId_(-1)
+//    , statusTimerId_(-1)
 {
     connect(jsonClient_, &JsonRpc::WalletClient::addressesReceived, this, &RemoteWalletd::addressesReceived);
-//    connect(jsonClient_, &JsonRpc::WalletClient::statusReceived, this, &RemoteWalletd::statusReceived);
+    connect(jsonClient_, &JsonRpc::WalletClient::statusReceived, this, &RemoteWalletd::statusReceived);
     connect(jsonClient_, &JsonRpc::WalletClient::transfersReceived, this, &RemoteWalletd::transfersReceived);
     connect(jsonClient_, &JsonRpc::WalletClient::balanceReceived, this, &RemoteWalletd::balanceReceived);
     connect(jsonClient_, &JsonRpc::WalletClient::viewKeyReceived, this, &RemoteWalletd::viewKeyReceived);
@@ -140,13 +145,41 @@ RemoteWalletd::RemoteWalletd(const QString& endPoint, QObject* parent)
 
     connect(jsonClient_, &JsonRpc::WalletClient::authRequiredSignal, this, &RemoteWalletd::authRequired);
 
-    connect(this, &RemoteWalletd::errorOccurred, this, &RemoteWalletd::rerun);
+    connect(this, &RemoteWalletd::errorOccurred, &rerunTimer_, static_cast<void(QTimer::*)()>(&QTimer::start));
+
+    rerunTimer_.setSingleShot(true);
+    rerunTimer_.setInterval(RERUN_TIMER_MSEC);
+    rerunTimer_.setSingleShot(false);
+    statusTimer_.setInterval(STATUS_TIMER_MSEC);
+    connect(&rerunTimer_, &QTimer::timeout, this, &RemoteWalletd::rerun);
+    connect(&statusTimer_, &QTimer::timeout, this, &RemoteWalletd::sendGetStatus);
 }
 
 /*virtual*/
 RemoteWalletd::~RemoteWalletd()
 {
     stop();
+}
+
+void RemoteWalletd::rerun()
+{
+//    rerunTimer_.stop();
+    RemoteWalletd::run();
+}
+
+void RemoteWalletd::sendGetStatus()
+{
+    if (state_ == State::CONNECTED)
+    {
+        jsonClient_->sendGetStatus(RpcApi::GetStatus::Request{
+                    /*status.top_block_hash,
+                    status.transaction_pool_version,
+                    status.outgoing_peer_count,
+                    status.incoming_peer_count,
+                    status.lower_level_error*/});
+
+        jsonClient_->sendGetBalance(RpcApi::GetBalance::Request{QString{}, -1});
+    }
 }
 
 /*virtual*/
@@ -162,13 +195,14 @@ void RemoteWalletd::run()
             this, &RemoteWalletd::errorOccurred,
             [this]()
             {
+                statusTimer_.start();
                 jsonClient_->sendGetStatus(RpcApi::GetStatus::Request{});
             });
 
-    onceCallOrDieConnect(
-            jsonClient_, &JsonRpc::WalletClient::statusReceived,
-            this, &RemoteWalletd::errorOccurred,
-            this, &RemoteWalletd::statusReceived);
+//    onceCallOrDieConnect(
+//            jsonClient_, &JsonRpc::WalletClient::statusReceived,
+//            this, &RemoteWalletd::errorOccurred,
+//            this, &RemoteWalletd::statusReceived);
 
     jsonClient_->sendGetAddresses();
 }
@@ -176,11 +210,13 @@ void RemoteWalletd::run()
 /*virtual*/
 void RemoteWalletd::stop()
 {
-    if (rerunTimerId_ != -1)
-    {
-        killTimer(rerunTimerId_);
-        rerunTimerId_ = -1;
-    }
+//    if (rerunTimerId_ != -1)
+//    {
+//        killTimer(rerunTimerId_);
+//        rerunTimerId_ = -1;
+//    }
+    rerunTimer_.stop();
+    statusTimer_.stop();
     setState(State::STOPPED);
 }
 
@@ -191,40 +227,40 @@ void RemoteWalletd::statusReceived(const RpcApi::Status& status)
     emit statusReceivedSignal(status);
     if (state_ == State::CONNECTED)
     {
-        onceCallOrDieConnect(
-                jsonClient_, &JsonRpc::WalletClient::statusReceived,
-                this, &RemoteWalletd::errorOccurred,
-                this, &RemoteWalletd::statusReceived);
+//        onceCallOrDieConnect(
+//                jsonClient_, &JsonRpc::WalletClient::statusReceived,
+//                this, &RemoteWalletd::errorOccurred,
+//                this, &RemoteWalletd::statusReceived);
 
-        jsonClient_->sendGetStatus(RpcApi::GetStatus::Request{
+        /*jsonClient_->sendGetStatus(RpcApi::GetStatus::Request{
                     status.top_block_hash,
                     status.transaction_pool_version,
                     status.outgoing_peer_count,
                     status.incoming_peer_count,
                     status.lower_level_error});
 
-        jsonClient_->sendGetBalance(RpcApi::GetBalance::Request{QString{}, -1});
+        jsonClient_->sendGetBalance(RpcApi::GetBalance::Request{QString{}, -1});*/
     }
 }
 
-void RemoteWalletd::rerun()
-{
-    if (rerunTimerId_ == -1)
-        rerunTimerId_ = startTimer(RERUN_TIMER_MSEC);
-}
+//void RemoteWalletd::startRerunTimer()
+//{
+//    if (rerunTimerId_ == -1)
+//        rerunTimerId_ = startTimer(RERUN_TIMER_MSEC);
+//}
 
-void RemoteWalletd::timerEvent(QTimerEvent* event)
-{
-    if (event->timerId() == rerunTimerId_)
-    {
-        killTimer(rerunTimerId_);
-        rerunTimerId_ = -1;
-        RemoteWalletd::run();
-        return;
-    }
+//void RemoteWalletd::timerEvent(QTimerEvent* event)
+//{
+//    if (event->timerId() == rerunTimerId_)
+//    {
+//        killTimer(rerunTimerId_);
+//        rerunTimerId_ = -1;
+//        RemoteWalletd::run();
+//        return;
+//    }
 
-    QObject::timerEvent(event);
-}
+//    QObject::timerEvent(event);
+//}
 
 
 void RemoteWalletd::transfersReceived(const RpcApi::Transfers& history)
@@ -443,7 +479,8 @@ void BuiltinWalletd::run(const QStringList& args)
             walletd_, &QProcess::errorOccurred,
             [this]()
             {
-                RemoteWalletd::run();
+                if (state_ == State::RUNNING)
+                    RemoteWalletd::run();
             });
 #else
     onceCallOrDieConnect(
@@ -451,7 +488,8 @@ void BuiltinWalletd::run(const QStringList& args)
             walletd_, static_cast<void(QProcess::*)(QProcess::ProcessError)>(&QProcess::error),
             [this]()
             {
-                RemoteWalletd::run();
+                if (state_ == State::RUNNING)
+                    RemoteWalletd::run();
             });
 #endif
 
@@ -490,17 +528,10 @@ void BuiltinWalletd::changeWalletPassword(QString&& oldPassword, QString&& newPa
                 QStringList args;
                 args << QString("--wallet-file=%1").arg(pathToWallet_);
                 args << QString("--set-password");
+                changePassword_ = true;
+                password_ = std::move(oldPassword);
+                newPassword_ = std::move(newPassword);
                 run(args);
-                walletd_->write((oldPassword + '\n').toUtf8());
-                password_.fill('0', 200);
-                password_.clear();
-                QByteArray pass = (newPassword + '\n').toUtf8();
-                walletd_->write(pass);
-                walletd_->write(pass); // confirm password
-                newPassword.fill('0', 200);
-                newPassword.clear();
-                pass.fill('0', 200);
-                pass.clear();
             });
 
     stop();
@@ -517,18 +548,35 @@ void BuiltinWalletd::daemonStarted()
 
     if (createNew_)
         emit requestPasswordWithConfirmationSignal();
-    else
+    else if (!changePassword_)
         emit requestPasswordSignal();
 
     const bool importKeys = !keys_.isEmpty();
     if (importKeys)
         walletd_->write(keys_.toHex() + QString{'\n'}.toUtf8());
 
-    walletd_->write((password_ + '\n').toUtf8());
-    if (createNew_)
-        walletd_->write((password_ + '\n').toUtf8()); // write confirmation
-    password_.fill('0', 200);
-    password_.clear();
+    if (changePassword_)
+    {
+        walletd_->write((password_ + '\n').toUtf8());
+        password_.fill('0', 200);
+        password_.clear();
+        QByteArray pass = (newPassword_ + '\n').toUtf8();
+        walletd_->write(pass);
+        walletd_->write(pass); // confirm password
+        newPassword_.fill('0', 200);
+        newPassword_.clear();
+        pass.fill('0', 200);
+        pass.clear();
+        changePassword_ = false;
+    }
+    else
+    {
+        walletd_->write((password_ + '\n').toUtf8());
+        if (createNew_)
+            walletd_->write((password_ + '\n').toUtf8()); // write confirmation
+        password_.fill('0', 200);
+        password_.clear();
+    }
 
     walletd_->write((auth_.getConcatenated() + '\n').toUtf8());
 
@@ -610,6 +658,189 @@ void BuiltinWalletd::authRequired(QAuthenticator* authenticator)
     authenticator->setUser(auth_.getUser());
     authenticator->setPassword(auth_.getPass());
 }
+
+void BuiltinWalletd::exportViewOnlyKeys(QWidget* parent/*, const QString& exportPath*/)
+{
+    QProcess walletd;
+    walletd.setProgram(Settings::getDefaultWalletdPath());
+
+    QString pass;
+    emit requestPasswordForExportSignal(&walletd, &pass);
+
+    if (pass.isNull())
+        return;
+
+    const QString fileName = QFileDialog::getSaveFileName(
+                parent,
+                tr("Create wallet file"),
+                QDir::homePath(),
+                tr("Wallet files (*.wallet);;All files (*)"));
+    if (fileName.isEmpty())
+        return;
+
+    connect(&walletd, &QProcess::readyReadStandardOutput, this, &BuiltinWalletd::daemonStandardOutputReady);
+    connect(&walletd, &QProcess::readyReadStandardError, this, &BuiltinWalletd::daemonStandardErrorReady);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
+    connect(
+            walletd_, &QProcess::errorOccurred,
+            [&walletd, parent](QProcess::ProcessError error)
+            {
+                if (error != QProcess::FailedToStart)
+                    return;
+                QMessageBox::critical(parent, QObject::tr("Error"), tr("Failed to export view only keys. ") + walletd.errorString());
+            });
+#else
+    connect(
+            walletd_, static_cast<void(QProcess::*)(QProcess::ProcessError)>(&QProcess::error),
+            [&walletd, parent](QProcess::ProcessError error)
+            {
+                if (error != QProcess::FailedToStart)
+                    return;
+                QMessageBox::critical(parent, QObject::tr("Error"), tr("Failed to export view only keys. ") + walletd.errorString());
+            });
+#endif
+    connect(&walletd, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
+            [&walletd, parent](int exitCode, QProcess::ExitStatus /*exitStatus*/)
+            {
+                if (exitCode == 0)
+                    return;
+                const QString walletdMsg = BuiltinWalletd::errorMessage(static_cast<BuiltinWalletd::ReturnCode>(exitCode));
+                const QString msg = !walletdMsg.isEmpty() ?
+                                        walletdMsg :
+                                        tr("Failed to export view only keys. %1. Return code %2. ").arg(walletd.errorString()).arg(exitCode);
+                QMessageBox::critical(parent, QObject::tr("Error"), msg);
+            });
+
+    QStringList args;
+    args << QString("--wallet-file=%1").arg(pathToWallet_);
+    args << QString("--export-view-only=%1").arg(fileName);
+    walletd.setArguments(args);
+    walletd.start();
+
+    walletd.write((pass + '\n').toUtf8());
+    pass.fill('0', 200);
+    pass.clear();
+
+    qDebug("[Walletd] Waiting for walletd finished...");
+    if (walletd.waitForFinished(WAITING_TIMEOUT_MSEC))
+        qDebug("[Walletd] Walletd terminated.");
+    else
+        qDebug("[Walletd] Walletd terminating is timed out.");
+}
+
+void BuiltinWalletd::exportKeys(QWidget* parent)
+{
+    QProcess walletd;
+    walletd.setProgram(Settings::getDefaultWalletdPath());
+
+    QString pass;
+    emit requestPasswordForExportSignal(&walletd, &pass);
+
+    if (pass.isNull())
+        return;
+
+    connect(&walletd, &QProcess::readyReadStandardError, this, &BuiltinWalletd::daemonStandardErrorReady);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
+    connect(
+            walletd_, &QProcess::errorOccurred,
+            [&walletd, parent](QProcess::ProcessError error)
+            {
+                if (error != QProcess::FailedToStart)
+                    return;
+                QMessageBox::critical(parent, QObject::tr("Error"), tr("Failed to export keys. ") + walletd.errorString());
+            });
+#else
+    connect(
+            walletd_, static_cast<void(QProcess::*)(QProcess::ProcessError)>(&QProcess::error),
+            [&walletd, parent](QProcess::ProcessError error)
+            {
+                if (error != QProcess::FailedToStart)
+                    return;
+                QMessageBox::critical(parent, QObject::tr("Error"), tr("Failed to export keys. ") + walletd.errorString());
+            });
+#endif
+    connect(&walletd, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
+            [&walletd, parent](int exitCode, QProcess::ExitStatus /*exitStatus*/)
+            {
+                if (exitCode == 0)
+                    return;
+                const QString walletdMsg = BuiltinWalletd::errorMessage(static_cast<BuiltinWalletd::ReturnCode>(exitCode));
+                const QString msg = !walletdMsg.isEmpty() ?
+                                        walletdMsg :
+                                        tr("Failed to export keys. %1. Return code %2. ").arg(walletd.errorString()).arg(exitCode);
+                QMessageBox::critical(parent, QObject::tr("Error"), msg);
+            });
+
+    QStringList args;
+    args << QString("--wallet-file=%1").arg(pathToWallet_);
+    args << QString("--export-keys");
+    walletd.setArguments(args);
+    walletd.start();
+
+    walletd.write((pass + '\n').toUtf8());
+    pass.fill('0', 200);
+    pass.clear();
+
+    qDebug("[Walletd] Waiting for walletd finished...");
+    if (walletd.waitForFinished(WAITING_TIMEOUT_MSEC))
+        qDebug("[Walletd] Walletd terminated.");
+    else
+        qDebug("[Walletd] Walletd terminating is timed out.");
+
+    if (walletd.exitCode() != 0)
+        return;
+    const QByteArray data = walletd.readAllStandardOutput();
+    const QString read{data};
+    ExportKeyDialog dlg{QString{read.simplified().right(256)}};
+    dlg.exec();
+}
+
+/*static*/
+QString BuiltinWalletd::errorMessage(ReturnCode err)
+{
+    QString msg;
+    switch(err)
+    {
+    case ReturnCode::BYTECOIND_DATABASE_ERROR:
+        msg = tr("Database write error. Disk is full or database is corrupted.");
+        break;
+    case ReturnCode::BYTECOIND_ALREADY_RUNNING:
+        msg = tr("Cannot run bytecoind. Another instance of bytecoind is running.");
+        break;
+    case ReturnCode::WALLETD_BIND_PORT_IN_USE:
+        msg = tr("Cannot run walletd. Walletd bind port in use.");
+        break;
+    case ReturnCode::BYTECOIND_BIND_PORT_IN_USE:
+        msg = tr("Cannot run bytecoind. Bytecoind bind port in use.");
+        break;
+    case ReturnCode::WALLET_FILE_READ_ERROR:
+        msg = tr("Cannot read the specified wallet file.");
+        break;
+    case ReturnCode::WALLET_FILE_UNKNOWN_VERSION:
+        msg = tr("Version of the specified wallet file is unknown.");
+        break;
+    case ReturnCode::WALLET_FILE_DECRYPT_ERROR:
+        msg = tr("Cannot decrypt the wallet file. The specified password is incorrect or the wallet file is corrupted.");
+        break;
+    case ReturnCode::WALLET_FILE_WRITE_ERROR:
+        msg = tr("Cannot write to the wallet file. Probably your file system is read only.");
+        break;
+    case ReturnCode::WALLET_FILE_EXISTS:
+        msg = tr("The specified wallet file already exists. Bytecoin wallet could not overwrite an existed file for safety reason. If you want to overwrite the file please remove it manually and try again.");
+        break;
+    case ReturnCode::WALLET_WITH_THE_SAME_VIEWKEY_IN_USE:
+        msg = tr("Another walletd instance is using the specified wallet file or another wallet file with the same view key.");
+        break;
+    case ReturnCode::WALLETD_WRONG_ARGS:
+        msg = tr("Wrong arguments passed to walletd.");
+        break;
+    case ReturnCode::WALLETD_EXPORTKEYS_MORETHANONE:
+        msg = tr("Walletd cannot export keys for more than one spend keypair");
+        break;
+    }
+    return msg;
+}
+
 
 
 static QString generatePass()

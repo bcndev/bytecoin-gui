@@ -25,7 +25,9 @@ AddressBookModel::AddressBookModel(AddressBookManager* _addressBookManager, QObj
 {
     connect(m_addressBookManager, &AddressBookManager::addressAddedSignal, this, &AddressBookModel::addressAdded);
     connect(m_addressBookManager, &AddressBookManager::addressEditedSignal, this, &AddressBookModel::addressEdited);
-    connect(m_addressBookManager, &AddressBookManager::addressRemovedSignal, this, &AddressBookModel::addressRemoved);
+//    connect(m_addressBookManager, &AddressBookManager::addressRemovedSignal, this, &AddressBookModel::addressRemoved);
+    connect(m_addressBookManager, &AddressBookManager::beginRemoveAddressSignal, this, &AddressBookModel::beginRemoveAddress);
+    connect(m_addressBookManager, &AddressBookManager::endRemoveAddressSignal, this, &AddressBookModel::endRemoveAddress);
 
     addressBookOpened();
 }
@@ -145,10 +147,21 @@ void AddressBookModel::addressEdited(quintptr _addressIndex) {
   Q_EMIT dataChanged(index(_addressIndex, 0), index(_addressIndex, columnCount() - 1));
 }
 
-void AddressBookModel::addressRemoved(quintptr _addressIndex) {
-  beginRemoveRows(QModelIndex(), _addressIndex, _addressIndex);
-  m_rowCount = m_addressBookManager->getAddressCount();
-  endRemoveRows();
+//void AddressBookModel::addressRemoved(quintptr _addressIndex) {
+//  beginRemoveRows(QModelIndex(), _addressIndex, _addressIndex);
+//  m_rowCount = m_addressBookManager->getAddressCount();
+//  endRemoveRows();
+//}
+
+void AddressBookModel::beginRemoveAddress(quintptr _addressIndex)
+{
+    beginRemoveRows(QModelIndex(), _addressIndex, _addressIndex);
+}
+
+void AddressBookModel::endRemoveAddress()
+{
+    m_rowCount = m_addressBookManager->getAddressCount();
+    endRemoveRows();
 }
 
 QVariant AddressBookModel::getDisplayRole(const QModelIndex& _index) const {

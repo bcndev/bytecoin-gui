@@ -66,12 +66,14 @@ signals:
     void builtinRunSignal();
     void remoteConnectedSignal();
     void createWalletdSignal(QPrivateSignal);
+    void exportViewOnlyKeysSignal(QWidget* parent/*, const QString& exportPath*/, QPrivateSignal);
+    void exportKeysSignal(QWidget* parent, QPrivateSignal);
 
 public slots:
     void createTx(const RpcApi::CreateTransaction::Request& req);
     void sendTx(const RpcApi::SendTransaction::Request& req);
-    void createProof(const QString& txHash);
-    void sendCreateProof(const QString& txHash, const QString& message);
+    void createProof(const QString& txHash, bool needToFind);
+    void sendCreateProof(const QString& txHash, const QString& message, const QStringList& addresses);
     void checkProof();
     void sendCheckProof(const QString& proof);
     void restartDaemon();
@@ -88,6 +90,9 @@ public slots:
 
     void splashMsg(const QString& msg);
 
+    void exportViewOnlyKeys();
+    void exportKeys();
+
 private slots:
     void connectedToWalletd();
     void disconnectedFromWalletd();
@@ -96,6 +101,7 @@ private slots:
     void daemonFinished(int exitCode, QProcess::ExitStatus exitStatus);
     void requestPassword();
     void requestPasswordWithConfirmation();
+    void requestPasswordForExport(QProcess* walletd, QString* pass);
     void requestWalletdAuth(QAuthenticator* authenticator);
 
 #ifdef Q_OS_MAC

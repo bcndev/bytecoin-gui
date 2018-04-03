@@ -22,6 +22,7 @@ struct WalletModelState
     RpcApi::Balance balance;
     QList<RpcApi::Transaction> txs;
     QList<QString> addresses;
+    bool viewOnly = false;
 
     RemoteWalletd::State walletdState = RemoteWalletd::State::STOPPED;
     int unconfimedSize = 0;
@@ -173,16 +174,18 @@ void WalletModel::containerReceived(Container& oldContainer, const Container& ne
 void WalletModel::addressesReceived(const RpcApi::Addresses& response)
 {
     const QList<QString>& addresses = response.addresses;
-    if (pimpl_->addresses == addresses)
+    if (pimpl_->addresses == addresses && pimpl_->viewOnly == response.view_only)
         return;
 
     containerReceived(pimpl_->addresses, addresses, pimpl_->txs.size());
+    pimpl_->viewOnly = response.view_only;
 
     QVector<int> changedAddressRoles;
     changedAddressRoles << Qt::EditRole << Qt::DisplayRole
-        << ROLE_ADDRESS;
+        << ROLE_ADDRESS
+        << ROLE_VIEW_ONLY;
 
-    emit dataChanged(index(0, COLUMN_ADDRESS), index(pimpl_->addresses.size() - 1, COLUMN_ADDRESS), changedAddressRoles);
+    emit dataChanged(index(0, COLUMN_ADDRESS), index(pimpl_->addresses.size() - 1, COLUMN_VIEW_ONLY), changedAddressRoles);
 }
 
 void WalletModel::transfersReceived(const RpcApi::Transfers& history)
@@ -379,7 +382,7 @@ QVariant WalletModel::getDisplayRoleData(const QModelIndex& index) const
     if (index.column() >= COLUMN_STATE && index.column() <= COLUMN_STATE)
         return getDisplayRoleState(index);
 
-    if (index.column() >= COLUMN_ADDRESS && index.column() <= COLUMN_ADDRESS)
+    if (index.column() >= COLUMN_ADDRESS && index.column() <= COLUMN_VIEW_ONLY)
         return getDisplayRoleAddresses(index);
 
     if (index.column() >= COLUMN_UNLOCK_TIME && index.column() <= COLUMN_PROOF)
@@ -399,7 +402,7 @@ QVariant WalletModel::getUserRoleData(const QModelIndex& index, int role) const
     if (role >= ROLE_STATE && role <= ROLE_STATE)
         return getUserRoleState(index, role);
 
-    if (role >= ROLE_ADDRESS && role <= ROLE_ADDRESS)
+    if (role >= ROLE_ADDRESS && role <= ROLE_VIEW_ONLY)
         return getUserRoleAddresses(index, role);
 
     if (role >= ROLE_UNLOCK_TIME && role <= ROLE_PROOF)
@@ -458,6 +461,8 @@ QVariant WalletModel::getDisplayRoleAddresses(const QModelIndex& index) const
     {
     case COLUMN_ADDRESS:
         return pimpl_->addresses[index.row()];
+    case COLUMN_VIEW_ONLY:
+        return pimpl_->viewOnly ? tr("(View only)") : QString{};
     }
 
     return QVariant();
@@ -472,6 +477,8 @@ QVariant WalletModel::getUserRoleAddresses(const QModelIndex& index, int role) c
     {
     case ROLE_ADDRESS:
         return pimpl_->addresses[index.row()];
+    case ROLE_VIEW_ONLY:
+        return pimpl_->viewOnly;
     }
 
     return QVariant();
@@ -551,9 +558,12 @@ QVariant WalletModel::getDisplayRoleHistory(const QModelIndex& index) const
         for (const RpcApi::Transfer& tr : tx.transfers)
         {
             if (!tr.ours)
+            {
                 proof = true;
+                break;
+            }
         }
-        return proof ? QVariant(tr("Proof")) : QVariant(/*tr("Try")*/);
+        return pimpl_->viewOnly ? QVariant{} : proof ? QVariant(tr("Proof")) : QVariant(tr("Try"));
     }
     }
 

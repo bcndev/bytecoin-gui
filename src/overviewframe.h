@@ -34,7 +34,7 @@ public:
 
 signals:
     void copiedToClipboardSignal();
-    void createProofSignal(const QString& txHash);
+    void createProofSignal(const QString& txHash, bool needToFind);
 
 private:
     QScopedPointer<Ui::OverviewFrame> m_ui;

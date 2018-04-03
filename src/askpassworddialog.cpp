@@ -10,6 +10,8 @@ namespace WalletGUI
 AskPasswordDialog::AskPasswordDialog(bool askUserName, QWidget *parent)
     : QDialog(parent, Qt::Dialog)
     , ui(new Ui::AskPasswordDialog)
+    , password_("")
+    , user_("")
 {
     ui->setupUi(this);
 

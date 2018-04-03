@@ -29,6 +29,7 @@
 #include "createproofdialog.h"
 #include "checkproofdialog.h"
 #include "walletdparamsdialog.h"
+#include "questiondialog.h"
 
 namespace WalletGUI {
 
@@ -90,7 +91,7 @@ bool WalletApplication::init()
     if (!m_lockFile->tryLock())
     {
         WalletLogger::warning(tr("[Application] Bytecoin wallet GUI already running"));
-        QMessageBox::warning(nullptr, QObject::tr("Fail"), tr("Bytecoin wallet GUI already running"));
+        QMessageBox::warning(nullptr, QObject::tr("Error"), tr("Bytecoin wallet GUI already running"));
         return false;
     }
 
@@ -118,6 +119,8 @@ bool WalletApplication::init()
     connect(m_mainWindow, &MainWindow::createProofSignal, this, &WalletApplication::createProof);
     connect(m_mainWindow, &MainWindow::checkProofSignal, this, &WalletApplication::checkProof);
     connect(m_mainWindow, &MainWindow::showWalletdParamsSignal, this, &WalletApplication::showWalletdParams);
+    connect(m_mainWindow, &MainWindow::exportViewOnlyKeysSignal, this, &WalletApplication::exportViewOnlyKeys);
+    connect(m_mainWindow, &MainWindow::exportKeysSignal, this, &WalletApplication::exportKeys);
 
     connect(m_mainWindow, &MainWindow::createWalletSignal, this, &WalletApplication::createWallet);
     connect(m_mainWindow, &MainWindow::importKeysSignal, this, &WalletApplication::importKeys);
@@ -226,9 +229,9 @@ void WalletApplication::sendTx(const RpcApi::SendTransaction::Request& req)
     walletd_->sendTx(req);
 }
 
-void WalletApplication::sendCreateProof(const QString& txHash, const QString& message)
+void WalletApplication::sendCreateProof(const QString& txHash, const QString& message, const QStringList& addresses)
 {
-    const RpcApi::CreateSendProof::Request req{txHash, message, QStringList{}};
+    const RpcApi::CreateSendProof::Request req{txHash, message, addresses};
     walletd_->createProof(req);
 }
 
@@ -266,8 +269,10 @@ void WalletApplication::runBuiltinWalletd(const QString& walletFile, bool create
 {
     if (walletd_)
     {
-        delete walletd_;
-        walletd_ = nullptr;
+//        delete walletd_;
+//        walletd_ = nullptr;
+
+        walletd_->deleteLater();
     }
 
     splashMsg(tr("Running walletd..."));
@@ -281,12 +286,15 @@ void WalletApplication::runBuiltinWalletd(const QString& walletFile, bool create
     connect(walletd, &BuiltinWalletd::daemonFinishedSignal, this, &WalletApplication::detached);
     connect(walletd, &BuiltinWalletd::requestPasswordSignal, this, &WalletApplication::requestPassword);
     connect(walletd, &BuiltinWalletd::requestPasswordWithConfirmationSignal, this, &WalletApplication::requestPasswordWithConfirmation);
+    connect(walletd, &BuiltinWalletd::requestPasswordForExportSignal, this, &WalletApplication::requestPasswordForExport);
 
     subscribeToWalletd();
     Settings::instance().setConnectionMethod(ConnectionMethod::BUILTIN);
     Settings::instance().setWalletFile(walletFile);
 
     connect(walletd, &BuiltinWalletd::connectedSignal, this, &WalletApplication::builtinRunSignal);
+    connect(this, &WalletApplication::exportViewOnlyKeysSignal, walletd, &BuiltinWalletd::exportViewOnlyKeys);
+    connect(this, &WalletApplication::exportKeysSignal, walletd, &BuiltinWalletd::exportKeys);
 
     walletd_->run();
 }
@@ -341,7 +349,7 @@ void WalletApplication::daemonFinished(int exitCode, QProcess::ExitStatus /*exit
                 exitCode);
 //    const QString msg = metaEnum.valueToKey(static_cast<int>(exitCode));
     bool showPasswordEdit = false;
-    QString msg;
+/*    QString msg;
     switch(exitCode)
     {
     case static_cast<int>(BuiltinWalletd::ReturnCode::BYTECOIND_DATABASE_ERROR):
@@ -378,10 +386,18 @@ void WalletApplication::daemonFinished(int exitCode, QProcess::ExitStatus /*exit
     case static_cast<int>(BuiltinWalletd::ReturnCode::WALLETD_WRONG_ARGS):
         msg = tr("Wrong arguments passed to walletd.");
         break;
+    case static_cast<int>(BuiltinWalletd::ReturnCode::WALLETD_EXPORTKEYS_MORETHANONE):
+        msg = tr("Walletd cannot export keys for more than one spend keypair");
+        break;
     default:
         msg = tr("Walletd just crashed. %1. Return code %2. ").arg(walletd->errorString()).arg(exitCode);
         break;
-    }
+    }*/
+
+    const QString walletdMsg = BuiltinWalletd::errorMessage(static_cast<BuiltinWalletd::ReturnCode>(exitCode));
+    const QString msg = !walletdMsg.isEmpty() ?
+                            walletdMsg :
+                            tr("Walletd just crashed. %1. Return code %2. ").arg(walletd->errorString()).arg(exitCode);
 
     if (crashDialog_->execWithReason(msg, showPasswordEdit) == QDialog::Accepted)
     {
@@ -479,6 +495,7 @@ void WalletApplication::requestPassword()
     AskPasswordDialog dlg(false, m_mainWindow);
     BuiltinWalletd* walletd = static_cast<BuiltinWalletd*>(walletd_);
     connect(walletd, &BuiltinWalletd::daemonErrorOccurredSignal, &dlg, &AskPasswordDialog::reject);
+    connect(crashDialog_.data(), &CrashDialog::rejected, &dlg, &AskPasswordDialog::reject);
     if (dlg.exec() == QDialog::Accepted)
         walletd->setPassword(dlg.getPassword());
     else
@@ -496,6 +513,24 @@ void WalletApplication::requestPasswordWithConfirmation()
         walletd_->stop();
 }
 
+void WalletApplication::requestPasswordForExport(QProcess* walletd, QString* pass)
+{
+    AskPasswordDialog dlg(false, m_mainWindow);
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
+    connect(
+            walletd, &QProcess::errorOccurred,
+            &dlg, &AskPasswordDialog::reject);
+#else
+    connect(
+            walletd, static_cast<void(QProcess::*)(QProcess::ProcessError)>(&QProcess::error),
+            &dlg, &AskPasswordDialog::reject);
+#endif
+
+    if (dlg.exec() == QDialog::Accepted)
+        dlg.getPassword().swap(*pass);
+}
+
 void WalletApplication::requestWalletdAuth(QAuthenticator* authenticator)
 {
     AskPasswordDialog dlg(true, m_mainWindow);
@@ -511,16 +546,35 @@ void WalletApplication::requestWalletdAuth(QAuthenticator* authenticator)
     }
 }
 
-void WalletApplication::createProof(const QString& txHash)
+void WalletApplication::createProof(const QString& txHash, bool needToFind)
 {
+    QStringList addresses;
+
+    if (needToFind)
+    {
+        QuestionDialog qdlg{tr("Question"), tr("Cannot find history for the selected transaction.\nDo you want to try to find appropriate addresses in your address book?"), m_mainWindow};
+        if (qdlg.exec() != QDialog::Accepted)
+            return;
+        for (auto i = addressBookManager_->getAddressCount() - 1; i >= 0; --i)
+            addresses.append(addressBookManager_->getAddress(i).address);
+    }
+
     CreateProofDialog dlg{txHash, m_mainWindow};
-    connect(&dlg, &CreateProofDialog::generateProofSignal, this, &WalletApplication::sendCreateProof);
+
+    connect(&dlg, &CreateProofDialog::generateProofSignal,
+            this,
+            [this, &addresses](const QString& txHash, const QString& message)
+            {
+                sendCreateProof(txHash, message, addresses);
+            });
+
     connect(walletd_, &RemoteWalletd::proofsReceivedSignal,
             &dlg,
             [&dlg](const RpcApi::Proofs& proofs)
             {
                 dlg.addProofs(proofs.send_proofs);
             });
+
     dlg.exec();
 }
 
@@ -544,6 +598,16 @@ void WalletApplication::showWalletdParams()
     BuiltinWalletd* walletd = static_cast<BuiltinWalletd*>(walletd_);
     connect(walletd, &BuiltinWalletd::daemonErrorOccurredSignal, &dlg, &WalletdParamsDialog::reject);
     dlg.exec();
+}
+
+void WalletApplication::exportViewOnlyKeys()
+{
+    emit exportViewOnlyKeysSignal(m_mainWindow, QPrivateSignal{});
+}
+
+void WalletApplication::exportKeys()
+{
+    emit exportKeysSignal(m_mainWindow, QPrivateSignal{});
 }
 
 }

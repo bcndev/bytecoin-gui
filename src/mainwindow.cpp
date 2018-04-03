@@ -99,6 +99,7 @@ MainWindow::MainWindow(
 
     m_addressesMapper->setModel(walletModel_);
     m_addressesMapper->addMapping(m_ui->m_addressLabel, WalletModel::COLUMN_ADDRESS, "text");
+    m_addressesMapper->addMapping(m_ui->m_viewOnlyLabel, WalletModel::COLUMN_VIEW_ONLY, "text");
     m_addressesMapper->toFirst();
     connect(walletModel_, &QAbstractItemModel::modelReset, m_addressesMapper, &QDataWidgetMapper::toFirst);
 
@@ -136,6 +137,10 @@ MainWindow::MainWindow(
     m_ui->m_sendButton->setEnabled(false);
     m_ui->m_miningButton->setEnabled(false);
     m_ui->m_overviewButton->setEnabled(false);
+    m_ui->m_checkProofAction->setEnabled(false);
+    m_ui->m_changePasswordAction->setEnabled(false);
+    m_ui->m_exportKeysAction->setEnabled(false);
+    m_ui->m_exportViewOnlyKeysAction->setEnabled(false);
 
     m_ui->m_logButton->setChecked(true);
     m_ui->m_logFrame->show();
@@ -383,6 +388,8 @@ void MainWindow::setDisconnectedState()
     m_miningManager->stopMining();
     m_ui->m_changePasswordAction->setEnabled(false);
     m_ui->m_checkProofAction->setEnabled(false);
+    m_ui->m_exportKeysAction->setEnabled(false);
+    m_ui->m_exportViewOnlyKeysAction->setEnabled(false);
 
     clearTitle();
 #ifdef Q_OS_MAC
@@ -393,6 +400,8 @@ void MainWindow::setDisconnectedState()
 void MainWindow::builtinRun()
 {
     m_ui->m_changePasswordAction->setEnabled(true);
+    m_ui->m_exportKeysAction->setEnabled(true);
+    m_ui->m_exportViewOnlyKeysAction->setEnabled(true);
 }
 
 void MainWindow::jsonErrorResponse(const QString& /*id*/, const QString& errorString)
@@ -427,9 +436,9 @@ void MainWindow::packetReceived(const QByteArray& data)
     m_ui->m_logFrame->addNetworkMessage(QString("<-- ") + QString::fromUtf8(data) + '\n');
 }
 
-void MainWindow::createProof(const QString& txHash)
+void MainWindow::createProof(const QString& txHash, bool needToFind)
 {
-    emit createProofSignal(txHash);
+    emit createProofSignal(txHash, needToFind);
 }
 
 void MainWindow::checkProof()
@@ -440,6 +449,16 @@ void MainWindow::checkProof()
 void MainWindow::showWalletdParams()
 {
     emit showWalletdParamsSignal();
+}
+
+void MainWindow::exportViewOnlyKeys()
+{
+    emit exportViewOnlyKeysSignal();
+}
+
+void MainWindow::exportKeys()
+{
+    emit exportKeysSignal();
 }
 
 }

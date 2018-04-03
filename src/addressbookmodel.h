@@ -42,7 +42,9 @@ public:
   Q_SLOT void addressBookClosed();
   Q_SLOT void addressAdded(quintptr _addressIndex);
   Q_SLOT void addressEdited(quintptr _addressIndex);
-  Q_SLOT void addressRemoved(quintptr _addressIndex);
+//  Q_SLOT void addressRemoved(quintptr _addressIndex);
+  Q_SLOT void beginRemoveAddress(quintptr _addressIndex);
+  Q_SLOT void endRemoveAddress();
 
 private:
   AddressBookManager* m_addressBookManager;

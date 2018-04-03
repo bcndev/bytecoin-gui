@@ -1,5 +1,15 @@
 ## Release Notes
 
+### v2.0.1
+
+- Added possibility to try creating send proofs for transactions not found in history.
+- Added support for view-only wallets.
+- Fixed the changing password bug.
+- Added export of view-only wallets.
+- Added export of keys.
+- Fixed crash on MacOS while working with address book.
+- Fixed minor UI bugs.
+
 ### v2.0.0
 
 - Added creating send proofs.
