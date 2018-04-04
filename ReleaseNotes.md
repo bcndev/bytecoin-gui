@@ -1,5 +1,9 @@
 ## Release Notes
 
+### v2.0.2
+
+- Fixed `walletd` crashes when reopening wallet. 
+
 ### v2.0.1
 
 - Added possibility to try creating send proofs for transactions not found in history.

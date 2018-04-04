@@ -269,10 +269,10 @@ void WalletApplication::runBuiltinWalletd(const QString& walletFile, bool create
 {
     if (walletd_)
     {
-//        delete walletd_;
-//        walletd_ = nullptr;
+        delete walletd_;
+        walletd_ = nullptr;
 
-        walletd_->deleteLater();
+//        walletd_->deleteLater();
     }
 
     splashMsg(tr("Running walletd..."));
@@ -347,65 +347,13 @@ void WalletApplication::daemonFinished(int exitCode, QProcess::ExitStatus /*exit
     qDebug("[WalletApplication] Daemon finished. Return code: %s (%d)",
                 metaEnum.valueToKey(static_cast<int>(exitCode)),
                 exitCode);
-//    const QString msg = metaEnum.valueToKey(static_cast<int>(exitCode));
-    bool showPasswordEdit = false;
-/*    QString msg;
-    switch(exitCode)
-    {
-    case static_cast<int>(BuiltinWalletd::ReturnCode::BYTECOIND_DATABASE_ERROR):
-        msg = tr("Database write error. Disk is full or database is corrupted.");
-        break;
-    case static_cast<int>(BuiltinWalletd::ReturnCode::BYTECOIND_ALREADY_RUNNING):
-        msg = tr("Cannot run bytecoind. Another instance of bytecoind is running.");
-        break;
-    case static_cast<int>(BuiltinWalletd::ReturnCode::WALLETD_BIND_PORT_IN_USE):
-        msg = tr("Cannot run walletd. Walletd bind port in use.");
-        break;
-    case static_cast<int>(BuiltinWalletd::ReturnCode::BYTECOIND_BIND_PORT_IN_USE):
-        msg = tr("Cannot run bytecoind. Bytecoind bind port in use.");
-        break;
-    case static_cast<int>(BuiltinWalletd::ReturnCode::WALLET_FILE_READ_ERROR):
-        msg = tr("Cannot read the specified wallet file.");
-        break;
-    case static_cast<int>(BuiltinWalletd::ReturnCode::WALLET_FILE_UNKNOWN_VERSION):
-        msg = tr("Version of the specified wallet file is unknown.");
-        break;
-    case static_cast<int>(BuiltinWalletd::ReturnCode::WALLET_FILE_DECRYPT_ERROR):
-        msg = tr("Cannot decrypt the wallet file. The specified password is incorrect or the wallet file is corrupted.");
-//        showPasswordEdit = true;
-        break;
-    case static_cast<int>(BuiltinWalletd::ReturnCode::WALLET_FILE_WRITE_ERROR):
-        msg = tr("Cannot write to the wallet file. Probably your file system is read only.");
-        break;
-    case static_cast<int>(BuiltinWalletd::ReturnCode::WALLET_FILE_EXISTS):
-        msg = tr("The specified wallet file already exists. Bytecoin wallet could not overwrite an existed file for safety reason. If you want to overwrite the file please remove it manually and try again.");
-        break;
-    case static_cast<int>(BuiltinWalletd::ReturnCode::WALLET_WITH_THE_SAME_VIEWKEY_IN_USE):
-        msg = tr("Another walletd instance is using the specified wallet file or another wallet file with the same view key.");
-        break;
-    case static_cast<int>(BuiltinWalletd::ReturnCode::WALLETD_WRONG_ARGS):
-        msg = tr("Wrong arguments passed to walletd.");
-        break;
-    case static_cast<int>(BuiltinWalletd::ReturnCode::WALLETD_EXPORTKEYS_MORETHANONE):
-        msg = tr("Walletd cannot export keys for more than one spend keypair");
-        break;
-    default:
-        msg = tr("Walletd just crashed. %1. Return code %2. ").arg(walletd->errorString()).arg(exitCode);
-        break;
-    }*/
-
     const QString walletdMsg = BuiltinWalletd::errorMessage(static_cast<BuiltinWalletd::ReturnCode>(exitCode));
     const QString msg = !walletdMsg.isEmpty() ?
                             walletdMsg :
                             tr("Walletd just crashed. %1. Return code %2. ").arg(walletd->errorString()).arg(exitCode);
 
-    if (crashDialog_->execWithReason(msg, showPasswordEdit) == QDialog::Accepted)
-    {
-//        if (showPasswordEdit)
-//            walletd->setPassword(crashDialog_->getPassword());
-//        walletd->run();
+    if (crashDialog_->execWithReason(msg, false) == QDialog::Accepted)
         restartDaemon();
-    }
 }
 
 void WalletApplication::connectToRemoteWalletd()

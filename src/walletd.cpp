@@ -210,11 +210,6 @@ void RemoteWalletd::run()
 /*virtual*/
 void RemoteWalletd::stop()
 {
-//    if (rerunTimerId_ != -1)
-//    {
-//        killTimer(rerunTimerId_);
-//        rerunTimerId_ = -1;
-//    }
     rerunTimer_.stop();
     statusTimer_.stop();
     setState(State::STOPPED);
@@ -225,43 +220,7 @@ void RemoteWalletd::statusReceived(const RpcApi::Status& status)
     if (state_ != State::STOPPED)
         setState(State::CONNECTED);
     emit statusReceivedSignal(status);
-    if (state_ == State::CONNECTED)
-    {
-//        onceCallOrDieConnect(
-//                jsonClient_, &JsonRpc::WalletClient::statusReceived,
-//                this, &RemoteWalletd::errorOccurred,
-//                this, &RemoteWalletd::statusReceived);
-
-        /*jsonClient_->sendGetStatus(RpcApi::GetStatus::Request{
-                    status.top_block_hash,
-                    status.transaction_pool_version,
-                    status.outgoing_peer_count,
-                    status.incoming_peer_count,
-                    status.lower_level_error});
-
-        jsonClient_->sendGetBalance(RpcApi::GetBalance::Request{QString{}, -1});*/
-    }
 }
-
-//void RemoteWalletd::startRerunTimer()
-//{
-//    if (rerunTimerId_ == -1)
-//        rerunTimerId_ = startTimer(RERUN_TIMER_MSEC);
-//}
-
-//void RemoteWalletd::timerEvent(QTimerEvent* event)
-//{
-//    if (event->timerId() == rerunTimerId_)
-//    {
-//        killTimer(rerunTimerId_);
-//        rerunTimerId_ = -1;
-//        RemoteWalletd::run();
-//        return;
-//    }
-
-//    QObject::timerEvent(event);
-//}
-
 
 void RemoteWalletd::transfersReceived(const RpcApi::Transfers& history)
 {
@@ -440,8 +399,6 @@ void BuiltinWalletd::run()
 {
     QStringList args;
     args << QString("--wallet-file=%1").arg(pathToWallet_);
-//    args << QString("--walletd-authorization=%1").arg(auth_.getHttpBasicAuth());
-//    args << QString("--walletd-authorization");
     if (createNew_)
         args << "--create-wallet";
 
@@ -450,22 +407,6 @@ void BuiltinWalletd::run()
         args << "--import-keys";
 
     run(args);
-
-//    if (createNew_)
-//        emit requestPasswordWithConfirmationSignal();
-//    else
-//        emit requestPasswordSignal();
-
-//    if (importKeys)
-//        walletd_->write(keys_.toHex() + QString{'\n'}.toUtf8());
-
-//    walletd_->write((password_ + '\n').toUtf8());
-//    if (createNew_)
-//        walletd_->write((password_ + '\n').toUtf8()); // write confirmation
-//    password_.fill('0', 200);
-//    password_.clear();
-
-//    walletd_->write((auth_.getConcatenated() + '\n').toUtf8());
 }
 
 void BuiltinWalletd::run(const QStringList& args)
