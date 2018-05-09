@@ -376,7 +376,7 @@ struct CreateTransaction
     struct Request
     {
         Transaction transaction;
-        QString spend_address;
+        QStringList spend_addresses;
         bool any_spend_address = false;
         QString change_address;
         HeightOrDepth confirmed_height_or_depth = -DEFAULT_CONFIRMATIONS - 1;

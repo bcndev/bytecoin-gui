@@ -25,7 +25,7 @@ struct WalletModelState
     bool viewOnly = false;
 
     RemoteWalletd::State walletdState = RemoteWalletd::State::STOPPED;
-    int unconfimedSize = 0;
+    int unconfirmedSize = 0;
     bool canFetchMore = true;
 };
 
@@ -90,6 +90,8 @@ QVariant WalletModel::headerData(int section, Qt::Orientation orientation, int r
             return tr("Fee");
         case COLUMN_ADDRESS:
             return tr("Address");
+        case COLUMN_PROOF:
+            return tr("Proof");
         }
         break;
     case Qt::TextAlignmentRole:
@@ -191,22 +193,45 @@ void WalletModel::addressesReceived(const RpcApi::Addresses& response)
 void WalletModel::transfersReceived(const RpcApi::Transfers& history)
 {
     const quint32 highestConfirmedBlock = getHighestKnownConfirmedBlock();
-    if (history.next_from_height >= highestConfirmedBlock)
+//    const quint32 highestConfirmedBlock = pimpl_->highestConfirmedBlockDuringRequest;
+//    QList<RpcApi::Transaction> txs;
+//    QList<RpcApi::Transaction> unconfirmedTxs;
+//    for (const RpcApi::Block& block : history.blocks)
+//    {
+//        if (block.header.height > highestConfirmedBlock)
+//            unconfirmedTxs.append(block.transactions);
+//        else
+//            txs.append(block.transactions);
+//    }
+//    QList<RpcApi::Transaction> newTxs = unconfirmedTxs;
+//    newTxs.append(txs);
+//    newTxs.append(pimpl_->txs.mid(pimpl_->unconfirmedSize)); // cut unconfirmed and save confirmed only
+
+//    pimpl_->unconfirmedSize = unconfirmedTxs.size();
+//    containerReceived(pimpl_->txs, newTxs, pimpl_->addresses.size());
+
+    if (history.next_from_height >= highestConfirmedBlock) // unconfirmed
     {
+//        pimpl_->txs.erase(pimpl_->txs.begin(), pimpl_->txs.begin() + pimpl_->unconfirmedSize);
+//        pimpl_->unconfirmedSize = 0;
+
         QList<RpcApi::Transaction> txs;
         for (const RpcApi::Block& block : history.blocks)
             txs.append(block.transactions);
 
-        if (txs == pimpl_->txs.mid(0, pimpl_->unconfimedSize))
+        if (txs == pimpl_->txs.mid(0, pimpl_->unconfirmedSize))
             return;
 
-        const QList<RpcApi::Transaction>& confirmedTxs = pimpl_->txs.mid(pimpl_->unconfimedSize);
-        pimpl_->unconfimedSize = txs.size();
+        const QList<RpcApi::Transaction>& confirmedTxs = pimpl_->txs.mid(pimpl_->unconfirmedSize);
+        pimpl_->unconfirmedSize = txs.size();
         txs.append(confirmedTxs);
         containerReceived(pimpl_->txs, txs, pimpl_->addresses.size());
     }
-    else if (history.next_to_height < highestConfirmedBlock)
+    else if (history.next_to_height < highestConfirmedBlock) // confirmed
     {
+//        pimpl_->txs.erase(pimpl_->txs.begin(), pimpl_->txs.begin() + pimpl_->unconfirmedSize);
+//        pimpl_->unconfirmedSize = 0;
+
         QList<RpcApi::Transaction> txs;
         for (const RpcApi::Block& block : history.blocks)
             txs.append(block.transactions);
@@ -222,9 +247,10 @@ void WalletModel::transfersReceived(const RpcApi::Transfers& history)
         }
         else if (txs.last().block_height > getTopConfirmedBlock())
         {
-            QList<RpcApi::Transaction> newTxs = pimpl_->txs.mid(0, pimpl_->unconfimedSize);
+            QList<RpcApi::Transaction> newTxs = pimpl_->txs.mid(0, pimpl_->unconfirmedSize);
             newTxs.append(txs);
-            newTxs.append(pimpl_->txs.mid(pimpl_->unconfimedSize));
+//            QList<RpcApi::Transaction> newTxs = txs;
+            newTxs.append(pimpl_->txs.mid(pimpl_->unconfirmedSize));
             containerReceived(pimpl_->txs, newTxs, pimpl_->addresses.size());
         }
     }
@@ -319,17 +345,18 @@ void WalletModel::statusReceived(const RpcApi::Status& status)
 
 quint32 WalletModel::getTopConfirmedBlock() const
 {
-    return pimpl_->unconfimedSize < pimpl_->txs.size() ? pimpl_->txs[pimpl_->unconfimedSize].block_height : 0;
+    return pimpl_->unconfirmedSize < pimpl_->txs.size() ? pimpl_->txs[pimpl_->unconfirmedSize].block_height : 0;
 }
 
 quint32 WalletModel::getBottomConfirmedBlock() const
 {
-    return pimpl_->unconfimedSize < pimpl_->txs.size() ? pimpl_->txs.last().block_height : std::numeric_limits<quint32>::max();
+    return pimpl_->unconfirmedSize < pimpl_->txs.size() ? pimpl_->txs.last().block_height : std::numeric_limits<quint32>::max();
 }
 
 quint32 WalletModel::getHighestKnownConfirmedBlock() const
 {
-    const quint32 topKnownBlockHeight = pimpl_->status.top_known_block_height;
+//    const quint32 topKnownBlockHeight = pimpl_->status.top_known_block_height;
+    const quint32 topKnownBlockHeight = pimpl_->status.top_block_height;
     return topKnownBlockHeight < CONFIRMATIONS + 2 ? 0 : topKnownBlockHeight - CONFIRMATIONS - 2;
 }
 
@@ -563,7 +590,7 @@ QVariant WalletModel::getDisplayRoleHistory(const QModelIndex& index) const
                 break;
             }
         }
-        return pimpl_->viewOnly ? QVariant{} : proof ? QVariant(tr("Proof")) : QVariant(tr("Try"));
+        return pimpl_->viewOnly ? QVariant{} : proof ? QVariant(tr("Get")) : QVariant(tr("Try"));
     }
     }
 

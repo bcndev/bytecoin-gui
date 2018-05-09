@@ -334,13 +334,18 @@ void MainWindow::showLog()
 
 void MainWindow::setTitle()
 {
+    clearTitle();
+#ifdef Q_OS_MAC
+    if (Settings::instance().getConnectionMethod() == ConnectionMethod::BUILTIN)
+        setWindowFilePath(Settings::instance().getWalletFile());
+    else
+        setWindowTitle(Settings::instance().getRpcEndPoint());
+#else
     const QString fileName =
             Settings::instance().getConnectionMethod() == ConnectionMethod::BUILTIN ?
                 Settings::instance().getWalletFile() :
                 Settings::instance().getRpcEndPoint();
-#ifdef Q_OS_MAC
-    setWindowFilePath(fileName);
-#else
+
     setWindowTitle(fileName);
 #endif
 }
@@ -349,6 +354,7 @@ void MainWindow::clearTitle()
 {
 #ifdef Q_OS_MAC
     setWindowFilePath(QString{});
+    setWindowTitle(QString{});
 #else
     setWindowTitle(QString{});
 #endif
@@ -365,12 +371,6 @@ void MainWindow::setConnectedState()
         m_ui->m_overviewButton->click();
 
     setTitle();
-#ifdef Q_OS_MAC
-    if (Settings::instance().getConnectionMethod() == ConnectionMethod::BUILTIN)
-        setWindowFilePath(Settings::instance().getWalletFile());
-    else
-        setWindowFilePath(Settings::instance().getRpcEndPoint());
-#endif
 }
 
 void MainWindow::setDisconnectedState()
@@ -392,9 +392,6 @@ void MainWindow::setDisconnectedState()
     m_ui->m_exportViewOnlyKeysAction->setEnabled(false);
 
     clearTitle();
-#ifdef Q_OS_MAC
-    setWindowFilePath(QString());
-#endif
 }
 
 void MainWindow::builtinRun()

@@ -247,7 +247,7 @@ CreateTransaction::Request::toJson() const
 
     RPCAPI_SERIALIZE_STRUCT(value, json, transaction);
 
-    RPCAPI_SERIALIZE_FIELD(value, json, spend_address);
+    RPCAPI_SERIALIZE_FIELD(value, json, spend_addresses);
     RPCAPI_SERIALIZE_FIELD(value, json, any_spend_address);
     RPCAPI_SERIALIZE_FIELD(value, json, change_address);
     RPCAPI_SERIALIZE_FIELD(value, json, confirmed_height_or_depth);

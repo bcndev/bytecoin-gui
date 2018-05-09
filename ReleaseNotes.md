@@ -1,5 +1,12 @@
 ## Release Notes
 
+### v2.0.4
+
+- Updated Bytecoin daemons.
+- Fixed window file path on MacOS.
+- Fixed bug in transaction list.
+- Fixed minor GUI fixes.
+
 ### v2.0.2
 
 - Fixed `walletd` crashes when reopening wallet. 
