@@ -21,6 +21,7 @@ typedef quint64 Timestamp;
 typedef qint64 SignedAmount;
 typedef qint32 HeightOrDepth;
 typedef quint64 UnlockMoment;  // Height or Timestamp,
+typedef QString Hash;
 
 constexpr HeightOrDepth DEFAULT_CONFIRMATIONS = 5;
 
@@ -86,10 +87,10 @@ struct Transaction
 {
     UnlockMoment unlock_time = 0;
     QList<Transfer> transfers;
-    QString payment_id{};
+    Hash payment_id{};
     quint32 anonymity = 0;
 
-    QString hash{};
+    Hash hash{};
     SignedAmount fee = 0;
     QString public_key;
     QString extra;
@@ -97,7 +98,7 @@ struct Transaction
     Amount amount = 0;
 
     Height block_height = 0;
-    QString block_hash{};
+    Hash block_hash{};
     QDateTime timestamp;
 
     static Transaction fromJson(const QVariantMap& json);
@@ -127,11 +128,11 @@ struct BlockHeader
     quint8 major_version = 0;
     quint8 minor_version = 0;
     QDateTime timestamp;
-    QString previous_block_hash{};
+    Hash previous_block_hash{};
     quint32 nonce = 0;
 
     Height height = 0;
-    QString hash{};
+    Hash hash{};
     Amount reward = 0;
     Difficulty cumulative_difficulty = 0;
     Difficulty difficulty = 0;
@@ -216,7 +217,7 @@ struct GetStatus
 
     struct Request
     {
-        QString top_block_hash{};
+        Hash top_block_hash{};
         quint32 transaction_pool_version = 0;
         quint32 outgoing_peer_count = 0;
         quint32 incoming_peer_count = 0;
@@ -227,7 +228,7 @@ struct GetStatus
 
     struct Response
     {
-        QString top_block_hash = 0;
+        Hash top_block_hash = 0;
         quint32 transaction_pool_version = 0;
         quint32 outgoing_peer_count = 0;
         quint32 incoming_peer_count = 0;
@@ -383,6 +384,7 @@ struct CreateTransaction
         SignedAmount fee_per_byte = 0;
         QString optimization;
         bool save_history = true;
+        QList<Hash> prevent_conflict_with_transactions;
 
         QVariantMap toJson() const;
     };
@@ -392,6 +394,7 @@ struct CreateTransaction
         QString binary_transaction;
         Transaction transaction;
         bool save_history_error = false;
+        QList<Hash> transactions_required;
 
         static Response fromJson(const QVariantMap& json);
     };
@@ -422,7 +425,7 @@ struct CreateSendProof
 
     struct Request
     {
-        QString transaction_hash;
+        Hash transaction_hash;
         QString message;
         QStringList addresses;
 

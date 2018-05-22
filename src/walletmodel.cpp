@@ -193,63 +193,39 @@ void WalletModel::addressesReceived(const RpcApi::Addresses& response)
 void WalletModel::transfersReceived(const RpcApi::Transfers& history)
 {
     const quint32 highestConfirmedBlock = getHighestKnownConfirmedBlock();
-//    const quint32 highestConfirmedBlock = pimpl_->highestConfirmedBlockDuringRequest;
-//    QList<RpcApi::Transaction> txs;
-//    QList<RpcApi::Transaction> unconfirmedTxs;
-//    for (const RpcApi::Block& block : history.blocks)
-//    {
-//        if (block.header.height > highestConfirmedBlock)
-//            unconfirmedTxs.append(block.transactions);
-//        else
-//            txs.append(block.transactions);
-//    }
-//    QList<RpcApi::Transaction> newTxs = unconfirmedTxs;
-//    newTxs.append(txs);
-//    newTxs.append(pimpl_->txs.mid(pimpl_->unconfirmedSize)); // cut unconfirmed and save confirmed only
-
-//    pimpl_->unconfirmedSize = unconfirmedTxs.size();
-//    containerReceived(pimpl_->txs, newTxs, pimpl_->addresses.size());
-
     if (history.next_from_height >= highestConfirmedBlock) // unconfirmed
     {
-//        pimpl_->txs.erase(pimpl_->txs.begin(), pimpl_->txs.begin() + pimpl_->unconfirmedSize);
-//        pimpl_->unconfirmedSize = 0;
-
-        QList<RpcApi::Transaction> txs;
+        QList<RpcApi::Transaction> rcvdTxs;
         for (const RpcApi::Block& block : history.blocks)
-            txs.append(block.transactions);
+            rcvdTxs.append(block.transactions);
 
-        if (txs == pimpl_->txs.mid(0, pimpl_->unconfirmedSize))
+        if (rcvdTxs == pimpl_->txs.mid(0, pimpl_->unconfirmedSize))
             return;
 
         const QList<RpcApi::Transaction>& confirmedTxs = pimpl_->txs.mid(pimpl_->unconfirmedSize);
-        pimpl_->unconfirmedSize = txs.size();
-        txs.append(confirmedTxs);
-        containerReceived(pimpl_->txs, txs, pimpl_->addresses.size());
+        pimpl_->unconfirmedSize = rcvdTxs.size();
+        rcvdTxs.append(confirmedTxs);
+        containerReceived(pimpl_->txs, rcvdTxs, pimpl_->addresses.size());
     }
     else if (history.next_to_height < highestConfirmedBlock) // confirmed
     {
-//        pimpl_->txs.erase(pimpl_->txs.begin(), pimpl_->txs.begin() + pimpl_->unconfirmedSize);
-//        pimpl_->unconfirmedSize = 0;
-
-        QList<RpcApi::Transaction> txs;
+        QList<RpcApi::Transaction> rcvdTxs;
         for (const RpcApi::Block& block : history.blocks)
-            txs.append(block.transactions);
+            rcvdTxs.append(block.transactions);
 
-        if (txs.empty())
+        if (rcvdTxs.empty())
             return;
-        if (txs.first().block_height < getBottomConfirmedBlock())
+        if (rcvdTxs.first().block_height < getBottomConfirmedBlock())
         {
             QList<RpcApi::Transaction> newTxs = pimpl_->txs;
-            newTxs.append(txs);
+            newTxs.append(rcvdTxs);
             containerReceived(pimpl_->txs, newTxs, pimpl_->addresses.size());
             pimpl_->canFetchMore = history.next_to_height != 0;
         }
-        else if (txs.last().block_height > getTopConfirmedBlock())
+        else if (rcvdTxs.last().block_height > getTopConfirmedBlock())
         {
             QList<RpcApi::Transaction> newTxs = pimpl_->txs.mid(0, pimpl_->unconfirmedSize);
-            newTxs.append(txs);
-//            QList<RpcApi::Transaction> newTxs = txs;
+            newTxs.append(rcvdTxs);
             newTxs.append(pimpl_->txs.mid(pimpl_->unconfirmedSize));
             containerReceived(pimpl_->txs, newTxs, pimpl_->addresses.size());
         }
@@ -373,11 +349,11 @@ void WalletModel::balanceReceived(const RpcApi::Balance& balance)
         << ROLE_LOCKED_OR_UNCONFIRMED
         << ROLE_TOTAL;
 
-    qDebug("[WalletModel] Balance changed.\n\tSpendable: %s\n\tSpendable dust: %s\n\tLocked or unconfirmed: %s\n\tTotal: %s",
-           qPrintable(formatUnsignedAmount(balance.spendable)),
-           qPrintable(formatUnsignedAmount(balance.spendable_dust)),
-           qPrintable(formatUnsignedAmount(balance.locked_or_unconfirmed)),
-           qPrintable(formatUnsignedAmount(balance.spendable + balance.spendable_dust + balance.locked_or_unconfirmed)));
+//    qDebug("[WalletModel] Balance changed.\n\tSpendable: %s\n\tSpendable dust: %s\n\tLocked or unconfirmed: %s\n\tTotal: %s",
+//           qPrintable(formatUnsignedAmount(balance.spendable)),
+//           qPrintable(formatUnsignedAmount(balance.spendable_dust)),
+//           qPrintable(formatUnsignedAmount(balance.locked_or_unconfirmed)),
+//           qPrintable(formatUnsignedAmount(balance.spendable + balance.spendable_dust + balance.locked_or_unconfirmed)));
     emit dataChanged(index(0, COLUMN_SPENDABLE), index(0, COLUMN_TOTAL), changedRoles);
 }
 

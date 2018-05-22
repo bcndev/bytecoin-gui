@@ -19,7 +19,6 @@
 #include "JsonRpcNotification.h"
 #include "JsonRpcObjectFactory.h"
 #include "rpcapi.h"
-//#include "bytecoin/rpc_api.h"
 
 namespace JsonRpc {
 
@@ -29,7 +28,7 @@ class Client : public QObject
     Q_DISABLE_COPY(Client)
 
 public:
-    typedef std::function<void(const QVariantMap&)> FunctionHandler;
+    typedef std::function<void(const JsonRpcResponse&)> FunctionHandler;
 
     Client(QObject* parent = 0);
     Client(const QUrl& url, QObject* parent = 0);
@@ -105,38 +104,16 @@ signals:
     void checkProofReceived(const RpcApi::ProofCheck& result) const;
 
 private:
-    void statusHandler(const QVariantMap& result) const;
-    void transfersHandler(const QVariantMap& result) const;
-    void addressesHandler(const QVariantMap& result) const;
-    void balanceHandler(const QVariantMap& result) const;
-    void viewKeyHandler(const QVariantMap& result) const;
-//    void unspentHandler(const QVariantMap& result) const;
-    void createTxHandler(const QVariantMap& result) const;
-    void sendTxHandler(const QVariantMap& result) const;
-    void proofsHandler(const QVariantMap& result) const;
-    void checkProofHandler(const QVariantMap& result) const;
+    void statusHandler(const JsonRpcResponse& response);
+    void transfersHandler(const JsonRpcResponse& response);
+    void addressesHandler(const JsonRpcResponse& response);
+    void balanceHandler(const JsonRpcResponse& response);
+    void viewKeyHandler(const JsonRpcResponse& response);
+//    void unspentHandler(const JsonRpcResponse& response);
+    void createTxHandler(const JsonRpcResponse& response);
+    void sendTxHandler(const JsonRpcResponse& response);
+    void proofsHandler(const JsonRpcResponse& response);
+    void checkProofHandler(const JsonRpcResponse& response);
 };
-
-//class StratumClient : public Client
-//{
-//    Q_OBJECT
-//    Q_DISABLE_COPY(StratumClient)
-
-//public:
-//    StratumClient(const QUrl& url, QObject* parent = 0);
-
-//    void sendLogin(const QString& login, const QString& password, quint32 difficulty);
-//    void sendSubmit(const QString& jobId, quint32 nonce, const QByteArray& result);
-
-//Q_SIGNALS:
-//    void loginReceived(const QVariantMap& result) const;
-//    void submitReceived(const QVariantMap& result) const;
-//    void jobReceived(const QVariantMap& result) const;
-
-//private:
-//    void loginHandler(const QVariantMap& result) const;
-//    void submitHandler(const QVariantMap& result) const;
-//    void jobHandler(const QVariantMap& result) const;
-//};
 
 }

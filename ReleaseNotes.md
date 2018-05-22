@@ -1,8 +1,13 @@
 ## Release Notes
 
+### v3.1.0
+
+- Increment the major version to conform with the daemon versioning.
+- Updated the Bytecoin daemons.
+
 ### v2.0.4
 
-- Updated Bytecoin daemons.
+- Updated the Bytecoin daemons.
 - Fixed window file path on MacOS.
 - Fixed bug in transaction list.
 - Fixed minor GUI fixes.

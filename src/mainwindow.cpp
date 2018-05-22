@@ -169,6 +169,7 @@ void MainWindow::createTx(const RpcApi::Transaction& tx, quint64 fee)
     req.change_address = getAddress();
     req.confirmed_height_or_depth = -static_cast<qint32>(CONFIRMATIONS) - 1;
     req.fee_per_byte = fee;
+    req.save_history = true;
 
     emit createTxSignal(req, QPrivateSignal{});
 }
