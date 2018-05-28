@@ -30,8 +30,12 @@
 #include "checkproofdialog.h"
 #include "walletdparamsdialog.h"
 #include "questiondialog.h"
+#include "filedownloader.h"
+#include "version.h"
 
 namespace WalletGUI {
+
+const char VERSION_DATA_URL[] = "https://raw.githubusercontent.com/bcndev/bytecoin-gui/master/LatestStableVersion.txt?1"; // use ?1 trick to force reload and bypass cache
 
 WalletApplication::WalletApplication(int& argc, char** argv)
     : QApplication(argc, argv)
@@ -41,15 +45,20 @@ WalletApplication::WalletApplication(int& argc, char** argv)
     , addressBookManager_(nullptr)
     , walletd_(nullptr)
     , walletModel_(new WalletModel(this))
+    , downloader_(new FileDownloader(this))
     , crashDialog_(new CrashDialog())
     , m_isAboutToQuit(false)
 {
     setApplicationName("bytecoin"); // do not change becasuse it also changes data directory under Mac and Win
     setApplicationDisplayName(tr("Bytecoin Wallet"));
-    setApplicationVersion("2.0.0");
+    setApplicationVersion(VERSION);
     setQuitOnLastWindowClosed(false);
     QLocale::setDefault(QLocale::c());
     loadFonts();
+
+    checkForUpdateTimer_.setInterval(12*60*60*1000); // 12 hours
+    connect(&checkForUpdateTimer_, &QTimer::timeout, this, &WalletApplication::checkForUpdate);
+    checkForUpdateTimer_.start();
 
     connect(this, &WalletApplication::createWalletdSignal, this, &WalletApplication::createWalletd, Qt::QueuedConnection);
 }
@@ -130,11 +139,16 @@ bool WalletApplication::init()
     connect(this, &WalletApplication::builtinRunSignal, m_mainWindow, &MainWindow::builtinRun);
     connect(this, &WalletApplication::aboutToQuit, this, &WalletApplication::prepareToQuit);
 
+    connect(downloader_, &FileDownloader::downloaded, this, &WalletApplication::updateReceived);
+    connect(this, &WalletApplication::updateIsReadySignal, m_mainWindow, &MainWindow::updateIsReady);
+
     if(isFirstRun)
         firstRun();
     else
 //        createWalletd();
         emit createWalletdSignal(QPrivateSignal{});
+
+    checkForUpdate();
     return true;
 }
 
@@ -556,6 +570,26 @@ void WalletApplication::exportViewOnlyKeys()
 void WalletApplication::exportKeys()
 {
     emit exportKeysSignal(m_mainWindow, QPrivateSignal{});
+}
+
+void WalletApplication::checkForUpdate()
+{
+    downloader_->download(QUrl::fromUserInput(VERSION_DATA_URL));
+}
+
+void WalletApplication::updateReceived()
+{
+    const QString newVersionStr = downloader_->downloadedData();
+    const QString currentVersionStr = VERSION;
+    bool ok = false;
+    const int newVersion = QString(newVersionStr).remove('.').toInt(&ok);
+    if (!ok)
+        return;
+    ok = false;
+    const int currentVersion = QString(currentVersionStr).remove('.').toInt(&ok);
+    Q_ASSERT(ok);
+    if (newVersion > currentVersion)
+        emit updateIsReadySignal(newVersionStr);
 }
 
 }

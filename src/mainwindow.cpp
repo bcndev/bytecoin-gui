@@ -70,6 +70,9 @@ MainWindow::MainWindow(
 {
     m_ui->setupUi(this);
 
+    m_ui->m_updateLabel->setText("");
+    m_ui->m_updateLabel->hide();
+    m_ui->m_viewOnlyLabel->setText("");
     setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, this->size(), qApp->desktop()->availableGeometry()));
     setWindowIcon(QIcon(":images/bytecoin_lin"));
     clearTitle();
@@ -457,6 +460,14 @@ void MainWindow::exportViewOnlyKeys()
 void MainWindow::exportKeys()
 {
     emit exportKeysSignal();
+}
+
+void MainWindow::updateIsReady(const QString& newVersion)
+{
+    m_ui->m_updateLabel->setTextInteractionFlags(Qt::LinksAccessibleByMouse);
+    m_ui->m_updateLabel->setOpenExternalLinks(true);
+    m_ui->m_updateLabel->setText(QString("New version %1 of Bytecoin wallet is available.").arg(QString("<a href=\"https://bytecoin.org/downloads\">%1</a>").arg(newVersion)));
+    m_ui->m_updateLabel->show();
 }
 
 }

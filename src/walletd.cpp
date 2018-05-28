@@ -20,7 +20,7 @@ namespace
 {
 
 constexpr int RERUN_TIMER_MSEC = 3000;
-constexpr int STATUS_TIMER_MSEC = 4000;
+constexpr int STATUS_TIMER_MSEC = 15000;
 constexpr int WAITING_TIMEOUT_MSEC = 10000;
 
 template <typename Func1>
@@ -150,9 +150,9 @@ RemoteWalletd::RemoteWalletd(const QString& endPoint, QObject* parent)
     rerunTimer_.setSingleShot(true);
     rerunTimer_.setInterval(RERUN_TIMER_MSEC);
     rerunTimer_.setSingleShot(false);
-    statusTimer_.setInterval(STATUS_TIMER_MSEC);
+//    statusTimer_.setInterval(STATUS_TIMER_MSEC);
     connect(&rerunTimer_, &QTimer::timeout, this, &RemoteWalletd::rerun);
-    connect(&statusTimer_, &QTimer::timeout, this, &RemoteWalletd::sendGetStatus);
+//    connect(&statusTimer_, &QTimer::timeout, this, &RemoteWalletd::sendGetStatus);
 }
 
 /*virtual*/
@@ -195,7 +195,7 @@ void RemoteWalletd::run()
             this, &RemoteWalletd::errorOccurred,
             [this]()
             {
-                statusTimer_.start();
+//                statusTimer_.start();
                 jsonClient_->sendGetStatus(RpcApi::GetStatus::Request{});
             });
 
@@ -211,7 +211,7 @@ void RemoteWalletd::run()
 void RemoteWalletd::stop()
 {
     rerunTimer_.stop();
-    statusTimer_.stop();
+//    statusTimer_.stop();
     setState(State::STOPPED);
 }
 
@@ -220,6 +220,18 @@ void RemoteWalletd::statusReceived(const RpcApi::Status& status)
     if (state_ != State::STOPPED)
         setState(State::CONNECTED);
     emit statusReceivedSignal(status);
+    if (state_ == State::CONNECTED)
+    {
+
+        jsonClient_->sendGetStatus(RpcApi::GetStatus::Request{
+                    status.top_block_hash,
+                    status.transaction_pool_version,
+                    status.outgoing_peer_count,
+                    status.incoming_peer_count,
+                    status.lower_level_error});
+
+        jsonClient_->sendGetBalance(RpcApi::GetBalance::Request{QString{}, -1});
+    }
 }
 
 void RemoteWalletd::transfersReceived(const RpcApi::Transfers& history)

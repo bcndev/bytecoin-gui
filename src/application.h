@@ -6,6 +6,7 @@
 #include <QApplication>
 #include <QSystemTrayIcon>
 #include <QScopedPointer>
+#include <QTimer>
 
 #include "rpcapi.h"
 #include "walletd.h"
@@ -25,6 +26,7 @@ class AddressBookManager;
 class CrashDialog;
 
 class MainWindow;
+class FileDownloader;
 
 class WalletApplication: public QApplication
 {
@@ -46,6 +48,8 @@ private:
     AddressBookManager* addressBookManager_;
     RemoteWalletd* walletd_;
     WalletModel* walletModel_;
+    FileDownloader* downloader_;
+    QTimer checkForUpdateTimer_;
 
     QScopedPointer<CrashDialog> crashDialog_;
     bool m_isAboutToQuit;
@@ -68,6 +72,7 @@ signals:
     void createWalletdSignal(QPrivateSignal);
     void exportViewOnlyKeysSignal(QWidget* parent/*, const QString& exportPath*/, QPrivateSignal);
     void exportKeysSignal(QWidget* parent, QPrivateSignal);
+    void updateIsReadySignal(const QString& newVersion);
 
 public slots:
     void createTx(const RpcApi::CreateTransaction::Request& req);
@@ -103,6 +108,8 @@ private slots:
     void requestPasswordWithConfirmation();
     void requestPasswordForExport(QProcess* walletd, QString* pass);
     void requestWalletdAuth(QAuthenticator* authenticator);
+    void checkForUpdate();
+    void updateReceived();
 
 #ifdef Q_OS_MAC
 private:

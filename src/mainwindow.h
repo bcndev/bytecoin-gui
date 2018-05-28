@@ -67,6 +67,7 @@ public:
     Q_SLOT void importKeys();
     Q_SLOT void exportViewOnlyKeys();
     Q_SLOT void exportKeys();
+    Q_SLOT void updateIsReady(const QString& newVersion);
 
 protected:
     void changeEvent(QEvent* event) override;

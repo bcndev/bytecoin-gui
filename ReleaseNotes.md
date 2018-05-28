@@ -1,5 +1,10 @@
 ## Release Notes
 
+### v3.1.1
+
+- Added ability to notify the user about the new version of the app available.
+- Updated the Bytecoin daemons.
+
 ### v3.1.0
 
 - Increment the major version to conform with the daemon versioning.

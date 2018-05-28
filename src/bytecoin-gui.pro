@@ -15,7 +15,7 @@ TEMPLATE = app
 macx: QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.11
 macx: ICON = images/bytecoin.icns
 win32: RC_ICONS = images/bytecoin.ico
-win32: VERSION = 3.18.5.21
+win32: VERSION = 3.18.5.24
 
 #QMAKE_CXXFLAGS += -fno-omit-frame-pointer -fsanitize=address,undefined
 #LIBS += -lasan -lubsan
@@ -100,7 +100,8 @@ SOURCES += main.cpp\
     createproofdialog.cpp \
     checkproofdialog.cpp \
     walletdparamsdialog.cpp \
-    exportkeydialog.cpp
+    exportkeydialog.cpp \
+    filedownloader.cpp
 
 HEADERS  += mainwindow.h \
     signalhandler.h \
@@ -161,7 +162,8 @@ HEADERS  += mainwindow.h \
     checkproofdialog.h \
     walletdparamsdialog.h \
     exportkeydialog.h \
-    version.h
+    version.h \
+    filedownloader.h
 
 FORMS    += mainwindow.ui \
     overviewframe.ui \

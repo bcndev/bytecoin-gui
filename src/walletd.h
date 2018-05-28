@@ -79,7 +79,7 @@ private:
 //    int rerunTimerId_;
 //    int statusTimerId_;
     QTimer rerunTimer_;
-    QTimer statusTimer_;
+//    QTimer statusTimer_;
 
     void setState(State state);
 //    void startRerunTimer();
