@@ -79,6 +79,7 @@ set(SOURCES
     src/checkproofdialog.cpp
     src/walletdparamsdialog.cpp
     src/exportkeydialog.cpp
+    src/filedownloader.cpp
 
 )
 

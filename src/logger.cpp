@@ -88,9 +88,9 @@ WalletLogger::WalletLogger(bool debug, QObject* parent)
 {
     qInstallMessageHandler(&WalletLogger::messageHandler);
     if (debug)
-        QLoggingCategory::setFilterRules("qt.network.ssl.warning=false\nWallet.debug=true");
+        QLoggingCategory::setFilterRules("qt.qpa.dialogs.debug=false\nqt.network.ssl.warning=false\nWallet.debug=true");
     else
-        QLoggingCategory::setFilterRules("qt.network.ssl.warning=false\nWallet.debug=false");
+        QLoggingCategory::setFilterRules("qt.qpa.dialogs.debug=false\nqt.network.ssl.warning=false\nWallet.debug=false");
 }
 
 WalletLogger::~WalletLogger()
@@ -101,6 +101,11 @@ void WalletLogger::messageHandler(QtMsgType type, const QMessageLogContext& cont
 {
     if (!QLoggingCategory(context.category).isEnabled(type))
         return;
+
+#ifdef Q_OS_WIN
+    if (msg.contains("QWindowsNativeFileDialogBase::onSelectionChange"))
+        return;
+#endif
 
     QString timeString = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz");
     QString typeString;

@@ -13,6 +13,7 @@ namespace WalletGUI
 {
 
 static constexpr int MAX_LINES = 10000;
+static constexpr int MAX_TEXT_SIZE = 1024 * 1024;
 
 LogFrame::LogFrame(QWidget *parent)
     : QFrame(parent)
@@ -80,7 +81,10 @@ void LogFrame::print(const QString& data, const QColor& color)
 void LogFrame::insertText(const QString& data, const QColor& color)
 {
     ui->textEdit->setTextColor(color.isValid() ? color : defaultColor_);
-    ui->textEdit->append(data);
+    if (data.size() > MAX_TEXT_SIZE)
+        ui->textEdit->append(data.left(MAX_TEXT_SIZE));
+    else
+        ui->textEdit->append(data);
 }
 
 void LogFrame::copyToClipboard()

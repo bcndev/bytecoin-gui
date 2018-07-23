@@ -8,6 +8,7 @@
 class QLabel;
 class QAbstractItemModel;
 class QDataWidgetMapper;
+class QTimer;
 
 namespace WalletGUI {
 
@@ -34,6 +35,7 @@ private:
     QLabel* m_bytecoindConnectionLabel;
     QMovie* m_syncMovie;
     QDataWidgetMapper* stateMapper_;
+    QTimer* updateTimer_;
     bool isSynchronized_;
 
     void nodeStateChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles);

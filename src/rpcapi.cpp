@@ -121,6 +121,7 @@ GetStatus::Response::fromJson(const QVariantMap& json)
     RPCAPI_DESERIALIZE_FIELD(value, json, lower_level_error);
     RPCAPI_DESERIALIZE_FIELD(value, json, top_block_height);
     RPCAPI_DESERIALIZE_FIELD(value, json, top_block_difficulty);
+    RPCAPI_DESERIALIZE_FIELD(value, json, top_block_cumulative_difficulty);
 
     RPCAPI_DESERIALIZE_TIMESTAMP(value, json, top_block_timestamp);
     RPCAPI_DESERIALIZE_TIMESTAMP(value, json, top_block_timestamp_median);
@@ -180,6 +181,10 @@ GetBalance::Response::fromJson(const QVariantMap& json)
     RPCAPI_DESERIALIZE_FIELD(value, json, spendable);
     RPCAPI_DESERIALIZE_FIELD(value, json, spendable_dust);
     RPCAPI_DESERIALIZE_FIELD(value, json, locked_or_unconfirmed);
+    RPCAPI_DESERIALIZE_FIELD(value, json, spendable_outputs);
+    RPCAPI_DESERIALIZE_FIELD(value, json, spendable_dust_outputs);
+    RPCAPI_DESERIALIZE_FIELD(value, json, locked_or_unconfirmed_outputs);
+
 
     return value;
 }
@@ -360,7 +365,6 @@ BlockHeader::fromJson(const QVariantMap& json)
     RPCAPI_DESERIALIZE_FIELD(value, json, size_median);
     RPCAPI_DESERIALIZE_FIELD(value, json, effective_size_median);
     RPCAPI_DESERIALIZE_TIMESTAMP(value, json, timestamp_median);
-    RPCAPI_DESERIALIZE_TIMESTAMP(value, json, timestamp_unlock);
     RPCAPI_DESERIALIZE_FIELD(value, json, total_fee_amount);
 
     return value;
@@ -410,6 +414,7 @@ Transaction::fromJson(const QVariantMap& json)
     RPCAPI_DESERIALIZE_FIELD(value, json, amount);
     RPCAPI_DESERIALIZE_FIELD(value, json, block_height);
     RPCAPI_DESERIALIZE_FIELD(value, json, block_hash);
+    RPCAPI_DESERIALIZE_FIELD(value, json, binary_size);
 
     RPCAPI_DESERIALIZE_LIST(value, json, transfers);
     RPCAPI_DESERIALIZE_TIMESTAMP(value, json, timestamp);
@@ -434,6 +439,7 @@ Transaction::toJson() const
     RPCAPI_SERIALIZE_FIELD(value, json, amount);
     RPCAPI_SERIALIZE_FIELD(value, json, block_height);
     RPCAPI_SERIALIZE_FIELD(value, json, block_hash);
+    RPCAPI_SERIALIZE_FIELD(value, json, binary_size);
 
     RPCAPI_SERIALIZE_LIST(value, json, transfers);
     RPCAPI_SERIALIZE_TIMESTAMP(value, json, timestamp);

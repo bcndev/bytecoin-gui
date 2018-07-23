@@ -1,5 +1,11 @@
 ## Release Notes
 
+### 3.2.0-beta-20180723
+
+- Remove logging wallet file names on Windows.
+- Made minor UI improvements.
+- Updated the Bytecoin daemons.
+
 ### v3.1.1
 
 - Added ability to notify the user about the new version of the app available.

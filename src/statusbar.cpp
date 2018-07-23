@@ -6,7 +6,6 @@
 #include <QLabel>
 #include <QLocale>
 #include <QMovie>
-#include <QTimerEvent>
 #include <QAbstractItemModel>
 
 #include "statusbar.h"
@@ -95,6 +94,7 @@ WalletStatusBar::WalletStatusBar(QWidget* parent)
     , m_bytecoindConnectionLabel(new QLabel(this))
     , m_syncMovie(new QMovie(this))
     , stateMapper_(new QDataWidgetMapper(this))
+    , updateTimer_(new QTimer(this))
     , isSynchronized_(false)
 {
     m_syncStatusLabel->setObjectName("m_syncStatusLabel");
@@ -110,6 +110,10 @@ WalletStatusBar::WalletStatusBar(QWidget* parent)
     addPermanentWidget(m_bytecoindConnectionLabel);
 //    addPermanentWidget(m_encryptionStatusIconLabel);
     addPermanentWidget(m_syncStatusIconLabel);
+
+    updateTimer_->setInterval(30*1000); // 30 secs
+    connect(updateTimer_, &QTimer::timeout, this, &WalletStatusBar::updateStatusDescription);
+    updateTimer_->start();
 
 //    setStyleSheet(Settings::instance().getCurrentStyle().makeStyleSheet(STATUS_BAR_STYLE_SHEET_TEMPLATE));
     setStyleSheet(STATUS_BAR_STYLE_SHEET_TEMPLATE);

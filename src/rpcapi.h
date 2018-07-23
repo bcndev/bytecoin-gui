@@ -23,7 +23,7 @@ typedef qint32 HeightOrDepth;
 typedef quint64 UnlockMoment;  // Height or Timestamp,
 typedef QString Hash;
 
-constexpr HeightOrDepth DEFAULT_CONFIRMATIONS = 5;
+constexpr HeightOrDepth DEFAULT_CONFIRMATIONS = 6;
 
 struct EmptyStruct
 {};
@@ -101,6 +101,8 @@ struct Transaction
     Hash block_hash{};
     QDateTime timestamp;
 
+    quint32 binary_size = 0;
+
     static Transaction fromJson(const QVariantMap& json);
     QVariantMap toJson() const;
 
@@ -119,7 +121,8 @@ struct Transaction
             amount,
             block_height,
             block_hash,
-            timestamp);
+            timestamp,
+            binary_size);
     }
 };
 
@@ -144,7 +147,6 @@ struct BlockHeader
     quint32 size_median = 0;
     quint32 effective_size_median = 0;
     QDateTime timestamp_median;
-    QDateTime timestamp_unlock;
     Amount total_fee_amount = 0;
 
     static BlockHeader fromJson(const QVariantMap& json);
@@ -170,7 +172,6 @@ struct BlockHeader
             size_median,
             effective_size_median,
             timestamp_median,
-            timestamp_unlock,
             total_fee_amount);
     }
 };
@@ -235,12 +236,13 @@ struct GetStatus
         QString lower_level_error{"Disconnected"};
 
         Height top_block_height = 0;
+        Height top_known_block_height = 0;
         Difficulty top_block_difficulty = 0;
+        Difficulty top_block_cumulative_difficulty = 0;
+        Amount recommended_fee_per_byte = 0;
         QDateTime top_block_timestamp;
         QDateTime top_block_timestamp_median;
         quint32 next_block_effective_median_size = 0;
-        Amount recommended_fee_per_byte = 0;
-        Height top_known_block_height = 0;
 
         static Response fromJson(const QVariantMap& json);
 
@@ -253,12 +255,13 @@ struct GetStatus
                 incoming_peer_count,
                 lower_level_error,
                 top_block_height,
+                top_known_block_height,
                 top_block_difficulty,
+                top_block_cumulative_difficulty,
+                recommended_fee_per_byte,
                 top_block_timestamp,
                 top_block_timestamp_median,
-                next_block_effective_median_size,
-                recommended_fee_per_byte,
-                top_known_block_height);
+                next_block_effective_median_size);
         }
     };
 };
@@ -310,6 +313,9 @@ struct GetBalance
         Amount spendable = 0;
         Amount spendable_dust = 0;
         Amount locked_or_unconfirmed = 0;
+        quint64 spendable_outputs = 0;
+        quint64 spendable_dust_outputs = 0;
+        quint64 locked_or_unconfirmed_outputs = 0;
 
         static Response fromJson(const QVariantMap& json);
 
@@ -318,7 +324,10 @@ struct GetBalance
             return std::tie(
                 spendable,
                 spendable_dust,
-                locked_or_unconfirmed);
+                locked_or_unconfirmed,
+                spendable_outputs,
+                spendable_dust_outputs,
+                locked_or_unconfirmed_outputs);
         }
     };
 };
