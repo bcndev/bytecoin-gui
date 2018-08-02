@@ -534,7 +534,7 @@ void WalletApplication::createProof(const QString& txHash, bool needToFind)
             &dlg,
             [&dlg](const RpcApi::Proofs& proofs)
             {
-                dlg.addProofs(proofs.send_proofs);
+                dlg.addProofs(proofs.sendproofs);
             });
 
     dlg.exec();

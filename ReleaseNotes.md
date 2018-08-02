@@ -1,8 +1,13 @@
 ## Release Notes
 
+### v3.2.0
+
+- Updated the Bytecoin daemons and API bindings.
+- Fix minor bugs found in the beta release.
+
 ### 3.2.0-beta-20180723
 
-- Remove logging wallet file names on Windows.
+- Removed logging wallet file names on Windows.
 - Made minor UI improvements.
 - Updated the Bytecoin daemons.
 
@@ -13,7 +18,7 @@
 
 ### v3.1.0
 
-- Increment the major version to conform with the daemon versioning.
+- Incremented the major version to conform with the daemon versioning.
 - Updated the Bytecoin daemons.
 
 ### v2.0.4

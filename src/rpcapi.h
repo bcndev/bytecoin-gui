@@ -430,7 +430,7 @@ struct SendTransaction
 
 struct CreateSendProof
 {
-    static constexpr char METHOD[] = "create_send_proof";
+    static constexpr char METHOD[] = "create_sendproof";
 
     struct Request
     {
@@ -443,7 +443,7 @@ struct CreateSendProof
 
     struct Response
     {
-        QStringList send_proofs;
+        QStringList sendproofs;
 
         static Response fromJson(const QVariantMap& json);
     };
@@ -451,11 +451,11 @@ struct CreateSendProof
 
 struct CheckSendProof
 {
-    static constexpr char METHOD[] = "check_send_proof";
+    static constexpr char METHOD[] = "check_sendproof";
 
     struct Request
     {
-        QString send_proof;
+        QString sendproof;
 
         QVariantMap toJson() const;
     };

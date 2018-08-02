@@ -309,6 +309,12 @@ QString Settings::getRevision()
     return REVISION;
 }
 
+/*static*/
+bool Settings::isStableVersion()
+{
+    return getVersionSuffix() == "stable";
+}
+
 void Settings::restoreDefaultPoolList()
 {
     const auto defaultPoolList = getDefaultMiningPoolList();

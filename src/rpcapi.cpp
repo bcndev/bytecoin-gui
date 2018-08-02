@@ -469,7 +469,7 @@ CreateSendProof::Response::fromJson(const QVariantMap& json)
 {
     CreateSendProof::Response value;
 
-    RPCAPI_DESERIALIZE_FIELD(value, json, send_proofs);
+    RPCAPI_DESERIALIZE_FIELD(value, json, sendproofs);
 
     return value;
 }
@@ -504,7 +504,7 @@ CheckSendProof::Request::toJson() const
     const CheckSendProof::Request& value = *this;
     QVariantMap json;
 
-    RPCAPI_SERIALIZE_FIELD(value, json, send_proof);
+    RPCAPI_SERIALIZE_FIELD(value, json, sendproof);
 
     return json;
 }
