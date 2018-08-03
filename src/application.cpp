@@ -555,10 +555,11 @@ void WalletApplication::checkProof()
 
 void WalletApplication::showWalletdParams()
 {
-    WalletdParamsDialog dlg(Settings::instance().getConnectionMethod() == ConnectionMethod::BUILTIN, m_mainWindow);
+    WalletdParamsDialog dlg(Settings::instance().getConnectionMethod() == ConnectionMethod::BUILTIN && !Settings::instance().getWalletFile().isEmpty(), m_mainWindow);
     connect(&dlg, &WalletdParamsDialog::restartWalletd, this, &WalletApplication::restartDaemon);
     BuiltinWalletd* walletd = static_cast<BuiltinWalletd*>(walletd_);
-    connect(walletd, &BuiltinWalletd::daemonErrorOccurredSignal, &dlg, &WalletdParamsDialog::reject);
+    if (walletd)
+        connect(walletd, &BuiltinWalletd::daemonErrorOccurredSignal, &dlg, &WalletdParamsDialog::reject);
     dlg.exec();
 }
 
