@@ -1,5 +1,9 @@
 ## Release Notes
 
+### v3.2.2
+
+- Updated the Bytecoin daemons.
+
 ### v3.2.1
 
 - Fixed a GUI crash in the detached state. 
