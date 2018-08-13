@@ -310,9 +310,9 @@ QString Settings::getRevision()
 }
 
 /*static*/
-bool Settings::isStableVersion()
+QString Settings::getFullVersion()
 {
-    return getVersionSuffix() == "stable";
+    return fullVersion();
 }
 
 void Settings::restoreDefaultPoolList()

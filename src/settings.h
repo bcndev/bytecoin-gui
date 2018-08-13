@@ -39,7 +39,7 @@ public:
     static QString getVersion();
     static QString getVersionSuffix();
     static QString getRevision();
-    static bool isStableVersion();
+    static QString getFullVersion();
 
     QSettings::Format getFormat() const;
 

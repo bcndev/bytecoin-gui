@@ -742,7 +742,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>&amp;Create new wallet</string>
+    <string>&amp;Create new wallet file</string>
    </property>
   </action>
   <action name="m_openWalletAction">
@@ -750,7 +750,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>&amp;Open wallet</string>
+    <string>&amp;Open wallet file</string>
    </property>
   </action>
   <action name="m_aboutBytecoinAction">
@@ -799,7 +799,7 @@
   </action>
   <action name="m_importKeysAction">
    <property name="text">
-    <string>Create wallet from &amp;keys</string>
+    <string>Create wallet file from &amp;keys</string>
    </property>
   </action>
   <action name="m_checkProofAction">
@@ -814,7 +814,7 @@
   </action>
   <action name="m_exportViewOnlyKeysAction">
    <property name="text">
-    <string>&amp;Export view only wallet</string>
+    <string>&amp;Export view only wallet file</string>
    </property>
   </action>
   <action name="m_exportKeysAction">

@@ -1,5 +1,10 @@
 ## Release Notes
 
+### v3.2.3
+
+- Made minor GUI improvements.
+- Updated the Bytecoin daemons.
+
 ### v3.2.2
 
 - Updated the Bytecoin daemons.

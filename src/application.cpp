@@ -50,7 +50,7 @@ WalletApplication::WalletApplication(int& argc, char** argv)
     , m_isAboutToQuit(false)
 {
     setApplicationName("bytecoin"); // do not change becasuse it also changes data directory under Mac and Win
-    setApplicationDisplayName(tr("Bytecoin Wallet"));
+    setApplicationDisplayName(tr("Bytecoin Wallet") + ' ' + Settings::getFullVersion());
     setApplicationVersion(VERSION);
     setQuitOnLastWindowClosed(false);
     QLocale::setDefault(QLocale::c());
@@ -458,10 +458,12 @@ void WalletApplication::requestPassword()
     BuiltinWalletd* walletd = static_cast<BuiltinWalletd*>(walletd_);
     connect(walletd, &BuiltinWalletd::daemonErrorOccurredSignal, &dlg, &AskPasswordDialog::reject);
     connect(crashDialog_.data(), &CrashDialog::rejected, &dlg, &AskPasswordDialog::reject);
+    m_mainWindow->setTitle();
     if (dlg.exec() == QDialog::Accepted)
         walletd->setPassword(dlg.getPassword());
     else
         walletd_->stop();
+    m_mainWindow->clearTitle();
 }
 
 void WalletApplication::requestPasswordWithConfirmation()
@@ -469,10 +471,12 @@ void WalletApplication::requestPasswordWithConfirmation()
     ChangePasswordDialog dlg(false, m_mainWindow);
     BuiltinWalletd* walletd = static_cast<BuiltinWalletd*>(walletd_);
     connect(walletd, &BuiltinWalletd::daemonErrorOccurredSignal, &dlg, &ChangePasswordDialog::reject);
+    m_mainWindow->setTitle();
     if (dlg.exec() == QDialog::Accepted)
         walletd->setPassword(dlg.getNewPassword());
     else
         walletd_->stop();
+    m_mainWindow->clearTitle();
 }
 
 void WalletApplication::requestPasswordForExport(QProcess* walletd, QString* pass)
@@ -581,15 +585,11 @@ void WalletApplication::checkForUpdate()
 void WalletApplication::updateReceived()
 {
     const QString newVersionStr = downloader_->downloadedData();
-    const QString currentVersionStr = VERSION;
-    bool ok = false;
-    const int newVersion = QString(newVersionStr).remove('.').toInt(&ok);
-    if (!ok)
+    if (newVersionStr.length() > 15)
         return;
-    ok = false;
-    const int currentVersion = QString(currentVersionStr).remove('.').toInt(&ok);
-    Q_ASSERT(ok);
-    if (newVersion > currentVersion)
+    const QString currentVersionStr = VERSION;
+
+    if (compareVersion(newVersionStr, currentVersionStr) > 0)
         emit updateIsReadySignal(newVersionStr);
 }
 

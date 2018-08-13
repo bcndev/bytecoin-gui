@@ -18,9 +18,7 @@ AboutDialog::AboutDialog(QWidget* parent)
     QString aboutText = m_ui->m_aboutLabel->text();
     m_ui->m_aboutLabel->setText(
             aboutText
-                .arg(Settings::getVersion())
-                .arg(Settings::isStableVersion() ? "" : Settings::getVersionSuffix())
-                .arg(Settings::isStableVersion() ? "" : Settings::getRevision())
+                .arg(Settings::getFullVersion())
                 .arg(QDateTime::currentDateTime().date().year()));
 }
 

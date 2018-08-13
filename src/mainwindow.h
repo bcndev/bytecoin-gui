@@ -45,6 +45,9 @@ public:
     void addRecipient(const QString& address, const QString& label = QString());
     QString getAddress() const;
 
+    void setTitle();
+    void clearTitle();
+
     Q_SLOT void setConnectedState();
     Q_SLOT void setDisconnectedState();
 
@@ -95,8 +98,6 @@ private:
     void setClosedState();
     void walletStateModelDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles);
     void showSendConfirmation(const RpcApi::CreatedTx& tx);
-    void setTitle();
-    void clearTitle();
 
     Q_SLOT void aboutQt();
     Q_SLOT void about();
