@@ -587,7 +587,7 @@ void WalletApplication::updateReceived()
     const QString newVersionStr = downloader_->downloadedData();
     if (newVersionStr.length() > 15)
         return;
-    const QString currentVersionStr = VERSION;
+    const QString currentVersionStr = Settings::getFullVersion();
 
     if (compareVersion(newVersionStr, currentVersionStr) > 0)
         emit updateIsReadySignal(newVersionStr);

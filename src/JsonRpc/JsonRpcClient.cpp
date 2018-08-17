@@ -242,9 +242,9 @@ void WalletClient::sendGetTransfers(const RpcApi::GetTransfers::Request& req)
     insertResponseHandler(requestID, std::bind(&WalletClient::transfersHandler, this, _1));
 }
 
-void WalletClient::sendGetAddresses()
+void WalletClient::sendGetAddresses(const RpcApi::GetAddresses::Request& req)
 {
-    const QString requestID = sendRequest(RpcApi::GetAddresses::METHOD);
+    const QString requestID = sendRequest(RpcApi::GetAddresses::METHOD, req.toJson());
     insertResponseHandler(requestID, std::bind(&WalletClient::addressesHandler, this, _1));
 }
 

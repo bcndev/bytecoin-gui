@@ -45,6 +45,7 @@ namespace {
 //const char COMMUNITY_FORUM_URL[] = "https://bytecointalk.org";
 const char COMMUNITY_FORUM_URL[] = "https://bytecoin.org";
 const char REPORT_ISSUE_URL[] = "https://bytecoin.org/contact";
+const char DOWNLOAD_URL[] = "https://github.com/bcndev/bytecoin-gui/releases";
 
 const char BUTTON_STYLE_SHEET[] =
         "QPushButton {border: none;}"
@@ -100,8 +101,13 @@ MainWindow::MainWindow(
     m_ui->statusBar->setWalletModel(walletModel_);
     m_ui->m_syncProgress->setWalletModel(walletModel_);
 
+
+    m_ui->m_addressesCountLabel->hide();
+    m_ui->m_creationTimestampLabel->hide();
     m_addressesMapper->setModel(walletModel_);
     m_addressesMapper->addMapping(m_ui->m_addressLabel, WalletModel::COLUMN_ADDRESS, "text");
+//    m_addressesMapper->addMapping(m_ui->m_addressesCountLabel, WalletModel::COLUMN_ADDRESSES_COUNT, "text");
+//    m_addressesMapper->addMapping(m_ui->m_creationTimestampLabel, WalletModel::COLUMN_CREATION_TIMESTAMP, "text");
     m_addressesMapper->addMapping(m_ui->m_viewOnlyLabel, WalletModel::COLUMN_VIEW_ONLY, "text");
     m_addressesMapper->toFirst();
     connect(walletModel_, &QAbstractItemModel::modelReset, m_addressesMapper, &QDataWidgetMapper::toFirst);
@@ -316,6 +322,8 @@ void MainWindow::splashMsg(const QString& msg)
 {
     m_ui->m_logFrame->addGuiMessage(QString("\n\n\n\n\n") + msg + '\n');
     m_ui->m_addressLabel->setText(msg);
+    m_ui->m_addressesCountLabel->setText("");
+    m_ui->m_creationTimestampLabel->setText("");
     showLog();
 }
 
@@ -466,7 +474,7 @@ void MainWindow::updateIsReady(const QString& newVersion)
 {
     m_ui->m_updateLabel->setTextInteractionFlags(Qt::LinksAccessibleByMouse);
     m_ui->m_updateLabel->setOpenExternalLinks(true);
-    m_ui->m_updateLabel->setText(QString("New version %1 of Bytecoin wallet is available.").arg(QString("<a href=\"https://bytecoin.org/downloads\">%1</a>").arg(newVersion)));
+    m_ui->m_updateLabel->setText(QString("New version %1 of Bytecoin wallet is available.").arg(QString(QString("<a href=\"") + DOWNLOAD_URL + "\">%1</a>").arg(newVersion)));
     m_ui->m_updateLabel->show();
 }
 

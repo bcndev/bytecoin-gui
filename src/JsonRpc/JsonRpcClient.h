@@ -82,7 +82,7 @@ public:
 
     void sendGetStatus(const RpcApi::GetStatus::Request& req);
     void sendGetTransfers(const RpcApi::GetTransfers::Request& req);
-    void sendGetAddresses();
+    void sendGetAddresses(const RpcApi::GetAddresses::Request& req);
     void sendGetBalance(const RpcApi::GetBalance::Request& req);
 //    void sendGetUnspent(const RpcApi::GetUnspent::Request& req);
     void sendGetViewKey();

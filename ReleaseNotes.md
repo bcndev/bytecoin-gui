@@ -1,5 +1,10 @@
 ## Release Notes
 
+### v3.2.4
+
+- Improved the check sendproof dialog's UX.
+- Updated the Bytecoin daemons.
+
 ### v3.2.3
 
 - Made minor GUI improvements.

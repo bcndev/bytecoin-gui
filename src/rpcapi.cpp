@@ -154,10 +154,26 @@ GetAddresses::Response::fromJson(const QVariantMap& json)
 {
     GetAddresses::Response value;
 
-    RPCAPI_DESERIALIZE_FIELD(value, json, addresses);
     RPCAPI_DESERIALIZE_FIELD(value, json, view_only);
+    RPCAPI_DESERIALIZE_TIMESTAMP(value, json, wallet_creation_timestamp);
+    RPCAPI_DESERIALIZE_FIELD(value, json, total_addresses_count);
+    RPCAPI_DESERIALIZE_FIELD(value, json, addresses);
+    RPCAPI_DESERIALIZE_FIELD(value, json, secret_spend_keys);
 
     return value;
+}
+
+QVariantMap
+GetAddresses::Request::toJson() const
+{
+    const GetAddresses::Request& value = *this;
+    QVariantMap json;
+
+    RPCAPI_SERIALIZE_FIELD(value, json, need_secret_spend_keys);
+    RPCAPI_SERIALIZE_FIELD(value, json, from_address);
+    RPCAPI_SERIALIZE_FIELD(value, json, max_count);
+
+    return json;
 }
 
 /*static*/

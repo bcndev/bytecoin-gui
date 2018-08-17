@@ -204,7 +204,7 @@ void RemoteWalletd::run()
 //            this, &RemoteWalletd::errorOccurred,
 //            this, &RemoteWalletd::statusReceived);
 
-    jsonClient_->sendGetAddresses();
+    jsonClient_->sendGetAddresses(RpcApi::GetAddresses::Request{});
 }
 
 /*virtual*/

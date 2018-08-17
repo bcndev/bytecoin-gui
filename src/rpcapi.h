@@ -270,12 +270,23 @@ struct GetAddresses
 {
     static constexpr char METHOD[] = "get_addresses";
 
-    using Request = EmptyStruct;
+    struct Request
+    {
+        bool need_secret_spend_keys = false;
+        quint32 from_address = 0; // We can now iterate through addresses
+        quint32 max_count = 1; // we need only 1 address in gui
+
+        QVariantMap toJson() const;
+    };
 
     struct Response
     {
+        bool view_only = false;
+        QDateTime wallet_creation_timestamp;
+        quint32 total_addresses_count = 0;
+
         QStringList addresses;
-        bool view_only = false; // TODO show flag in gui
+        QStringList secret_spend_keys;
 
         static Response fromJson(const QVariantMap& json);
     };

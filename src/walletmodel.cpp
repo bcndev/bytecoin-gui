@@ -23,6 +23,8 @@ struct WalletModelState
     QList<RpcApi::Transaction> txs;
     QList<QString> addresses;
     bool viewOnly = false;
+    QDateTime creationTimestamp;
+    quint32 addressesCount = 0;
 
     RemoteWalletd::State walletdState = RemoteWalletd::State::STOPPED;
     int unconfirmedSize = 0;
@@ -181,10 +183,14 @@ void WalletModel::addressesReceived(const RpcApi::Addresses& response)
 
     containerReceived(pimpl_->addresses, addresses, pimpl_->txs.size());
     pimpl_->viewOnly = response.view_only;
+    pimpl_->addressesCount = response.total_addresses_count;
+    pimpl_->creationTimestamp = response.wallet_creation_timestamp;
 
     QVector<int> changedAddressRoles;
     changedAddressRoles << Qt::EditRole << Qt::DisplayRole
         << ROLE_ADDRESS
+        << ROLE_CREATION_TIMESTAMP
+        << ROLE_ADDRESSES_COUNT
         << ROLE_VIEW_ONLY;
 
     emit dataChanged(index(0, COLUMN_ADDRESS), index(pimpl_->addresses.size() - 1, COLUMN_VIEW_ONLY), changedAddressRoles);
@@ -464,8 +470,12 @@ QVariant WalletModel::getDisplayRoleAddresses(const QModelIndex& index) const
     {
     case COLUMN_ADDRESS:
         return pimpl_->addresses[index.row()];
+    case COLUMN_CREATION_TIMESTAMP:
+        return tr("Wallet created: %1.").arg(pimpl_->creationTimestamp.toString(Qt::SystemLocaleShortDate));
+    case COLUMN_ADDRESSES_COUNT:
+        return tr("Total addresses in the wallet: %1.").arg(pimpl_->addressesCount);
     case COLUMN_VIEW_ONLY:
-        return pimpl_->viewOnly ? tr("(View only)") : QString{};
+        return pimpl_->viewOnly ? tr("The wallet is view only.") : QString{};
     }
 
     return QVariant();
@@ -480,6 +490,10 @@ QVariant WalletModel::getUserRoleAddresses(const QModelIndex& index, int role) c
     {
     case ROLE_ADDRESS:
         return pimpl_->addresses[index.row()];
+    case ROLE_CREATION_TIMESTAMP:
+        return pimpl_->creationTimestamp;
+    case ROLE_ADDRESSES_COUNT:
+        return pimpl_->addressesCount;
     case ROLE_VIEW_ONLY:
         return pimpl_->viewOnly;
     }

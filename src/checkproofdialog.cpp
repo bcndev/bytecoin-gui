@@ -41,7 +41,7 @@ void CheckProofDialog::pasteFromClipboard()
 
 void CheckProofDialog::proofChanged()
 {
-    ui->resultLabel->setText(QString("<b><font color='red'>%1</font></b>").arg(tr("Unchecked")));
+    ui->resultLabel->setText(/*QString("<b><font color='red'>%1</font></b>").arg(*/tr("Ready to check"))/*)*/;
 
     clear();
 
@@ -51,10 +51,16 @@ void CheckProofDialog::proofChanged()
     QJsonParseError parseError;
     QJsonDocument jsonDocument = QJsonDocument::fromJson(proofBytes, &parseError);
     if (parseError.error != QJsonParseError::NoError)
+    {
+        ui->resultLabel->setText(QString("<b><font color='red'>%1</font></b>").arg(tr("The entered text is not a valid JSON object")));
         return;
+    }
 
     if (!jsonDocument.isObject())
+    {
+        ui->resultLabel->setText(QString("<b><font color='red'>%1</font></b>").arg(tr("The entered text is not a valid JSON object")));
         return;
+    }
     const QJsonObject json = jsonDocument.object();
     const RpcApi::Proof proof = RpcApi::Proof::fromJson(json.toVariantMap());
 

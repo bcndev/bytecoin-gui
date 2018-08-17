@@ -25,6 +25,8 @@ public:
     enum Columns
     {
         COLUMN_ADDRESS = 0, // getAddresses
+        COLUMN_CREATION_TIMESTAMP,
+        COLUMN_ADDRESSES_COUNT,
         COLUMN_VIEW_ONLY,
 
         COLUMN_UNLOCK_TIME, // listHistory (transactions)
@@ -67,6 +69,8 @@ public:
     enum Roles
     {
         ROLE_ADDRESS = Qt::UserRole,
+        ROLE_CREATION_TIMESTAMP,
+        ROLE_ADDRESSES_COUNT,
         ROLE_VIEW_ONLY,
 
         ROLE_UNLOCK_TIME, // listHistory (transactions)
