@@ -175,15 +175,16 @@ void WalletModel::containerReceived(Container& oldContainer, const Container& ne
     }
 }
 
-void WalletModel::addressesReceived(const RpcApi::Addresses& response)
+void WalletModel::walletInfoReceived(const RpcApi::WalletInfo& response)
 {
-    const QList<QString>& addresses = response.addresses;
+    QList<QString> addresses;
+    addresses.append(response.first_address);
     if (pimpl_->addresses == addresses && pimpl_->viewOnly == response.view_only)
         return;
 
     containerReceived(pimpl_->addresses, addresses, pimpl_->txs.size());
     pimpl_->viewOnly = response.view_only;
-    pimpl_->addressesCount = response.total_addresses_count;
+    pimpl_->addressesCount = response.total_address_count;
     pimpl_->creationTimestamp = response.wallet_creation_timestamp;
 
     QVector<int> changedAddressRoles;
@@ -223,10 +224,20 @@ void WalletModel::transfersReceived(const RpcApi::Transfers& history)
             return;
         if (rcvdTxs.first().block_height < getBottomConfirmedBlock())
         {
-            QList<RpcApi::Transaction> newTxs = pimpl_->txs;
-            newTxs.append(rcvdTxs);
-            containerReceived(pimpl_->txs, newTxs, pimpl_->addresses.size());
+//            QList<RpcApi::Transaction> newTxs = pimpl_->txs;
+//            newTxs.append(rcvdTxs);
+
+            beginInsertRows(QModelIndex(), rowCount(), pimpl_->txs.size() + rcvdTxs.size() - 1);
+            pimpl_->txs.append(std::move(rcvdTxs));
+//            oldContainer = newContainer;
+            endInsertRows();
+
+//            containerReceived(pimpl_->txs, newTxs, pimpl_->addresses.size());
             pimpl_->canFetchMore = history.next_to_height != 0;
+            if (pimpl_->canFetchMore)
+                emit fetchedSignal();
+            else
+                emit nothingToFetchSignal();
         }
         else if (rcvdTxs.last().block_height > getTopConfirmedBlock())
         {
@@ -511,12 +522,12 @@ QVariant WalletModel::getDisplayRoleHistory(const QModelIndex& index) const
     {
     case COLUMN_UNLOCK_TIME:
     {
-        if (tx.unlock_time == 0)
+        if (tx.unlock_block_or_timestamp == 0)
             return QVariant();
-        if (isTransactionSpendTimeUnlocked(tx.unlock_time, tx.block_height, pimpl_->status.top_block_timestamp_median.toTime_t()))
+        if (isTransactionSpendTimeUnlocked(tx.unlock_block_or_timestamp, pimpl_->status.top_block_height, pimpl_->status.top_block_timestamp_median.toTime_t()))
             return tr("Unlocked");
-        if (tx.unlock_time < CRYPTONOTE_MAX_BLOCK_NUMBER)
-            return tr("Locked till %1 block").arg(tx.unlock_time);
+        if (tx.unlock_block_or_timestamp < CRYPTONOTE_MAX_BLOCK_NUMBER)
+            return tr("Locked till %1 block").arg(tx.unlock_block_or_timestamp);
         return tr("Locked till %1").arg(tx.timestamp.toString(Qt::SystemLocaleShortDate));
     }
     case COLUMN_PAYMENT_ID:
@@ -596,7 +607,7 @@ QVariant WalletModel::getUserRoleHistory(const QModelIndex& index, int role) con
     switch (role)
     {
     case ROLE_UNLOCK_TIME:
-        return tx.unlock_time;
+        return tx.unlock_block_or_timestamp;
     case ROLE_PAYMENT_ID:
         return tx.payment_id;
     case ROLE_ANONYMITY:
@@ -609,7 +620,7 @@ QVariant WalletModel::getUserRoleHistory(const QModelIndex& index, int role) con
         return tx.public_key;
     case ROLE_EXTRA:
         return tx.extra;
-    case COLUMN_COINBASE:
+    case ROLE_COINBASE:
         return tx.coinbase;
     case ROLE_AMOUNT:
     {
@@ -940,5 +951,16 @@ bool WalletModel::canFetchMore(const QModelIndex& parent) const
 {
     return !parent.isValid() && pimpl_->canFetchMore;
 }
+
+int WalletModel::getTopFetchedHeight() const
+{
+    return getTopConfirmedBlock();
+}
+
+int WalletModel::getBottomFetchedHeight() const
+{
+    return canFetchMore() ? getBottomConfirmedBlock() : 0;
+}
+
 
 }

@@ -1,5 +1,10 @@
 ## Release Notes
 
+### v3.3.0
+
+- Added exporting of transactions to CSV file.
+- Updated the Bytecoin daemons.
+
 ### v3.2.4
 
 - Improved the check sendproof dialog's UX.

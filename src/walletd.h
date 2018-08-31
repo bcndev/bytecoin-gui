@@ -50,7 +50,7 @@ public:
 signals:
     void statusReceivedSignal(const RpcApi::Status& status);
     void transfersReceivedSignal(const RpcApi::Transfers& history);
-    void addressesReceivedSignal(const RpcApi::Addresses& addresses);
+    void walletInfoReceivedSignal(const RpcApi::WalletInfo& info);
     void balanceReceivedSignal(const RpcApi::Balance& balance);
     void viewKeyReceivedSignal(const RpcApi::ViewKey& viewKey);
     void unspentsReceivedSignal(const RpcApi::Unspents& unspents);
@@ -91,7 +91,7 @@ private:
 private slots:
     void statusReceived(const RpcApi::Status& status);
     void transfersReceived(const RpcApi::Transfers& history);
-    void addressesReceived(const RpcApi::Addresses& addresses);
+    void walletInfoReceived(const RpcApi::WalletInfo& info);
     void balanceReceived(const RpcApi::Balance& balance);
     void viewKeyReceived(const RpcApi::ViewKey& viewKey);
     void unspentsReceived(const RpcApi::Unspents& unspents);

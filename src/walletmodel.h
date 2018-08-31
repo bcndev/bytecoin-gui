@@ -120,8 +120,8 @@ public:
     virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
     virtual QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const override;
     virtual QModelIndex parent(const QModelIndex& index) const override;
-    virtual bool canFetchMore(const QModelIndex& parent) const override;
-    virtual void fetchMore(const QModelIndex& parent) override;
+    virtual bool canFetchMore(const QModelIndex& parent = QModelIndex{}) const override;
+    virtual void fetchMore(const QModelIndex& parent = QModelIndex{}) override;
 
     void reset();
 
@@ -137,13 +137,18 @@ public:
     quint32 getPeerCountSum() const;
     QString getLowerLevelError() const;
 
+    int getTopFetchedHeight() const;
+    int getBottomFetchedHeight() const;
+
 signals:
     void getTransfersSignal(const RpcApi::GetTransfers::Request& req);
+    void fetchedSignal();
+    void nothingToFetchSignal();
 
 public slots:
     void statusReceived(const RpcApi::Status& status);
     void transfersReceived(const RpcApi::Transfers& history);
-    void addressesReceived(const RpcApi::Addresses& addresses);
+    void walletInfoReceived(const RpcApi::WalletInfo& info);
     void balanceReceived(const RpcApi::Balance& balance);
     void viewKeyReceived(const RpcApi::ViewKey& viewKey);
     void unspentsReceived(const RpcApi::Unspents& unspents);

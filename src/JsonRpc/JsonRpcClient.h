@@ -82,7 +82,7 @@ public:
 
     void sendGetStatus(const RpcApi::GetStatus::Request& req);
     void sendGetTransfers(const RpcApi::GetTransfers::Request& req);
-    void sendGetAddresses(const RpcApi::GetAddresses::Request& req);
+    void sendGetWalletInfo();
     void sendGetBalance(const RpcApi::GetBalance::Request& req);
 //    void sendGetUnspent(const RpcApi::GetUnspent::Request& req);
     void sendGetViewKey();
@@ -94,7 +94,7 @@ public:
 signals:
     void statusReceived(const RpcApi::Status& result) const;
     void transfersReceived(const RpcApi::Transfers& result) const;
-    void addressesReceived(const RpcApi::Addresses& result) const;
+    void walletInfoReceived(const RpcApi::WalletInfo& result) const;
     void balanceReceived(const RpcApi::Balance& result) const;
     void viewKeyReceived(const RpcApi::ViewKey& result) const;
     void unspentReceived(const RpcApi::Unspents& result) const;
@@ -106,7 +106,7 @@ signals:
 private:
     void statusHandler(const JsonRpcResponse& response);
     void transfersHandler(const JsonRpcResponse& response);
-    void addressesHandler(const JsonRpcResponse& response);
+    void walletInfoHandler(const JsonRpcResponse& response);
     void balanceHandler(const JsonRpcResponse& response);
     void viewKeyHandler(const JsonRpcResponse& response);
 //    void unspentHandler(const JsonRpcResponse& response);

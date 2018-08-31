@@ -157,7 +157,7 @@ void WalletApplication::subscribeToWalletd()
     connect(walletModel_, &WalletModel::getTransfersSignal, walletd_, &RemoteWalletd::getTransfers);
     connect(walletd_, &RemoteWalletd::statusReceivedSignal, walletModel_, &WalletModel::statusReceived);
     connect(walletd_, &RemoteWalletd::transfersReceivedSignal, walletModel_, &WalletModel::transfersReceived);
-    connect(walletd_, &RemoteWalletd::addressesReceivedSignal, walletModel_, &WalletModel::addressesReceived);
+    connect(walletd_, &RemoteWalletd::walletInfoReceivedSignal, walletModel_, &WalletModel::walletInfoReceived);
     connect(walletd_, &RemoteWalletd::balanceReceivedSignal, walletModel_, &WalletModel::balanceReceived);
     connect(walletd_, &RemoteWalletd::viewKeyReceivedSignal, walletModel_, &WalletModel::viewKeyReceived);
     connect(walletd_, &RemoteWalletd::unspentsReceivedSignal, walletModel_, &WalletModel::unspentsReceived);

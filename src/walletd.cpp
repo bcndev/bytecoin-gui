@@ -124,7 +124,7 @@ RemoteWalletd::RemoteWalletd(const QString& endPoint, QObject* parent)
 //    , rerunTimerId_(-1)
 //    , statusTimerId_(-1)
 {
-    connect(jsonClient_, &JsonRpc::WalletClient::addressesReceived, this, &RemoteWalletd::addressesReceived);
+    connect(jsonClient_, &JsonRpc::WalletClient::walletInfoReceived, this, &RemoteWalletd::walletInfoReceived);
     connect(jsonClient_, &JsonRpc::WalletClient::statusReceived, this, &RemoteWalletd::statusReceived);
     connect(jsonClient_, &JsonRpc::WalletClient::transfersReceived, this, &RemoteWalletd::transfersReceived);
     connect(jsonClient_, &JsonRpc::WalletClient::balanceReceived, this, &RemoteWalletd::balanceReceived);
@@ -191,7 +191,7 @@ void RemoteWalletd::run()
     setState(State::CONNECTING);
 
     onceCallOrDieConnect(
-            jsonClient_, &JsonRpc::WalletClient::addressesReceived,
+            jsonClient_, &JsonRpc::WalletClient::walletInfoReceived,
             this, &RemoteWalletd::errorOccurred,
             [this]()
             {
@@ -204,7 +204,7 @@ void RemoteWalletd::run()
 //            this, &RemoteWalletd::errorOccurred,
 //            this, &RemoteWalletd::statusReceived);
 
-    jsonClient_->sendGetAddresses(RpcApi::GetAddresses::Request{});
+    jsonClient_->sendGetWalletInfo();
 }
 
 /*virtual*/
@@ -239,9 +239,9 @@ void RemoteWalletd::transfersReceived(const RpcApi::Transfers& history)
     emit transfersReceivedSignal(history);
 }
 
-void RemoteWalletd::addressesReceived(const RpcApi::Addresses& addresses)
+void RemoteWalletd::walletInfoReceived(const RpcApi::WalletInfo& info)
 {
-    emit addressesReceivedSignal(addresses);
+    emit walletInfoReceivedSignal(info);
 }
 
 void RemoteWalletd::balanceReceived(const RpcApi::Balance& balance)

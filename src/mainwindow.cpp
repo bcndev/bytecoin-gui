@@ -101,7 +101,6 @@ MainWindow::MainWindow(
     m_ui->statusBar->setWalletModel(walletModel_);
     m_ui->m_syncProgress->setWalletModel(walletModel_);
 
-
     m_ui->m_addressesCountLabel->hide();
     m_ui->m_creationTimestampLabel->hide();
     m_addressesMapper->setModel(walletModel_);

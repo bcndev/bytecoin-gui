@@ -5,9 +5,14 @@
 #include <QPushButton>
 #include <QAbstractItemModel>
 #include <QMouseEvent>
+#include <QFileDialog>
+#include <QTextStream>
+#include <QMessageBox>
+#include <QProgressDialog>
 
 #include "overviewframe.h"
 #include "walletmodel.h"
+#include "rpcapi.h"
 
 #include "ui_overviewframe.h"
 
@@ -39,10 +44,31 @@ namespace {
 
 }
 
+//const QMap<int, int> indices =
+//        {{ WalletModel::COLUMN_AMOUNT, 0 },
+//         { WalletModel::COLUMN_FEE, 1 },
+//         { WalletModel::COLUMN_HASH, 2 },
+//         { WalletModel::COLUMN_BLOCK_HEIGHT, 3 },
+//         { WalletModel::COLUMN_BLOCK_HASH, 4 },
+//         { WalletModel::COLUMN_TIMESTAMP, 5 },
+//         { WalletModel::COLUMN_UNLOCK_TIME, 6 },
+//         { WalletModel::COLUMN_PROOF, 7}};
+
+const QList<int> columns_order =
+    { WalletModel::COLUMN_AMOUNT,
+      WalletModel::COLUMN_FEE,
+      WalletModel::COLUMN_HASH,
+      WalletModel::COLUMN_BLOCK_HASH,
+      WalletModel::COLUMN_TIMESTAMP,
+      WalletModel::COLUMN_BLOCK_HEIGHT,
+      WalletModel::COLUMN_UNLOCK_TIME,
+      WalletModel::COLUMN_PROOF };
+
 OverviewFrame::OverviewFrame(QWidget* parent)
     : QFrame(parent)
     , m_ui(new Ui::OverviewFrame)
     , m_mainWindow(nullptr)
+    , m_csvExporter(nullptr)
 {
     m_ui->setupUi(this);
 
@@ -55,67 +81,31 @@ OverviewFrame::OverviewFrame(QWidget* parent)
 OverviewFrame::~OverviewFrame()
 {}
 
-void OverviewFrame::setTransactionsModel(QAbstractItemModel* model)
+void OverviewFrame::setTransactionsModel(WalletModel* model)
 {
-    // TODO: change QHash to QList, join moveSection & setColumnHidden into one cycle
-    QHash<int, int> indices =
-        {{ WalletModel::COLUMN_AMOUNT, 0 },
-         { WalletModel::COLUMN_FEE, 1 },
-         { WalletModel::COLUMN_HASH, 2 },
-         { WalletModel::COLUMN_BLOCK_HEIGHT, 3 },
-         { WalletModel::COLUMN_BLOCK_HASH, 4 },
-         { WalletModel::COLUMN_TIMESTAMP, 5 },
-         { WalletModel::COLUMN_UNLOCK_TIME, 6 },
-         { WalletModel::COLUMN_PROOF, 7}};
-
     m_transactionsModel = model;
-    m_ui->m_recentTransactionsView->setModel(m_transactionsModel);
-
-    QHeaderView& header = *m_ui->m_recentTransactionsView->horizontalHeader();
-    header.setResizeContentsPrecision(-1);
-    header.moveSection(header.visualIndex(WalletModel::COLUMN_AMOUNT), indices[WalletModel::COLUMN_AMOUNT]);
-    header.moveSection(header.visualIndex(WalletModel::COLUMN_FEE), indices[WalletModel::COLUMN_FEE]);
-    header.moveSection(header.visualIndex(WalletModel::COLUMN_BLOCK_HEIGHT), indices[WalletModel::COLUMN_BLOCK_HEIGHT]);
-    header.moveSection(header.visualIndex(WalletModel::COLUMN_HASH), indices[WalletModel::COLUMN_HASH]);
-    header.moveSection(header.visualIndex(WalletModel::COLUMN_BLOCK_HASH), indices[WalletModel::COLUMN_BLOCK_HASH]);
-    header.moveSection(header.visualIndex(WalletModel::COLUMN_UNLOCK_TIME), indices[WalletModel::COLUMN_UNLOCK_TIME]);
-    header.moveSection(header.visualIndex(WalletModel::COLUMN_PROOF), indices[WalletModel::COLUMN_PROOF]);
-    header.moveSection(header.visualIndex(WalletModel::COLUMN_TIMESTAMP), indices[WalletModel::COLUMN_TIMESTAMP]);
+    m_ui->m_recentTransactionsView->setModel(model);
 
     const int columns = m_transactionsModel->columnCount();
     // hide all columns
     for (int i = 0; i < columns; ++i)
         m_ui->m_recentTransactionsView->setColumnHidden(i, true);
 
-    // then unhide needed ones
-    m_ui->m_recentTransactionsView->setColumnHidden(WalletModel::COLUMN_AMOUNT, false);
-    m_ui->m_recentTransactionsView->setColumnHidden(WalletModel::COLUMN_FEE, false);
-    m_ui->m_recentTransactionsView->setColumnHidden(WalletModel::COLUMN_HASH, false);
-    m_ui->m_recentTransactionsView->setColumnHidden(WalletModel::COLUMN_BLOCK_HEIGHT, false);
-    m_ui->m_recentTransactionsView->setColumnHidden(WalletModel::COLUMN_BLOCK_HASH, false);
-    m_ui->m_recentTransactionsView->setColumnHidden(WalletModel::COLUMN_TIMESTAMP, false);
-    m_ui->m_recentTransactionsView->setColumnHidden(WalletModel::COLUMN_UNLOCK_TIME, false);
-    m_ui->m_recentTransactionsView->setColumnHidden(WalletModel::COLUMN_PROOF, false);
+    QHeaderView& header = *m_ui->m_recentTransactionsView->horizontalHeader();
+    header.setResizeContentsPrecision(-1);
 
-    header.setSectionResizeMode(WalletModel::COLUMN_AMOUNT, QHeaderView::ResizeToContents);
-    header.setSectionResizeMode(WalletModel::COLUMN_FEE,  QHeaderView::ResizeToContents);
-    header.setSectionResizeMode(WalletModel::COLUMN_HASH,  QHeaderView::Stretch);
-    header.setSectionResizeMode(WalletModel::COLUMN_BLOCK_HEIGHT,  QHeaderView::ResizeToContents);
-    header.setSectionResizeMode(WalletModel::COLUMN_BLOCK_HASH,  QHeaderView::Stretch);
-    header.setSectionResizeMode(WalletModel::COLUMN_TIMESTAMP,  QHeaderView::ResizeToContents);
-    header.setSectionResizeMode(WalletModel::COLUMN_UNLOCK_TIME,  QHeaderView::ResizeToContents);
-    header.setSectionResizeMode(WalletModel::COLUMN_PROOF,  QHeaderView::ResizeToContents);
+    for (int i = 0; i < columns_order.size(); ++i)
+    {
+        const int column = columns_order[i];
+        header.moveSection(header.visualIndex(column), i);
+        header.setSectionResizeMode(column, (column == WalletModel::COLUMN_HASH || column == WalletModel::COLUMN_BLOCK_HASH) ? QHeaderView::Stretch : QHeaderView::ResizeToContents);
 
-//    header.setSectionResizeMode(WalletModel::COLUMN_AMOUNT, QHeaderView::Fixed);
-//    header.setSectionResizeMode(WalletModel::COLUMN_FEE, QHeaderView::Fixed);
-//    header.setSectionResizeMode(WalletModel::COLUMN_BLOCK_HEIGHT, QHeaderView::Fixed);
-//    header.setSectionResizeMode(WalletModel::COLUMN_HASH, QHeaderView::Stretch);
-//    header.setSectionResizeMode(WalletModel::COLUMN_BLOCK_HASH, QHeaderView::Stretch);
-//    header.setSectionResizeMode(WalletModel::COLUMN_UNLOCK_TIME, QHeaderView::Fixed);
-//    header.setSectionResizeMode(WalletModel::COLUMN_TIMESTAMP, QHeaderView::Fixed);
-//    header.resizeSection(newTransactionColumn, 6);
-//    header.resizeSection(timeColumn, 180);
-//    header.resizeSection(amountColumn, 220);
+        // then unhide needed ones
+        m_ui->m_recentTransactionsView->setColumnHidden(column, false);
+    }
+
+    delete m_csvExporter;
+    m_csvExporter = new CSVTransactionsExporter(model, this);
 }
 
 void OverviewFrame::setWalletModel(WalletModel* walletModel)
@@ -142,6 +132,11 @@ void OverviewFrame::rowsInserted(const QModelIndex& /*parent*/, int /*first*/, i
 void OverviewFrame::setMainWindow(QWidget* mainWindow)
 {
     m_mainWindow = mainWindow;
+}
+
+void OverviewFrame::exportToCSV()
+{
+    m_csvExporter->start();
 }
 
 bool OverviewFrame::eventFilter(QObject* object, QEvent* event)
@@ -206,6 +201,121 @@ bool OverviewFrame::eventFilter(QObject* object, QEvent* event)
     return false;
 }
 
+CSVTransactionsExporter::CSVTransactionsExporter(WalletModel* transactionsModel, QWidget* parent)
+    : parent_(parent)
+    , file_(this)
+    , csv_(&file_)
+    , exportProgressDlg_(nullptr)
+    , transactionsModel_(transactionsModel)
+{
+}
 
+void CSVTransactionsExporter::start()
+{
+    const QString fileName = QFileDialog::getSaveFileName(
+                parent_,
+                tr("Export to CSV file"),
+                QDir::homePath(),
+                tr("CSV files (*.csv);;All files (*)"));
+    if (fileName.isEmpty())
+        return;
+
+    file_.setFileName(fileName);
+    if (!file_.open(QIODevice::WriteOnly))
+    {
+        QMessageBox::critical(parent_, tr("Error"), tr("Failed to open the specified file (%1)").arg(fileName));
+        return;
+    }
+
+    exportProgressDlg_ = new QProgressDialog(parent_);
+    exportProgressDlg_->setLabelText(tr("Exporting..."));
+    exportProgressDlg_->setWindowModality(Qt::WindowModal);
+    exportProgressDlg_->setRange(0, 0);
+    exportProgressDlg_->setValue(0);
+    exportProgressDlg_->setMinimumDuration(500);
+//    exportProgressDlg_->show();
+
+    writeHeader();
+
+    if (transactionsModel_->canFetchMore())
+    {
+        connect(transactionsModel_, &WalletModel::fetchedSignal, this, &CSVTransactionsExporter::fetched);
+        connect(transactionsModel_, &WalletModel::nothingToFetchSignal, this, &CSVTransactionsExporter::finish);
+        connect(transactionsModel_, &WalletModel::modelAboutToBeReset, exportProgressDlg_, &QProgressDialog::cancel);
+        connect(exportProgressDlg_, &QProgressDialog::canceled, this, &CSVTransactionsExporter::cancel);
+        transactionsModel_->fetchMore();
+    }
+    else
+    {
+        writeData();
+        close();
+        QMessageBox::information(parent_, tr("Info"), tr("Transaction history successfully exported."));
+    }
+}
+
+void CSVTransactionsExporter::writeHeader()
+{
+    QStringList columns;
+    for(int i = 0; i < columns_order.size(); ++i)
+    {
+        const int column = columns_order[i];
+        if (column != WalletModel::COLUMN_PROOF) // skip proof column
+            columns << transactionsModel_->headerData(columns_order[i], Qt::Horizontal).toString();
+    }
+    csv_ << columns.join(';') + '\n';
+}
+
+void CSVTransactionsExporter::writeData()
+{
+    const int rowCount = transactionsModel_->rowCount();
+    for(int row = 0; row < rowCount; ++row)
+    {
+        QStringList columns;
+        for(int i = 0; i < columns_order.size(); ++i)
+        {
+            const int column = columns_order[i];
+            if (column != WalletModel::COLUMN_PROOF) // skip proof column
+                columns << transactionsModel_->data(transactionsModel_->index(row, column)).toString();
+        }
+        csv_ << columns.join(';') + '\n';
+    }
+}
+
+void CSVTransactionsExporter::close()
+{
+    exportProgressDlg_->setMaximum(1);
+    exportProgressDlg_->setValue(exportProgressDlg_->maximum());
+    exportProgressDlg_->deleteLater();
+    file_.close();
+}
+
+void CSVTransactionsExporter::fetched()
+{
+    if (transactionsModel_->canFetchMore())
+        transactionsModel_->fetchMore();
+}
+
+void CSVTransactionsExporter::reset()
+{
+    disconnect(transactionsModel_, &WalletModel::fetchedSignal, this, &CSVTransactionsExporter::fetched);
+    disconnect(transactionsModel_, &WalletModel::nothingToFetchSignal, this, &CSVTransactionsExporter::finish);
+    disconnect(transactionsModel_, &WalletModel::modelAboutToBeReset, exportProgressDlg_, &QProgressDialog::cancel);
+    disconnect(exportProgressDlg_, &QProgressDialog::canceled, this, &CSVTransactionsExporter::cancel);
+
+    writeData();
+    close();
+}
+
+void CSVTransactionsExporter::finish()
+{
+    reset();
+    QMessageBox::information(parent_, tr("Info"), tr("Transaction history successfully exported."));
+}
+
+void CSVTransactionsExporter::cancel()
+{
+    reset();
+    QMessageBox::information(parent_, tr("Info"), tr("Operation aborted."));
+}
 
 }

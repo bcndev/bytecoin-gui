@@ -251,7 +251,7 @@ void SendFrame::sendClicked()
     tx.transfers = trs;
     tx.payment_id = paymentId;
     tx.anonymity = m_ui->m_mixinSlider->value();
-    tx.unlock_time = 0;
+    tx.unlock_block_or_timestamp = 0;
 
     emit createTxSignal(tx, getFeeFromSlider(m_ui->m_feeSlider->value()));
 }

@@ -242,10 +242,10 @@ void WalletClient::sendGetTransfers(const RpcApi::GetTransfers::Request& req)
     insertResponseHandler(requestID, std::bind(&WalletClient::transfersHandler, this, _1));
 }
 
-void WalletClient::sendGetAddresses(const RpcApi::GetAddresses::Request& req)
+void WalletClient::sendGetWalletInfo()
 {
-    const QString requestID = sendRequest(RpcApi::GetAddresses::METHOD, req.toJson());
-    insertResponseHandler(requestID, std::bind(&WalletClient::addressesHandler, this, _1));
+    const QString requestID = sendRequest(RpcApi::GetWalletInfo::METHOD);
+    insertResponseHandler(requestID, std::bind(&WalletClient::walletInfoHandler, this, _1));
 }
 
 void WalletClient::sendGetViewKey()
@@ -316,7 +316,7 @@ void WalletClient::transfersHandler(const JsonRpcResponse& response)
     emit transfersReceived(RpcApi::Transfers::fromJson(result));
 }
 
-void WalletClient::addressesHandler(const JsonRpcResponse& response)
+void WalletClient::walletInfoHandler(const JsonRpcResponse& response)
 {
     if (response.isErrorResponse())
     {
@@ -326,7 +326,7 @@ void WalletClient::addressesHandler(const JsonRpcResponse& response)
     }
 
     const QVariantMap result = response.getResultAsObject();
-    emit addressesReceived(RpcApi::Addresses::fromJson(result));
+    emit walletInfoReceived(RpcApi::WalletInfo::fromJson(result));
 }
 
 void WalletClient::balanceHandler(const JsonRpcResponse& response)
@@ -398,7 +398,8 @@ void WalletClient::checkProofHandler(const JsonRpcResponse& response)
 {
     if (response.isErrorResponse())
     {
-        RpcApi::ProofCheck pc{response.getErrorMessage()};
+        RpcApi::ProofCheck pc;
+        pc.validation_error = response.getErrorMessage();
         emit checkProofReceived(pc);
         return;
     }
