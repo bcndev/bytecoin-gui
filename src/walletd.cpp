@@ -178,7 +178,7 @@ void RemoteWalletd::sendGetStatus()
                     status.incoming_peer_count,
                     status.lower_level_error*/});
 
-        jsonClient_->sendGetBalance(RpcApi::GetBalance::Request{QString{}, -1});
+        jsonClient_->sendGetBalance(RpcApi::GetBalance::Request{});
     }
 }
 
@@ -230,7 +230,7 @@ void RemoteWalletd::statusReceived(const RpcApi::Status& status)
                     status.incoming_peer_count,
                     status.lower_level_error});
 
-        jsonClient_->sendGetBalance(RpcApi::GetBalance::Request{QString{}, -1});
+        jsonClient_->sendGetBalance(RpcApi::GetBalance::Request{});
     }
 }
 
@@ -412,7 +412,7 @@ void BuiltinWalletd::run()
     QStringList args;
     args << QString("--wallet-file=%1").arg(pathToWallet_);
     if (createNew_)
-        args << "--create-wallet";
+        args << "--create-wallet" << "--launch-after-command";
 
     const bool importKeys = !keys_.isEmpty();
     if (importKeys)
@@ -480,7 +480,7 @@ void BuiltinWalletd::changeWalletPassword(QString&& oldPassword, QString&& newPa
             {
                 QStringList args;
                 args << QString("--wallet-file=%1").arg(pathToWallet_);
-                args << QString("--set-password");
+                args << "--set-password" << "--launch-after-command";
                 changePassword_ = true;
                 password_ = std::move(oldPassword);
                 newPassword_ = std::move(newPassword);

@@ -294,6 +294,7 @@ CreateTransaction::Request::toJson() const
     RPCAPI_SERIALIZE_FIELD(value, json, fee_per_byte);
     RPCAPI_SERIALIZE_FIELD(value, json, optimization);
     RPCAPI_SERIALIZE_FIELD(value, json, save_history);
+    RPCAPI_SERIALIZE_FIELD(value, json, subtract_fee_from_receiver);
     RPCAPI_SERIALIZE_FIELD(value, json, prevent_conflict_with_transactions);
 
     return json;

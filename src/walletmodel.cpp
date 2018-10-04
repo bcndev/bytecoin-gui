@@ -20,8 +20,12 @@ struct WalletModelState
 {
     RpcApi::Status status;
     RpcApi::Balance balance;
+//    QLinkedList<RpcApi::Transaction> confirmed_txs;
+//    QLinkedList<RpcApi::Transaction> unconfirmed_txs;
+//    QString firstAddress;
     QList<RpcApi::Transaction> txs;
     QList<QString> addresses;
+
     bool viewOnly = false;
     QDateTime creationTimestamp;
     quint32 addressesCount = 0;
@@ -202,6 +206,7 @@ void WalletModel::transfersReceived(const RpcApi::Transfers& history)
     const quint32 highestConfirmedBlock = getHighestKnownConfirmedBlock();
     if (history.next_from_height >= highestConfirmedBlock) // unconfirmed
     {
+//        QLinkedList<RpcApi::Transaction> rcvdTxs;
         QList<RpcApi::Transaction> rcvdTxs;
         for (const RpcApi::Block& block : history.blocks)
             rcvdTxs.append(block.transactions);
@@ -560,7 +565,7 @@ QVariant WalletModel::getDisplayRoleHistory(const QModelIndex& index) const
                 amount += tr.amount;
             }
         }
-        return isOur ? QVariant(formatAmount(amount)) : QVariant();
+        return isOur ? QVariant(formatAmount(amount)) : 0;
     }
     case COLUMN_BLOCK_HEIGHT:
     {

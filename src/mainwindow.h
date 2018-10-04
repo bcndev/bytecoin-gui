@@ -56,7 +56,7 @@ public:
 
     Q_SLOT void jsonErrorResponse(const QString& id, const QString& errorString);
     Q_SLOT void createTxReceived(const RpcApi::CreatedTx& tx);
-    Q_SLOT void createTx(const RpcApi::Transaction& tx, quint64 fee);
+    Q_SLOT void createTx(const RpcApi::Transaction& tx, quint64 fee, bool subtractFee);
 
     Q_SLOT void copiedToClipboard();
     Q_SLOT void openDataFolder();

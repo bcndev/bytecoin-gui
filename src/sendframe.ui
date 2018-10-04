@@ -126,7 +126,7 @@
      <property name="frameShadow">
       <enum>QFrame::Plain</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
+     <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,0,0">
       <property name="leftMargin">
        <number>10</number>
       </property>
@@ -142,26 +142,7 @@
       <property name="horizontalSpacing">
        <number>18</number>
       </property>
-      <item row="6" column="3">
-       <widget class="QLineEdit" name="m_paymentIdEdit">
-        <property name="styleSheet">
-         <string notr="true">[errorState=&quot;true&quot;] {
-  border-color: #ef3131;
-}</string>
-        </property>
-        <property name="placeholderText">
-         <string>Payment identifier issued by payee (market, exchange or other entity)</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="3">
-       <widget class="QLabel" name="m_paymentIdTextLabel">
-        <property name="text">
-         <string>Payment ID</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="3">
+      <item row="0" column="2">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
          <spacer name="horizontalSpacer_2">
@@ -194,7 +175,127 @@
         </item>
        </layout>
       </item>
-      <item row="6" column="0" colspan="3">
+      <item row="1" column="0" colspan="2">
+       <widget class="QSlider" name="m_feeSlider">
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>4</number>
+        </property>
+        <property name="pageStep">
+         <number>1</number>
+        </property>
+        <property name="value">
+         <number>2</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::TicksBelow</enum>
+        </property>
+        <property name="tickInterval">
+         <number>1</number>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="2">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="m_mixinTextLabel">
+          <property name="text">
+           <string>Anonymity level</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="m_mixinSpin">
+          <property name="maximum">
+           <number>999999999</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item row="4" column="0" colspan="2">
+       <widget class="QSlider" name="m_mixinSlider">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="maximum">
+         <number>50</number>
+        </property>
+        <property name="pageStep">
+         <number>1</number>
+        </property>
+        <property name="value">
+         <number>6</number>
+        </property>
+        <property name="tracking">
+         <bool>false</bool>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2">
+       <widget class="QLineEdit" name="m_paymentIdEdit">
+        <property name="styleSheet">
+         <string notr="true">[errorState=&quot;true&quot;] {
+  border-color: #ef3131;
+}</string>
+        </property>
+        <property name="placeholderText">
+         <string>Payment identifier issued by payee (market, exchange or other entity)</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="2">
+       <widget class="QLabel" name="m_feeTextLabel">
+        <property name="toolTip">
+         <string>Atomic units per byte</string>
+        </property>
+        <property name="text">
+         <string>Fee (AU per byte)</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QCheckBox" name="m_subtractFeeFromAmountCheckBox">
+        <property name="toolTip">
+         <string>The fee will be deducted from the amount being sent. The recipient will receive less bytecoins than you enter in the amount field. If multiple recipients are selected, the fee will be subtracted from transfers in their respective order.</string>
+        </property>
+        <property name="text">
+         <string>Subtract fee from amount</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QLabel" name="m_paymentIdTextLabel">
+        <property name="text">
+         <string>Payment ID</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="2">
        <widget class="QFrame" name="frame">
         <property name="minimumSize">
          <size>
@@ -260,41 +361,6 @@
         </layout>
        </widget>
       </item>
-      <item row="5" column="0" colspan="3">
-       <widget class="QSlider" name="m_feeSlider">
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>4</number>
-        </property>
-        <property name="pageStep">
-         <number>1</number>
-        </property>
-        <property name="value">
-         <number>2</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="tickPosition">
-         <enum>QSlider::TicksBelow</enum>
-        </property>
-        <property name="tickInterval">
-         <number>1</number>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0" colspan="3">
-       <widget class="QLabel" name="m_feeTextLabel">
-        <property name="toolTip">
-         <string>Atomic units per byte</string>
-        </property>
-        <property name="text">
-         <string>Fee (AU per byte)</string>
-        </property>
-       </widget>
-      </item>
      </layout>
     </widget>
    </item>
@@ -336,13 +402,6 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="QSpinBox" name="m_mixinSpin">
-        <property name="maximum">
-         <number>999999999</number>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="3" rowspan="2">
        <spacer name="horizontalSpacer">
         <property name="orientation">
@@ -358,31 +417,6 @@
          </size>
         </property>
        </spacer>
-      </item>
-      <item row="1" column="0" colspan="2">
-       <widget class="QSlider" name="m_mixinSlider">
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="maximum">
-         <number>50</number>
-        </property>
-        <property name="pageStep">
-         <number>1</number>
-        </property>
-        <property name="value">
-         <number>6</number>
-        </property>
-        <property name="tracking">
-         <bool>false</bool>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
       </item>
       <item row="0" column="7" rowspan="2">
        <widget class="QPushButton" name="m_sendButton">
@@ -419,13 +453,6 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="m_mixinTextLabel">
-        <property name="text">
-         <string>Anonymity level</string>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="6" rowspan="2">
        <spacer name="horizontalSpacer_4">
         <property name="orientation">
@@ -459,9 +486,6 @@
   <tabstop>m_sendScrollarea</tabstop>
   <tabstop>m_addRecipientButton</tabstop>
   <tabstop>m_feeSlider</tabstop>
-  <tabstop>m_paymentIdEdit</tabstop>
-  <tabstop>m_mixinSpin</tabstop>
-  <tabstop>m_mixinSlider</tabstop>
   <tabstop>m_sendButton</tabstop>
  </tabstops>
  <resources/>

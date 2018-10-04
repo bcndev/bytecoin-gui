@@ -10,6 +10,7 @@
 #include <QMetaType>
 #include <QVariantMap>
 #include <QDateTime>
+#include "common.h"
 
 namespace RpcApi
 {
@@ -23,7 +24,7 @@ typedef qint32 HeightOrDepth;
 typedef quint64 BlockOrTimestamp;  // Height or Timestamp,
 typedef QString Hash;
 
-constexpr HeightOrDepth DEFAULT_CONFIRMATIONS = 6;
+constexpr HeightOrDepth DEFAULT_CONFIRMATIONS = CONFIRMATIONS;
 
 struct EmptyStruct
 {};
@@ -441,6 +442,7 @@ struct CreateTransaction
         SignedAmount fee_per_byte = 0;
         QString optimization;
         bool save_history = true;
+        bool subtract_fee_from_receiver = false;
         QStringList prevent_conflict_with_transactions;
 
         QVariantMap toJson() const;

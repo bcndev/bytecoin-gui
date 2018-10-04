@@ -1,5 +1,13 @@
 ## Release Notes
 
+### v3.3.1
+
+- Activated zero amount value for fee.
+- Added subtract fee from amount flag.
+- Fixed occasional stops of `walletd`.
+- Fixed minor UI bugs.
+- Updated the Bytecoin daemons.
+
 ### v3.3.0
 
 - Added exporting of transactions to CSV file.

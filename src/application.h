@@ -42,7 +42,6 @@ public:
 
 private:
     QScopedPointer<QLockFile> m_lockFile;
-    QSystemTrayIcon* m_systemTrayIcon;
     MainWindow* m_mainWindow;
     MiningManager* m_miningManager;
     AddressBookManager* addressBookManager_;
@@ -57,9 +56,7 @@ private:
     void loadFonts();
     static void makeDataDir(const QDir& dataDir);
     void setupTheme();
-    void initSystemTrayIcon();
     void showCoreInitError();
-    void trayActivated(QSystemTrayIcon::ActivationReason reason);
     void prepareToQuit();
     void createWalletd();
     void subscribeToWalletd();

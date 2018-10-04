@@ -39,7 +39,6 @@ const char VERSION_DATA_URL[] = "https://raw.githubusercontent.com/bcndev/byteco
 
 WalletApplication::WalletApplication(int& argc, char** argv)
     : QApplication(argc, argv)
-    , m_systemTrayIcon(new QSystemTrayIcon(this))
     , m_mainWindow(nullptr)
     , m_miningManager(nullptr)
     , addressBookManager_(nullptr)
@@ -105,7 +104,6 @@ bool WalletApplication::init()
     }
 
     QObject::connect(&SignalHandler::instance(), &SignalHandler::quitSignal, this, &WalletApplication::quit);
-//    initSystemTrayIcon();
 
     const bool connectionSelected = Settings::instance().connectionMethodSet();
     const bool walletFileSet = !Settings::instance().getWalletFile().isEmpty();
@@ -186,13 +184,6 @@ void WalletApplication::makeDataDir(const QDir& dataDir)
         dataDir.mkpath(dataDir.absolutePath());
 }
 
-void WalletApplication::initSystemTrayIcon()
-{
-    connect(m_systemTrayIcon, &QSystemTrayIcon::activated, this, &WalletApplication::trayActivated);
-    m_systemTrayIcon->setIcon(QIcon(":images/bytecoin_lin"));
-    m_systemTrayIcon->show();
-}
-
 void WalletApplication::dockClickHandler()
 {
     if (m_isAboutToQuit)
@@ -202,24 +193,11 @@ void WalletApplication::dockClickHandler()
         m_mainWindow->show();
 }
 
-void WalletApplication::trayActivated(QSystemTrayIcon::ActivationReason /*reason*/)
-{
-    if (m_mainWindow != nullptr)
-    {
-        const Qt::WindowStates state = m_mainWindow->window()->windowState();
-        m_mainWindow->window()->setWindowState(state & ~Qt::WindowMinimized);
-        m_mainWindow->window()->show();
-        m_mainWindow->raise();
-        m_mainWindow->activateWindow();
-    }
-}
-
 void WalletApplication::prepareToQuit()
 {
     WalletLogger::debug(tr("[Application] Prepare to quit..."));
 
     m_isAboutToQuit = true;
-    m_systemTrayIcon->hide();
     if (m_mainWindow)
     {
         m_mainWindow->close();

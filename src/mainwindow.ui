@@ -1242,10 +1242,6 @@
   <slot>showLog()</slot>
   <slot>about()</slot>
   <slot>copyAddress()</slot>
-  <slot>setStartOnLoginEnabled(bool)</slot>
-  <slot>setMinimizeToTrayEnabled(bool)</slot>
-  <slot>setCloseToTrayEnabled(bool)</slot>
-  <slot>communityForumTriggered()</slot>
   <slot>showConsole()</slot>
   <slot>encryptWallet()</slot>
   <slot>openWallet()</slot>

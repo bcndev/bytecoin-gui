@@ -13,7 +13,6 @@
 #include <QMetaMethod>
 #include <QMovie>
 #include <QSessionManager>
-#include <QSystemTrayIcon>
 #include <QUrlQuery>
 #include <QDesktopWidget>
 #include <QToolTip>
@@ -169,7 +168,7 @@ void MainWindow::addRecipient(const QString& address, const QString& label)
     m_ui->m_sendButton->click();
 }
 
-void MainWindow::createTx(const RpcApi::Transaction& tx, quint64 fee)
+void MainWindow::createTx(const RpcApi::Transaction& tx, quint64 fee, bool subtractFee)
 {
     RpcApi::CreateTransaction::Request req;
     req.any_spend_address = true;
@@ -178,6 +177,7 @@ void MainWindow::createTx(const RpcApi::Transaction& tx, quint64 fee)
     req.confirmed_height_or_depth = -static_cast<qint32>(CONFIRMATIONS) - 1;
     req.fee_per_byte = fee;
     req.save_history = true;
+    req.subtract_fee_from_receiver = subtractFee;
 
     emit createTxSignal(req, QPrivateSignal{});
 }

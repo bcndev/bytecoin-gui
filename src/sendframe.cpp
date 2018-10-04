@@ -253,7 +253,7 @@ void SendFrame::sendClicked()
     tx.anonymity = m_ui->m_mixinSlider->value();
     tx.unlock_block_or_timestamp = 0;
 
-    emit createTxSignal(tx, getFeeFromSlider(m_ui->m_feeSlider->value()));
+    emit createTxSignal(tx, getFeeFromSlider(m_ui->m_feeSlider->value()), m_ui->m_subtractFeeFromAmountCheckBox->isChecked());
 }
 
 void SendFrame::mixinValueChanged(int value)
@@ -282,6 +282,7 @@ quint64 SendFrame::getFeeFromSlider(int sliderValue) const
     quint64 fee = 0;
     switch(sliderValue)
     {
+    case 0: fee = 0;                    break; // 0%
     case 1: fee = recommendedFee * 1/2; break; // 50%
     case 2: fee = recommendedFee;       break; // 100%
     case 3: fee = recommendedFee * 3/2; break; // 150%

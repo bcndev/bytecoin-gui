@@ -67,7 +67,7 @@ private:
 
 Q_SIGNALS:
     void showTransactionsFrameSignal();
-    void createTxSignal(const RpcApi::Transaction& tx, quint64 fee);
+    void createTxSignal(const RpcApi::Transaction& tx, quint64 fee, bool subtractFee);
 };
 
 }
