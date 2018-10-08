@@ -177,7 +177,7 @@ void MainWindow::createTx(const RpcApi::Transaction& tx, quint64 fee, bool subtr
     req.confirmed_height_or_depth = -static_cast<qint32>(CONFIRMATIONS) - 1;
     req.fee_per_byte = fee;
     req.save_history = true;
-    req.subtract_fee_from_receiver = subtractFee;
+    req.subtract_fee_from_amount = subtractFee;
 
     emit createTxSignal(req, QPrivateSignal{});
 }

@@ -1,5 +1,9 @@
 ## Release Notes
 
+### v3.3.1.1
+
+- Fixed bug in sending transactions.
+
 ### v3.3.1
 
 - Activated zero amount value for fee.

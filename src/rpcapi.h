@@ -442,7 +442,7 @@ struct CreateTransaction
         SignedAmount fee_per_byte = 0;
         QString optimization;
         bool save_history = true;
-        bool subtract_fee_from_receiver = false;
+        bool subtract_fee_from_amount = false;
         QStringList prevent_conflict_with_transactions;
 
         QVariantMap toJson() const;
