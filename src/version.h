@@ -5,9 +5,9 @@
 
 namespace WalletGUI {
 
-constexpr char VERSION[] = "3.3.1.1";
+constexpr char VERSION[] = "3.3.2";
 constexpr char VERSION_SUFFIX[] = "stable";
-constexpr char REVISION[] = "20181008";
+constexpr char REVISION[] = "20181009";
 
 // returns <0, if newVersion is worse than currentVersion, returns >0, if newVersion is better, and returns 0, if versions are equal
 int compareVersion(const QString& newVersion, const QString& currentVersion);

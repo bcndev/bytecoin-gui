@@ -1,5 +1,9 @@
 ## Release Notes
 
+### v3.3.2
+
+- Updated the Bytecoin daemons.
+
 ### v3.3.1.1
 
 - Fixed bug in sending transactions.
