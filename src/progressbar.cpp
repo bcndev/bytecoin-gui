@@ -3,6 +3,7 @@
 
 #include "progressbar.h"
 #include "walletmodel.h"
+#include "common.h"
 
 namespace WalletGUI
 {
@@ -12,7 +13,7 @@ const char PROGRESS_BAR_STYLE_SHEET_TEMPLATE[] =
     "max-height:5px;"
     "}"
     "WalletGUI--WalletProgressBar::chunk {"
-    "background-color: #EE4486;"
+    "background-color: %1;"
     "}";
 
 WalletProgressBar::WalletProgressBar(QWidget* parent)
@@ -21,11 +22,16 @@ WalletProgressBar::WalletProgressBar(QWidget* parent)
 {
     setRange(0, 0);
     setValue(0);
-    setStyleSheet(PROGRESS_BAR_STYLE_SHEET_TEMPLATE);
+    setColor(QColor{MAIN_NET_COLOR});
 }
 
 WalletProgressBar::~WalletProgressBar()
 {}
+
+void WalletProgressBar::setColor(const QColor& color)
+{
+    setStyleSheet(QString{PROGRESS_BAR_STYLE_SHEET_TEMPLATE}.arg(color.name()));
+}
 
 void WalletProgressBar::setWalletModel(WalletModel* model)
 {

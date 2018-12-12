@@ -95,13 +95,17 @@
         <file alias="scroll-news-up">icons/scroll_news_up.png</file>
         <file alias="start-mining">icons/start.png</file>
         <file alias="stop-mining">icons/stop.png</file>
+        <file alias="logo_test">icons/logo_test.png</file>
+        <file alias="logo_stage">icons/logo_stage.png</file>
     </qresource>
     <qresource prefix="/images">
         <file alias="splash">images/splash.png</file>
-        <file alias="bytecoin_lin">images/bytecoin.png</file>
+        <file alias="bytecoin">images/bytecoin.png</file>
         <file alias="add_address_helper">images/add_address_helper.png</file>
         <file alias="bytecoin_mac">images/bytecoin.icns</file>
         <file alias="bytecoin_win">images/bytecoin.ico</file>
+        <file alias="bytecoin_test">images/bytecoin_test.png</file>
+        <file alias="bytecoin_stage">images/bytecoin_stage.png</file>
     </qresource>
     <qresource prefix="/style">
         <file alias="qss">bytecoinwallet.qss</file>
@@ -118,4 +122,5 @@
         <file alias="Semibold">font/OpenSans-Semibold.ttf</file>
         <file alias="SemiboldItalic">font/OpenSans-SemiboldItalic.ttf</file>
     </qresource>
+    <qresource prefix="/"/>
 </RCC>

@@ -80,7 +80,8 @@ set(SOURCES
     src/walletdparamsdialog.cpp
     src/exportkeydialog.cpp
     src/filedownloader.cpp
-
+    src/mnemonicdialog.cpp
+    src/version.cpp
 )
 
 include_directories(${CMAKE_BINARY_DIR} src )

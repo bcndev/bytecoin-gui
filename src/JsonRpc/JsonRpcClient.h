@@ -22,6 +22,13 @@
 
 namespace JsonRpc {
 
+struct Error
+{
+    int code = 0;
+    QString message;
+    QString data;
+};
+
 class Client : public QObject
 {
     Q_OBJECT
@@ -45,7 +52,7 @@ signals:
 //    void error(const QString& msg, const QString& desc) const;
     void networkError(const QString& errorString);
     void jsonParsingError(const QString& message);
-    void jsonErrorResponse(const QString& id, const QString& errorString);
+//    void jsonErrorResponse(const QString& id, const QString& errorString);
     void jsonUnknownMessageId(const QString& id);
 
     void packetSent(const QByteArray& data);
@@ -55,9 +62,10 @@ signals:
 protected:
 //    template<typename... Ts>
 //    QString sendRequest(QString method, Ts&&... args); // returns request id
-    QString sendRequest(const QString& method, const QVariantMap& json = QVariantMap()); // returns request id
+//    QString sendRequest(const QString& method, const QVariantMap& json = QVariantMap()); // returns request id
+    void sendRequest(const QString& method, const QVariantMap& json, FunctionHandler&& handler);
 
-    void insertResponseHandler(const QString& id, FunctionHandler handler);
+    void insertResponseHandler(const QString& id, FunctionHandler&& handler);
 
 private:
     void sendJson(const QByteArray& json);
@@ -80,40 +88,52 @@ public:
     WalletClient(const QUrl& url, QObject* parent = 0);
     WalletClient(const QString& endPoint, QObject* parent = 0);
 
-    void sendGetStatus(const RpcApi::GetStatus::Request& req);
-    void sendGetTransfers(const RpcApi::GetTransfers::Request& req);
-    void sendGetWalletInfo();
-    void sendGetBalance(const RpcApi::GetBalance::Request& req);
-//    void sendGetUnspent(const RpcApi::GetUnspent::Request& req);
-    void sendGetViewKey();
-    void sendCreateTx(const RpcApi::CreateTransaction::Request& req);
-    void sendSendTx(const RpcApi::SendTransaction::Request& req);
-    void sendCreateProof(const RpcApi::CreateSendProof::Request& req);
-    void sendCheckProof(const RpcApi::CheckSendProof::Request& req);
+    template<typename APIFunction, typename SuccessHandler, typename ErrorHandler>
+    void sendRequest(const typename APIFunction::Request& req, SuccessHandler successHandler, ErrorHandler errorHandler)
+    {
+        Client::sendRequest(
+            APIFunction::METHOD,
+            req.toJson(),
+            [this, successHandler, errorHandler](const JsonRpcResponse& response) /*mutable*/
+            {
+                this->responseHandler<APIFunction, SuccessHandler, ErrorHandler>(response, successHandler, errorHandler);
+            });
+    }
 
-signals:
-    void statusReceived(const RpcApi::Status& result) const;
-    void transfersReceived(const RpcApi::Transfers& result) const;
-    void walletInfoReceived(const RpcApi::WalletInfo& result) const;
-    void balanceReceived(const RpcApi::Balance& result) const;
-    void viewKeyReceived(const RpcApi::ViewKey& result) const;
-    void unspentReceived(const RpcApi::Unspents& result) const;
-    void createTxReceived(const RpcApi::CreatedTx& result) const;
-    void sendTxReceived(const RpcApi::SentTx& result) const;
-    void proofsReceived(const RpcApi::Proofs& result) const;
-    void checkProofReceived(const RpcApi::ProofCheck& result) const;
+//    void sendGetStatus(const RpcApi::GetStatus::Request& req);
+//    void sendGetTransfers(const RpcApi::GetTransfers::Request& req);
+//    void sendGetWalletInfo();
+//    void sendGetBalance(const RpcApi::GetBalance::Request& req);
+//    void sendCreateTx(const RpcApi::CreateTransaction::Request& req);
+//    void sendSendTx(const RpcApi::SendTransaction::Request& req);
+//    void sendCreateProof(const RpcApi::CreateSendProof::Request& req);
+//    void sendCheckProof(const RpcApi::CheckSendProof::Request& req);
 
 private:
-    void statusHandler(const JsonRpcResponse& response);
-    void transfersHandler(const JsonRpcResponse& response);
-    void walletInfoHandler(const JsonRpcResponse& response);
-    void balanceHandler(const JsonRpcResponse& response);
-    void viewKeyHandler(const JsonRpcResponse& response);
-//    void unspentHandler(const JsonRpcResponse& response);
-    void createTxHandler(const JsonRpcResponse& response);
-    void sendTxHandler(const JsonRpcResponse& response);
-    void proofsHandler(const JsonRpcResponse& response);
-    void checkProofHandler(const JsonRpcResponse& response);
+    template<typename APIFunction, typename SuccessHandler, typename ErrorHandler>
+    void responseHandler(const JsonRpcResponse& response, SuccessHandler successHandler, ErrorHandler errorHandler)
+    {
+        if (response.isErrorResponse())
+        {
+            Error error{response.getErrorCode(), response.getErrorMessage(), response.getErrorData().toString()};
+            errorHandler(response.getId(), error);
+            return;
+        }
+
+        const QVariantMap& result = response.getResultAsObject();
+        successHandler(response.getId(), APIFunction::Response::fromJson(result));
+    }
+
+//    void statusHandler(const JsonRpcResponse& response);
+//    void transfersHandler(const JsonRpcResponse& response);
+//    void walletInfoHandler(const JsonRpcResponse& response);
+//    void balanceHandler(const JsonRpcResponse& response);
+//    void viewKeyHandler(const JsonRpcResponse& response);
+////    void unspentHandler(const JsonRpcResponse& response);
+//    void createTxHandler(const JsonRpcResponse& response);
+//    void sendTxHandler(const JsonRpcResponse& response);
+//    void proofsHandler(const JsonRpcResponse& response);
+//    void checkProofHandler(const JsonRpcResponse& response);
 };
 
 }

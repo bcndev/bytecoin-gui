@@ -25,6 +25,39 @@ typedef quint64 BlockOrTimestamp;  // Height or Timestamp,
 typedef QString Hash;
 
 constexpr HeightOrDepth DEFAULT_CONFIRMATIONS = CONFIRMATIONS;
+constexpr char MAIN_NET_NAME[] = "main";
+constexpr char STAGE_NET_NAME[] = "stage";
+constexpr char TEST_NET_NAME[] = "test";
+
+
+enum class ErrorCodes
+{
+    INVALID_HEIGHT_OR_DEPTH           = -2,  // height_or_depth too low or too high
+    TOO_BIG_RESERVE_SIZE              = -3,
+    ADDRESS_FAILED_TO_PARSE           = -4,  // returns ErrorAddress
+    HASH_NOT_FOUND                    = -5,  // Neither in main nor in side chain
+    WRONG_BLOCKBLOB                   = -6,
+    BLOCK_NOT_ACCEPTED                = -7,
+    INVALID_TRANSACTION_BINARY_FORMAT = -101,
+    WRONG_OUTPUT_REFERENCE            = -102,  // wrong signature or referenced outputs changed during reorg. Bad output
+    // height is reported in conflict_height. If output index > max current index, conflict_height will be set to
+    // currency.max_block_number
+    OUTPUT_ALREADY_SPENT              = -103, // conflight height reported in error
+    FAILED_TO_PARSE                   = -201,
+    NOT_IN_MAIN_CHAIN                 = -202,
+    WRONG_SIGNATURE                   = -203,
+    ADDRESS_NOT_IN_TRANSACTION        = -204,
+    WRONG_AMOUNT                      = -205,
+    NOT_ENOUGH_FUNDS                  = -301,
+    TRANSACTION_DOES_NOT_FIT_IN_BLOCK = -302,
+    NOT_ENOUGH_ANONYMITY              = -303,
+    VIEW_ONLY_WALLET                  = -304,
+    TOO_MUCH_ANONYMITY                = -305, // For white addresses, anonymity should be 0 when sending
+    WRONG_ARCHIVE_ID                  = -501, // If archive id changed, it is returned in Error
+    ARCHIVE_NOT_ENABLED               = -502, // No archive on this node
+    ADDRESS_NOT_IN_WALLET             = -1002, // returns ErrorAddress
+};
+
 
 struct EmptyStruct
 {};
@@ -35,11 +68,12 @@ struct Output
     QString public_key{};
     quint32 index = 0;
 
+    Height height = 0;
     BlockOrTimestamp unlock_block_or_timestamp = 0;
     quint32 index_in_transaction = 0;
-    Height height = 0;
-    QString key_image{};
-    QString transaction_public_key{};
+
+    QString transaction_hash;
+    QString key_image;
     QString address;
     bool dust = false;
 
@@ -52,11 +86,11 @@ struct Output
             amount,
             public_key,
             index,
+            height,
             unlock_block_or_timestamp,
             index_in_transaction,
-            height,
+            transaction_hash,
             key_image,
-            transaction_public_key,
             address,
             dust);
     }
@@ -69,6 +103,7 @@ struct Transfer
     bool ours = true;
     bool locked = false;
     QList<Output> outputs;
+    QString transaction_hash;
 
     static Transfer fromJson(const QVariantMap& json);
     QVariantMap toJson() const;
@@ -80,7 +115,8 @@ struct Transfer
             amount,
             ours,
             locked,
-            outputs);
+            outputs,
+            transaction_hash);
     }
 };
 
@@ -91,15 +127,16 @@ struct Transaction
     Hash payment_id{};
     quint32 anonymity = 0;
 
-    Hash hash{};
-    SignedAmount fee = 0;
+    Hash hash;
+    Hash inputs_hash;
+    Amount fee = 0;
     QString public_key;
     QString extra;
     bool coinbase = false;
     Amount amount = 0;
 
     Height block_height = 0;
-    Hash block_hash{};
+    Hash block_hash;
     QDateTime timestamp;
 
     quint32 size = 0;
@@ -136,7 +173,7 @@ struct BlockHeader
     quint32 nonce = 0;
 
     Height height = 0;
-    Hash hash{};
+    Hash hash;
     Amount reward = 0;
     quint64 cumulative_difficulty = 0;
     quint64 cumulative_difficulty_hi = 0;
@@ -148,6 +185,8 @@ struct BlockHeader
     quint64 already_generated_transactions = 0;
     quint32 size_median = 0;
     quint32 effective_size_median = 0;
+    quint32 block_capacity_vote = 0;
+    quint32 block_capacity_vote_median = 0;
     QDateTime timestamp_median;
     Amount transactions_fee = 0;
 
@@ -174,6 +213,8 @@ struct BlockHeader
             already_generated_transactions,
             size_median,
             effective_size_median,
+            block_capacity_vote,
+            block_capacity_vote_median,
             timestamp_median,
             transactions_fee);
     }
@@ -191,6 +232,27 @@ struct Block
         return std::tie(
             header,
             transactions);
+    }
+};
+
+struct WalletRecord
+{
+    QString address;
+    QString label;
+    quint32 index = 0;
+    QString secret_spend_key;
+    QString public_spend_key;
+
+    static Block fromJson(const QVariantMap& json);
+
+    auto tie() const
+    {
+        return std::tie(
+            address,
+            label,
+            index,
+            secret_spend_key,
+            public_spend_key);
     }
 };
 
@@ -298,16 +360,27 @@ struct GetWalletInfo
 {
     static constexpr char METHOD[] = "get_wallet_info";
 
-    using Request = EmptyStruct;
+    struct Request
+    {
+        bool need_secrets = false;
+
+        QVariantMap toJson() const;
+    };
+
 
     struct Response
     {
         bool view_only = false;
+        bool deterministic = false;
+        bool auditable = false;
         QDateTime wallet_creation_timestamp;
         QString first_address;
         quint32 total_address_count = 0;
-        QString net;
-        QString mineproof_secret;
+        QString net = MAIN_NET_NAME;
+        QString secret_view_key;
+        QString public_view_key;
+        QString import_keys;
+        QString mnemonic;
 
         static Response fromJson(const QVariantMap& json);
 
@@ -315,28 +388,54 @@ struct GetWalletInfo
         {
             return std::tie(
                 view_only,
+                deterministic,
+                auditable,
                 wallet_creation_timestamp,
                 first_address,
                 total_address_count,
                 net,
-                mineproof_secret);
+                secret_view_key,
+                public_view_key,
+                import_keys,
+                mnemonic);
         }
     };
 };
 
-struct GetViewKey
+struct GetWalletRecords
 {
-    static constexpr char METHOD[] = "get_view_key_pair";
+    static constexpr char METHOD[] = "get_wallet_records";
 
-    using Request = EmptyStruct;
+    struct Request
+    {
+        bool need_secrets = false;
+        bool create = false;
+        quint32 from_index = 0;
+        quint32 max_count  = 1;
+
+        QVariantMap toJson() const;
+    };
 
     struct Response
     {
-        QString secret_view_key;
-        QString public_view_key;
+        QList<WalletRecord> records;
+        quint32 total_address_count = 0;
 
         static Response fromJson(const QVariantMap& json);
     };
+};
+
+struct SetAddressLabel
+{
+    static constexpr char METHOD[] = "set_address_label";
+
+    struct Request
+    {
+        QString address;
+        QString label;
+    };
+
+    using Response = EmptyStruct;
 };
 
 struct GetBalance
@@ -345,7 +444,7 @@ struct GetBalance
 
     struct Request
     {
-        QString address{};
+        QString address;
         HeightOrDepth height_or_depth = -DEFAULT_CONFIRMATIONS - 1;
 
         QVariantMap toJson() const;
@@ -412,7 +511,7 @@ struct GetTransfers
         Height from_height = 0;
         Height to_height = std::numeric_limits<Height>::max();
         bool forward = false;
-        uint32_t desired_transactions_count = 100;
+        uint32_t desired_transactions_count = 300;
 
         QVariantMap toJson() const;
     };
@@ -478,6 +577,25 @@ struct SendTransaction
     };
 };
 
+struct GetTransaction
+{
+    static constexpr char METHOD[] = "get_transaction";
+
+    struct Request
+    {
+        Hash hash;
+
+        QVariantMap toJson() const;
+    };
+
+    struct Response
+    {
+        Transaction transaction;
+
+        static Response fromJson(const QVariantMap& json);
+    };
+};
+
 struct CreateSendProof
 {
     static constexpr char METHOD[] = "create_sendproof";
@@ -518,6 +636,7 @@ struct CheckSendProof
         QString address;
         Amount amount = 0;
         QString message;
+        QList<quint32> output_indexes;
 
         static Response fromJson(const QVariantMap& json);
     };
@@ -527,7 +646,6 @@ using Status = GetStatus::Response;
 using Transfers = GetTransfers::Response;
 using WalletInfo = GetWalletInfo::Response;
 using Balance = GetBalance::Response;
-using ViewKey = GetViewKey::Response;
 using Unspents = GetUnspents::Response;
 using CreatedTx = CreateTransaction::Response;
 using SentTx = SendTransaction::Response;

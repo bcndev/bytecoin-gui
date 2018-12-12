@@ -61,7 +61,7 @@ private:
     void createWalletd();
     void subscribeToWalletd();
     void firstRun();
-    void runBuiltinWalletd(const QString& walletFile, bool createNew, QByteArray&& keys);
+    void runBuiltinWalletd(const QString& walletFile, bool createNew, bool createLegacy, QByteArray&& keys, QByteArray&& mnemonic);
 
 signals:
     void builtinRunSignal();
@@ -84,8 +84,10 @@ public slots:
     void connectToRemoteWalletd();
 
 
+    void createLegacyWallet(QWidget* parent);
     void createWallet(QWidget* parent);
     void openWallet(QWidget* parent);
+    void restoreWalletFromMnemonic(QWidget* parent);
     void remoteWallet(QWidget* parent);
     void encryptWallet(QWidget* parent);
     void importKeys(QWidget* parent);

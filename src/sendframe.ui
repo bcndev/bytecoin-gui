@@ -211,6 +211,9 @@
         </item>
         <item>
          <widget class="QSpinBox" name="m_mixinSpin">
+          <property name="minimum">
+           <number>3</number>
+          </property>
           <property name="maximum">
            <number>999999999</number>
           </property>
@@ -238,6 +241,9 @@
           <width>16777215</width>
           <height>16777215</height>
          </size>
+        </property>
+        <property name="minimum">
+         <number>3</number>
         </property>
         <property name="maximum">
          <number>50</number>

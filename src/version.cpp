@@ -37,7 +37,7 @@ bool isStableVersion()
 
 QString fullVersion()
 {
-    return isStableVersion() ? VERSION : QString{"%1-%2-%3"}.arg(VERSION).arg(VERSION_SUFFIX).arg(REVISION);
+    return isStableVersion() ? QString{"%1 %2"}.arg(VERSION).arg(CODENAME) : QString{"%1-%2-%3-%4"}.arg(VERSION).arg(CODENAME).arg(VERSION_SUFFIX).arg(REVISION);
 }
 
 }

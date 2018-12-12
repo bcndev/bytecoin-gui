@@ -31,6 +31,7 @@
 #include "walletdparamsdialog.h"
 #include "questiondialog.h"
 #include "filedownloader.h"
+#include "mnemonicdialog.h"
 #include "version.h"
 
 namespace WalletGUI {
@@ -105,10 +106,11 @@ bool WalletApplication::init()
 
     QObject::connect(&SignalHandler::instance(), &SignalHandler::quitSignal, this, &WalletApplication::quit);
 
-    const bool connectionSelected = Settings::instance().connectionMethodSet();
+    const bool connectionSelected = Settings::instance().walletdConnectionMethodSet();
     const bool walletFileSet = !Settings::instance().getWalletFile().isEmpty();
-    const bool isFirstRun = !connectionSelected || (Settings::instance().getConnectionMethod() == ConnectionMethod::BUILTIN && !walletFileSet);
-    WalletLogger::info(tr("[Application] Initialized successfully"));
+    const bool isFirstRun = !connectionSelected || (Settings::instance().getWalletdConnectionMethod() == ConnectionMethod::BUILTIN && !walletFileSet);
+    if (isFirstRun)
+        WalletLogger::info(tr("[Application] First run detected"));
 
     addressBookManager_ =  new AddressBookManager(this);
     m_miningManager = new MiningManager(this);
@@ -129,9 +131,11 @@ bool WalletApplication::init()
     connect(m_mainWindow, &MainWindow::exportViewOnlyKeysSignal, this, &WalletApplication::exportViewOnlyKeys);
     connect(m_mainWindow, &MainWindow::exportKeysSignal, this, &WalletApplication::exportKeys);
 
+    connect(m_mainWindow, &MainWindow::createLegacyWalletSignal, this, &WalletApplication::createLegacyWallet);
     connect(m_mainWindow, &MainWindow::createWalletSignal, this, &WalletApplication::createWallet);
     connect(m_mainWindow, &MainWindow::importKeysSignal, this, &WalletApplication::importKeys);
     connect(m_mainWindow, &MainWindow::openWalletSignal, this, &WalletApplication::openWallet);
+    connect(m_mainWindow, &MainWindow::restoreWalletFromMnemonicSignal, this, &WalletApplication::restoreWalletFromMnemonic);
     connect(m_mainWindow, &MainWindow::remoteWalletSignal, this, &WalletApplication::remoteWallet);
     connect(m_mainWindow, &MainWindow::encryptWalletSignal, this, &WalletApplication::encryptWallet);
     connect(this, &WalletApplication::builtinRunSignal, m_mainWindow, &MainWindow::builtinRun);
@@ -153,12 +157,11 @@ bool WalletApplication::init()
 void WalletApplication::subscribeToWalletd()
 {
     connect(walletModel_, &WalletModel::getTransfersSignal, walletd_, &RemoteWalletd::getTransfers);
+    connect(walletModel_, &WalletModel::netChangedSignal, m_mainWindow, &MainWindow::netChanged);
     connect(walletd_, &RemoteWalletd::statusReceivedSignal, walletModel_, &WalletModel::statusReceived);
     connect(walletd_, &RemoteWalletd::transfersReceivedSignal, walletModel_, &WalletModel::transfersReceived);
     connect(walletd_, &RemoteWalletd::walletInfoReceivedSignal, walletModel_, &WalletModel::walletInfoReceived);
     connect(walletd_, &RemoteWalletd::balanceReceivedSignal, walletModel_, &WalletModel::balanceReceived);
-    connect(walletd_, &RemoteWalletd::viewKeyReceivedSignal, walletModel_, &WalletModel::viewKeyReceived);
-    connect(walletd_, &RemoteWalletd::unspentsReceivedSignal, walletModel_, &WalletModel::unspentsReceived);
 //    connect(walletd_, &RemoteWalletd::sendTxReceivedSignal, walletModel_, &WalletModel::transactionSent);
 //    connect(walletd_, &RemoteWalletd::proofsReceivedSignal, this, &WalletApplication::showProof);
 //    connect(walletd_, &RemoteWalletd::checkProofReceivedSignal, this, &WalletApplication::showCheckProof);
@@ -235,11 +238,11 @@ void WalletApplication::sendCheckProof(const QString& proof)
 
 void WalletApplication::createWalletd()
 {
-    if (Settings::instance().getConnectionMethod() == ConnectionMethod::BUILTIN)
+    if (Settings::instance().getWalletdConnectionMethod() == ConnectionMethod::BUILTIN)
     {
         const QString& walletFile = Settings::instance().getWalletFile();
         Q_ASSERT(!walletFile.isEmpty());
-        runBuiltinWalletd(walletFile, false, QByteArray{});
+        runBuiltinWalletd(walletFile, false, false, QByteArray{}, QByteArray{});
     }
     else
         connectToRemoteWalletd();
@@ -257,7 +260,7 @@ void WalletApplication::splashMsg(const QString& msg)
         m_mainWindow->splashMsg(msg);
 }
 
-void WalletApplication::runBuiltinWalletd(const QString& walletFile, bool createNew, QByteArray&& keys)
+void WalletApplication::runBuiltinWalletd(const QString& walletFile, bool createNew, bool createLegacy, QByteArray&& keys, QByteArray&& mnemonic)
 {
     if (walletd_)
     {
@@ -268,7 +271,7 @@ void WalletApplication::runBuiltinWalletd(const QString& walletFile, bool create
     }
 
     splashMsg(tr("Running walletd..."));
-    BuiltinWalletd* walletd = new BuiltinWalletd(walletFile, createNew, std::move(keys), this);
+    BuiltinWalletd* walletd = new BuiltinWalletd(walletFile, createNew, createLegacy, std::move(keys), std::move(mnemonic), this);
     walletd_ = walletd;
 
     connect(walletd, &BuiltinWalletd::daemonStandardOutputSignal, m_mainWindow, &MainWindow::addDaemonOutput);
@@ -280,8 +283,9 @@ void WalletApplication::runBuiltinWalletd(const QString& walletFile, bool create
     connect(walletd, &BuiltinWalletd::requestPasswordWithConfirmationSignal, this, &WalletApplication::requestPasswordWithConfirmation);
     connect(walletd, &BuiltinWalletd::requestPasswordForExportSignal, this, &WalletApplication::requestPasswordForExport);
 
+
     subscribeToWalletd();
-    Settings::instance().setConnectionMethod(ConnectionMethod::BUILTIN);
+    Settings::instance().setWalletdConnectionMethod(ConnectionMethod::BUILTIN);
     Settings::instance().setWalletFile(walletFile);
 
     connect(walletd, &BuiltinWalletd::connectedSignal, this, &WalletApplication::builtinRunSignal);
@@ -335,11 +339,11 @@ void WalletApplication::daemonFinished(int exitCode, QProcess::ExitStatus /*exit
     if (walletd->getState() == BuiltinWalletd::State::STOPPED)
         return;
 
-    const QMetaEnum metaEnum = QMetaEnum::fromType<BuiltinWalletd::ReturnCode>();
+    const QMetaEnum metaEnum = QMetaEnum::fromType<BuiltinWalletd::ReturnCodes>();
     qDebug("[WalletApplication] Daemon finished. Return code: %s (%d)",
                 metaEnum.valueToKey(static_cast<int>(exitCode)),
                 exitCode);
-    const QString walletdMsg = BuiltinWalletd::errorMessage(static_cast<BuiltinWalletd::ReturnCode>(exitCode));
+    const QString walletdMsg = BuiltinWalletd::errorMessage(static_cast<BuiltinWalletd::ReturnCodes>(exitCode));
     const QString msg = !walletdMsg.isEmpty() ?
                             walletdMsg :
                             tr("Walletd just crashed. %1. Return code %2. ").arg(walletd->errorString()).arg(exitCode);
@@ -357,9 +361,9 @@ void WalletApplication::connectToRemoteWalletd()
     }
 
     splashMsg(tr("Connecting to walletd..."));
-    walletd_ = new RemoteWalletd(Settings::instance().getRpcEndPoint(), this);
+    walletd_ = new RemoteWalletd(Settings::instance().getWalletdEndPoint(), this);
     subscribeToWalletd();
-    Settings::instance().setConnectionMethod(ConnectionMethod::REMOTE);
+    Settings::instance().setWalletdConnectionMethod(ConnectionMethod::REMOTE);
 
     connect(walletd_, &RemoteWalletd::networkErrorSignal, this, &WalletApplication::detached);
     connect(walletd_, &RemoteWalletd::connectedSignal, this, &WalletApplication::remoteConnectedSignal);
@@ -367,7 +371,7 @@ void WalletApplication::connectToRemoteWalletd()
     walletd_->run();
 }
 
-void WalletApplication::createWallet(QWidget* parent)
+void WalletApplication::createLegacyWallet(QWidget* parent)
 {
     const QString fileName = QFileDialog::getSaveFileName(
                 parent,
@@ -377,7 +381,25 @@ void WalletApplication::createWallet(QWidget* parent)
     if (fileName.isEmpty())
         return;
 
-    runBuiltinWalletd(fileName, true, QByteArray{});
+    runBuiltinWalletd(fileName, false, true, QByteArray{}, QByteArray{});
+}
+
+void WalletApplication::createWallet(QWidget* parent)
+{
+    MnemonicDialog dlg(true, parent);
+    if (dlg.exec() != QDialog::Accepted)
+        return;
+
+    const QString fileName = QFileDialog::getSaveFileName(
+                parent,
+                tr("Create wallet file"),
+                QDir::homePath(),
+                tr("Wallet files (*.wallet);;All files (*)"));
+    if (fileName.isEmpty())
+        return;
+
+    QByteArray mnemonic = dlg.getMnemonic();
+    runBuiltinWalletd(fileName, true, false, QByteArray{}, std::move(mnemonic));
 }
 
 void WalletApplication::openWallet(QWidget* parent)
@@ -390,7 +412,25 @@ void WalletApplication::openWallet(QWidget* parent)
     if (fileName.isEmpty())
         return;
 
-    runBuiltinWalletd(fileName, false, QByteArray{});
+    runBuiltinWalletd(fileName, false, false, QByteArray{}, QByteArray{});
+}
+
+void WalletApplication::restoreWalletFromMnemonic(QWidget *parent)
+{
+    MnemonicDialog dlg(false, parent);
+    if (dlg.exec() != QDialog::Accepted)
+        return;
+
+    const QString fileName = QFileDialog::getSaveFileName(
+                parent,
+                tr("Create wallet file"),
+                QDir::homePath(),
+                tr("Wallet files (*.wallet);;All files (*)"));
+    if (fileName.isEmpty())
+        return;
+
+    QByteArray mnemonic = dlg.getMnemonic();
+    runBuiltinWalletd(fileName, false, false, QByteArray{}, std::move(mnemonic));
 }
 
 void WalletApplication::remoteWallet(QWidget* parent)
@@ -427,7 +467,7 @@ void WalletApplication::importKeys(QWidget* parent)
         return;
 
     QByteArray keys = dlg.getKey();
-    runBuiltinWalletd(fileName, true, std::move(keys));
+    runBuiltinWalletd(fileName, false, true, std::move(keys), QByteArray{});
 }
 
 void WalletApplication::requestPassword()
@@ -537,7 +577,7 @@ void WalletApplication::checkProof()
 
 void WalletApplication::showWalletdParams()
 {
-    WalletdParamsDialog dlg(Settings::instance().getConnectionMethod() == ConnectionMethod::BUILTIN && !Settings::instance().getWalletFile().isEmpty(), m_mainWindow);
+    WalletdParamsDialog dlg(Settings::instance().getWalletdConnectionMethod() == ConnectionMethod::BUILTIN && !Settings::instance().getWalletFile().isEmpty(), m_mainWindow);
     connect(&dlg, &WalletdParamsDialog::restartWalletd, this, &WalletApplication::restartDaemon);
     BuiltinWalletd* walletd = static_cast<BuiltinWalletd*>(walletd_);
     if (walletd)

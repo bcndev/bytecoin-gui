@@ -88,6 +88,7 @@ WalletStatusBar::WalletStatusBar(QWidget* parent)
     , walletModel_(nullptr)
     , m_syncStatusLabel(new QLabel(this))
     , m_syncStatusIconLabel(new QLabel(this))
+//    , m_hdStatusLabel(new QLabel(this))
 //    , m_encryptionStatusIconLabel(new QLabel(this))
     , m_peerCountLabel(new QLabel(this))
     , m_walletConnectionLabel(new QLabel(this))
@@ -109,6 +110,7 @@ WalletStatusBar::WalletStatusBar(QWidget* parent)
     addPermanentWidget(m_walletConnectionLabel);
     addPermanentWidget(m_bytecoindConnectionLabel);
 //    addPermanentWidget(m_encryptionStatusIconLabel);
+//    addPermanentWidget(m_hdStatusLabel);
     addPermanentWidget(m_syncStatusIconLabel);
 
     updateTimer_->setInterval(30*1000); // 30 secs
@@ -133,6 +135,7 @@ void WalletStatusBar::setWalletModel(WalletModel* model)
     stateMapper_->addMapping(m_peerCountLabel, WalletModel::COLUMN_PEER_COUNT_SUM, "text");
     stateMapper_->addMapping(m_walletConnectionLabel, WalletModel::COLUMN_STATE, "text");
     stateMapper_->addMapping(m_bytecoindConnectionLabel, WalletModel::COLUMN_LOWER_LEVEL_ERROR, "text");
+//    stateMapper_->addMapping(m_hdStatusLabel, WalletModel::COLUMN_DETERMINISTIC, "text");
     stateMapper_->toFirst();
     connect(walletModel_, &QAbstractItemModel::modelReset, stateMapper_, &QDataWidgetMapper::toFirst);
     connect(walletModel_, &QAbstractItemModel::dataChanged, this, &WalletStatusBar::nodeStateChanged);

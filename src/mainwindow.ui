@@ -29,7 +29,7 @@
    </size>
   </property>
   <property name="windowIcon">
-   <iconset>
+   <iconset resource="resources.qrc">
     <normaloff>:/images/bytecoin</normaloff>:/images/bytecoin</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -735,13 +735,17 @@
     <property name="title">
      <string>&amp;Wallet</string>
     </property>
-    <addaction name="m_createWalletAction"/>
-    <addaction name="m_importKeysAction"/>
+    <addaction name="m_createNewWalletAction"/>
+    <addaction name="m_restoreWalletFromMnemonicAction"/>
     <addaction name="m_openWalletAction"/>
+    <addaction name="separator"/>
+    <addaction name="m_changePasswordAction"/>
+    <addaction name="separator"/>
+    <addaction name="m_createLegacyWalletAction"/>
+    <addaction name="m_importKeysAction"/>
     <addaction name="m_remoteWalletAction"/>
     <addaction name="m_exportViewOnlyKeysAction"/>
     <addaction name="m_exportKeysAction"/>
-    <addaction name="m_changePasswordAction"/>
     <addaction name="separator"/>
     <addaction name="m_exitAction"/>
    </widget>
@@ -780,12 +784,12 @@
     <string>Ctrl+Q</string>
    </property>
   </action>
-  <action name="m_createWalletAction">
+  <action name="m_createLegacyWalletAction">
    <property name="enabled">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>&amp;Create new wallet file</string>
+    <string>Create &amp;legacy wallet file</string>
    </property>
   </action>
   <action name="m_openWalletAction">
@@ -817,7 +821,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Connect to &amp;remote wallet daemon</string>
+    <string>Connect to remote &amp;wallet daemon</string>
    </property>
   </action>
   <action name="m_communityForumAction">
@@ -842,7 +846,7 @@
   </action>
   <action name="m_importKeysAction">
    <property name="text">
-    <string>Create wallet file from &amp;keys</string>
+    <string>Create legacy wallet file from &amp;keys</string>
    </property>
   </action>
   <action name="m_checkProofAction">
@@ -863,6 +867,16 @@
   <action name="m_exportKeysAction">
    <property name="text">
     <string>Ex&amp;port keys</string>
+   </property>
+  </action>
+  <action name="m_createNewWalletAction">
+   <property name="text">
+    <string>&amp;Create HD (BIP39) wallet file</string>
+   </property>
+  </action>
+  <action name="m_restoreWalletFromMnemonicAction">
+   <property name="text">
+    <string>&amp;Restore HD (BIP39) wallet from mnemonic</string>
    </property>
   </action>
  </widget>
@@ -917,10 +931,10 @@
  </resources>
  <connections>
   <connection>
-   <sender>m_createWalletAction</sender>
+   <sender>m_createLegacyWalletAction</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>createWallet()</slot>
+   <slot>createLegacyWallet()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -1236,6 +1250,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>m_createNewWalletAction</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>createWallet()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>636</x>
+     <y>411</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>m_restoreWalletFromMnemonicAction</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>restoreWalletFromMnemonic()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>636</x>
+     <y>411</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>aboutQt()</slot>
@@ -1245,7 +1291,7 @@
   <slot>showConsole()</slot>
   <slot>encryptWallet()</slot>
   <slot>openWallet()</slot>
-  <slot>createWallet()</slot>
+  <slot>createLegacyWallet()</slot>
   <slot>remoteWallet()</slot>
   <slot>copiedToClipboard()</slot>
   <slot>openDataFolder()</slot>
@@ -1255,6 +1301,8 @@
   <slot>showWalletdParams()</slot>
   <slot>exportViewOnlyKeys()</slot>
   <slot>exportKeys()</slot>
+  <slot>createWallet()</slot>
+  <slot>restoreWalletFromMnemonic()</slot>
  </slots>
  <buttongroups>
   <buttongroup name="m_toolButtonGroup">

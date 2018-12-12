@@ -59,9 +59,9 @@ ConnectionOptionsFrame::~ConnectionOptionsFrame()
 
 void ConnectionOptionsFrame::load()
 {
-    const QUrl remoteUrl = QUrl::fromUserInput(Settings::instance().getRemoteRpcEndPoint());
+    const QUrl remoteUrl = QUrl::fromUserInput(Settings::instance().getRemoteWalletdEndPoint());
     if (!remoteUrl.isValid())
-        m_ui->m_remotePortSpin->setValue(Settings::instance().getDefaultRpcPort());
+        m_ui->m_remotePortSpin->setValue(Settings::instance().getDefaultWalletdPort());
     else
     {
         m_ui->m_remoteHostEdit->setText(remoteUrl.host());
@@ -72,16 +72,16 @@ void ConnectionOptionsFrame::load()
 
 void ConnectionOptionsFrame::save()
 {
-    Settings::instance().setConnectionMethod(ConnectionMethod::REMOTE);
-    Settings::instance().setRemoteRpcEndPoint(m_ui->m_remoteHostEdit->text(), m_ui->m_remotePortSpin->value());
+    Settings::instance().setWalletdConnectionMethod(ConnectionMethod::REMOTE);
+    Settings::instance().setRemoteWalletdEndPoint(m_ui->m_remoteHostEdit->text(), m_ui->m_remotePortSpin->value());
 
-    switch (Settings::instance().getConnectionMethod())
+    switch (Settings::instance().getWalletdConnectionMethod())
     {
     case ConnectionMethod::BUILTIN:
         break;
     case ConnectionMethod::LOCAL:
     case ConnectionMethod::REMOTE:
-        Settings::instance().addRecentWallet(Settings::instance().getRpcEndPoint());
+        Settings::instance().addRecentWallet(Settings::instance().getWalletdEndPoint());
         break;
     }
 }

@@ -22,6 +22,7 @@ public:
     virtual ~WalletProgressBar();
 
     void setWalletModel(WalletModel* model);
+    void setColor(const QColor& color);
 
 private:
     WalletModel* walletModel_;

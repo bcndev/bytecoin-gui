@@ -20,6 +20,11 @@ enum class MiningPoolSwitchStrategy : int
     FAILOVER, RANDOM
 };
 
+enum class NetworkType : int
+{
+    MAIN, STAGE, TEST
+};
+
 class Settings : public QObject
 {
     Q_OBJECT
@@ -28,11 +33,12 @@ class Settings : public QObject
 public:
     static Settings& instance();
 
-    static quint16 getDefaultRpcPort();
     static QDir getDefaultWorkDir();
     static QString getDefaultWalletdPath();
 //    static QString getDefaultRpcPath();
-    static ConnectionMethod getDefaultConnectionMethod();
+    static ConnectionMethod getWalletdDefaultConnectionMethod();
+    static ConnectionMethod getBytecoindDefaultConnectionMethod();
+    static NetworkType getDefaultNetworkType();
     static MiningPoolSwitchStrategy getDefaultMiningPoolSwitchStrategy();
     static quint32 getDefaultMiningCpuCoreCount();
     static QStringList getDefaultMiningPoolList();
@@ -43,14 +49,27 @@ public:
 
     QSettings::Format getFormat() const;
 
-    quint16 getLocalRpcPort() const;
-    QString getRemoteRpcEndPoint() const;
-    QString getBuilinRpcEndPoint() const;
-    ConnectionMethod getConnectionMethod() const;
-    QString getUserFriendlyConnectionMethod() const;
-    QString getLocalRpcEndPoint() const;
-    QString getRpcEndPoint() const;
+//    quint16 getLocalRpcPort() const;
+//    QString getRemoteRpcEndPoint() const;
+//    QString getBuiltinRpcEndPoint() const;
+    quint16 getLocalWalletdPort() const;
+    QString getRemoteWalletdEndPoint() const;
+    QString getBuiltinWalletdEndPoint() const;
+    ConnectionMethod getWalletdConnectionMethod() const;
+    QString getUserFriendlyWalletdConnectionMethod() const;
+    ConnectionMethod getBytecoindConnectionMethod() const;
+    QString getBytecoindEndPoint() const;
+    QString getBytecoindHost() const;
+    quint16 getBytecoindPort() const;
+//    QString getLocalRpcEndPoint() const;
+//    QString getRpcEndPoint() const;
+    QString getLocalWalletdEndPoint() const;
+    QString getWalletdEndPoint() const;
+    quint16 getDefaultBytecoindPort() const;
+    quint16 getDefaultWalletdPort() const;
     QString getWalletFile() const;
+    QString getNetworkTypeString() const;
+    NetworkType getNetworkType() const;
 
     MiningPoolSwitchStrategy getMiningPoolSwitchStrategy() const;
     quint32 getMiningCpuCoreCount() const;
@@ -61,9 +80,14 @@ public:
     QStringList getWalletdParams() const;
 
     void setWalletdParams(const QString& params);
-    void setLocalRpcPort(quint16 port);
-    void setRemoteRpcEndPoint(const QString& host, quint16 port);
-    void setConnectionMethod(ConnectionMethod method);
+//    void setLocalRpcPort(quint16 port);
+//    void setRemoteRpcEndPoint(const QString& host, quint16 port);
+    void setLocalWalletdPort(quint16 port);
+    void setRemoteWalletdEndPoint(const QString& host, quint16 port);
+    void setWalletdConnectionMethod(ConnectionMethod method);
+    void setBytecoindConnectionMethod(ConnectionMethod method);
+    void setBytecoindEndPoint(const QString& host, quint16 port);
+    void setNetworkType(NetworkType type);
 
     void setMiningPoolSwitchStrategy(MiningPoolSwitchStrategy strategy);
     void setMiningCpuCoreCount(quint32 count);
@@ -75,7 +99,7 @@ public:
 
     void restoreDefaultPoolList();
 
-    bool connectionMethodSet() const;
+    bool walletdConnectionMethodSet() const;
 
 signals:
     void settingsChanged() const;
@@ -86,6 +110,10 @@ private:
     static void makeDataDir(const QDir& dataDir);
     QStringList getStringList(const QString& key, const QVariant& defaultValue) const;
     void setRecentWallets(const QStringList& wallets);
+    void renameLegacyParameter(const QString& legacyName, const QString& newName);
+
+    template<typename EnumT>
+    EnumT getEnumValue(const QString& key, EnumT defaultValue) const;
 
     QScopedPointer<QSettings> settings_;
 };

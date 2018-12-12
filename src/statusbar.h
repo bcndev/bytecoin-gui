@@ -30,6 +30,7 @@ private:
     QLabel* m_syncStatusLabel;
     QLabel* m_syncStatusIconLabel;
 //    QLabel* m_encryptionStatusIconLabel;
+//    QLabel* m_hdStatusLabel;
     QLabel* m_peerCountLabel;
     QLabel* m_walletConnectionLabel;
     QLabel* m_bytecoindConnectionLabel;

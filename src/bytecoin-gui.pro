@@ -15,7 +15,7 @@ TEMPLATE = app
 macx: QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.11
 macx: ICON = images/bytecoin.icns
 win32: RC_ICONS = images/bytecoin.ico
-win32: VERSION = 3.18.11.22
+win32: VERSION = 3.18.12.12
 
 #QMAKE_CXXFLAGS += -fno-omit-frame-pointer -fsanitize=address,undefined
 #LIBS += -lasan -lubsan
@@ -27,23 +27,31 @@ DESTDIR = $$PWD/../bin
 # copy walletd adjacent to bytecoin-gui binary on all 3 platforms
 win32 {
 WALLETD_BY_SRC_PATH = $$shell_path($$clean_path("$$PWD/../../bytecoin/bin/walletd.exe"))
+WALLETD2_BY_SRC_PATH = $$shell_path($$clean_path("$$PWD/../../bytecoin/bin/walletd.pdb"))
 BYTECOIND_BY_SRC_PATH = $$shell_path($$clean_path("$$PWD/../../bytecoin/bin/bytecoind.exe"))
+BYTECOIND2_BY_SRC_PATH = $$shell_path($$clean_path("$$PWD/../../bytecoin/bin/bytecoind.pdb"))
 Debug:BY_DST_PATH = $$shell_path($$clean_path("$$DESTDIR"))
 Release:BY_DST_PATH = $$shell_path($$clean_path("$$DESTDIR"))
 copywalletd.commands = $(COPY_FILE) $${WALLETD_BY_SRC_PATH} $${BY_DST_PATH}
+copywalletd2.commands = $(COPY_FILE) $${WALLETD2_BY_SRC_PATH} $${BY_DST_PATH}
 copybytecoind.commands = $(COPY_FILE) $${BYTECOIND_BY_SRC_PATH} $${BY_DST_PATH}
+copybytecoind2.commands = $(COPY_FILE) $${BYTECOIND2_BY_SRC_PATH} $${BY_DST_PATH}
+first.depends = $(first) copywalletd copywalletd2 copybytecoind copybytecoind2
+QMAKE_EXTRA_TARGETS += first copywalletd copywalletd2 copybytecoind copybytecoind2
 }else:macx {
 copywalletd.commands += $(COPY_FILE) $$PWD/../../bytecoin/bin/walletd $$DESTDIR/bytecoin-gui.app/Contents/MacOS
 copybytecoind.commands += $(COPY_FILE) $$PWD/../../bytecoin/bin/bytecoind $$DESTDIR/bytecoin-gui.app/Contents/MacOS
+first.depends = $(first) copywalletd copybytecoind
+QMAKE_EXTRA_TARGETS += first copywalletd copybytecoind
 }else {
 copywalletd.commands += $(COPY_FILE) $$PWD/../../bytecoin/bin/walletd $$DESTDIR
 copybytecoind.commands += $(COPY_FILE) $$PWD/../../bytecoin/bin/bytecoind $$DESTDIR
-}
 first.depends = $(first) copywalletd copybytecoind
-export(first.depends)
-export(copywalletd.commands)
-export(copybytecoind.commands)
 QMAKE_EXTRA_TARGETS += first copywalletd copybytecoind
+}
+#export(first.depends)
+#export(copywalletd.commands)
+#export(copybytecoind.commands)
 
 SOURCES += main.cpp\
     mainwindow.cpp \
@@ -102,7 +110,8 @@ SOURCES += main.cpp\
     walletdparamsdialog.cpp \
     exportkeydialog.cpp \
     filedownloader.cpp \
-    version.cpp
+    version.cpp \
+    mnemonicdialog.cpp
 
 HEADERS  += mainwindow.h \
     signalhandler.h \
@@ -164,7 +173,8 @@ HEADERS  += mainwindow.h \
     walletdparamsdialog.h \
     exportkeydialog.h \
     version.h \
-    filedownloader.h
+    filedownloader.h \
+    mnemonicdialog.h
 
 FORMS    += mainwindow.ui \
     overviewframe.ui \
@@ -189,7 +199,8 @@ FORMS    += mainwindow.ui \
     createproofdialog.ui \
     checkproofdialog.ui \
     walletdparamsdialog.ui \
-    exportkeydialog.ui
+    exportkeydialog.ui \
+    mnemonicdialog.ui
 
 RESOURCES += \
     resources.qrc \

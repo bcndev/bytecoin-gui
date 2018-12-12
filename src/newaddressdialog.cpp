@@ -1,6 +1,8 @@
 // Copyright (c) 2015-2018, The Bytecoin developers.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
+#include <QStyle>
+
 #include "newaddressdialog.h"
 #include "addressbookmodel.h"
 #include "addressbookmanager.h"

@@ -7,6 +7,7 @@
 #include <QScopedPointer>
 #include <QProcess>
 #include <QTimer>
+#include <functional>
 
 #include "rpcapi.h"
 
@@ -14,6 +15,7 @@ class QAuthenticator;
 
 namespace JsonRpc
 {
+    struct Error;
     class WalletClient;
 }
 
@@ -40,7 +42,7 @@ public:
 
     void createTx(const RpcApi::CreateTransaction::Request& tx);
     void sendTx(const RpcApi::SendTransaction::Request& tx);
-    void getTransfers(const RpcApi::GetTransfers::Request& req);
+    void getTransfers(const RpcApi::GetTransfers::Request& req, RpcApi::Height topHeight);
     void createProof(const RpcApi::CreateSendProof::Request& req);
     void checkSendProof(const RpcApi::CheckSendProof::Request& proof);
 
@@ -49,11 +51,9 @@ public:
 
 signals:
     void statusReceivedSignal(const RpcApi::Status& status);
-    void transfersReceivedSignal(const RpcApi::Transfers& history);
+    void transfersReceivedSignal(const RpcApi::Transfers& history, RpcApi::Height topHeight, RpcApi::Height from_height, RpcApi::Height to_height);
     void walletInfoReceivedSignal(const RpcApi::WalletInfo& info);
     void balanceReceivedSignal(const RpcApi::Balance& balance);
-    void viewKeyReceivedSignal(const RpcApi::ViewKey& viewKey);
-    void unspentsReceivedSignal(const RpcApi::Unspents& unspents);
     void createTxReceivedSignal(const RpcApi::CreatedTx& tx);
     void sendTxReceivedSignal(const RpcApi::SentTx& tx);
     void proofsReceivedSignal(const RpcApi::Proofs& proofs);
@@ -61,7 +61,7 @@ signals:
 
     void networkErrorSignal(const QString& errorString);
     void jsonParsingErrorSignal(const QString& message);
-    void jsonErrorResponseSignal(const QString& id, const QString& errorString);
+    void jsonErrorResponseSignal(const QString& id, const JsonRpc::Error& error);
     void jsonUnknownMessageIdSignal(const QString& id);
     void errorOccurred();
 
@@ -76,25 +76,19 @@ signals:
 private:
     JsonRpc::WalletClient* jsonClient_;
     State state_;
-//    int rerunTimerId_;
-//    int statusTimerId_;
     QTimer rerunTimer_;
-//    QTimer statusTimer_;
+    QTimer statusTimer_;
 
     void setState(State state);
-//    void startRerunTimer();
-//    virtual void timerEvent(QTimerEvent* event) override;
     virtual void authRequired(QAuthenticator* authenticator);
     void rerun();
-    void sendGetStatus();
+    void sendGetStatus(const RpcApi::GetStatus::Request& req, bool sendAgain);
 
 private slots:
-    void statusReceived(const RpcApi::Status& status);
-    void transfersReceived(const RpcApi::Transfers& history);
+    void statusReceived(const RpcApi::Status& status, bool sendAgain);
+    void transfersReceived(const RpcApi::Transfers& history, RpcApi::Height topHeight, RpcApi::Height from_height, RpcApi::Height to_height);
     void walletInfoReceived(const RpcApi::WalletInfo& info);
     void balanceReceived(const RpcApi::Balance& balance);
-    void viewKeyReceived(const RpcApi::ViewKey& viewKey);
-    void unspentsReceived(const RpcApi::Unspents& unspents);
     void createTxReceived(const RpcApi::CreatedTx& tx);
     void sendTxReceived(const RpcApi::SentTx& tx);
     void proofsReceived(const RpcApi::Proofs& result);
@@ -102,7 +96,7 @@ private slots:
 
     void networkError(const QString& errorString);
     void jsonParsingError(const QString& message);
-    void jsonErrorResponse(const QString& id, const QString& errorString);
+    void jsonErrorResponse(const QString& id, const JsonRpc::Error& error);
     void jsonUnknownMessageId(const QString& id);
 
 };
@@ -134,28 +128,30 @@ public:
     };
     Q_ENUM(State)
 
-    enum class ReturnCode
+    enum class ReturnCodes
     {
-        BYTECOIND_DATABASE_ERROR = 101, // we hope we are out of diskspace, otherwise blockchain.db is corrupted
-        BYTECOIND_ALREADY_RUNNING = 102,
-        WALLETD_BIND_PORT_IN_USE = 103,
-        BYTECOIND_BIND_PORT_IN_USE = 104,
-        WALLET_FILE_READ_ERROR = 205,
-        WALLET_FILE_UNKNOWN_VERSION = 206,
-        WALLET_FILE_DECRYPT_ERROR = 207,
-        WALLET_FILE_WRITE_ERROR = 208,
-        WALLET_FILE_EXISTS = 209, // daemon never overwrites file during --generate-wallet
-        WALLET_WITH_THE_SAME_VIEWKEY_IN_USE = 210, // another walletd instance is using the same wallet file or another wallet file with the same viewkey
-        WALLETD_WRONG_ARGS = 211,
-        WALLETD_EXPORTKEYS_MORETHANONE = 212, // We can export keys only if wallet file contains exactly 1 spend keypair
+        BYTECOIND_DATABASE_ERROR       = 101,  // We hope we are out of disk space, otherwise blockchain DB is corrupted.
+        BYTECOIND_ALREADY_RUNNING      = 102,
+        WALLETD_BIND_PORT_IN_USE       = 103,
+        BYTECOIND_BIND_PORT_IN_USE     = 104,
+        BYTECOIND_WRONG_ARGS           = 105,
+        WALLET_FILE_READ_ERROR         = 205,
+        WALLET_FILE_UNKNOWN_VERSION    = 206,
+        WALLET_FILE_DECRYPT_ERROR      = 207,
+        WALLET_FILE_WRITE_ERROR        = 208,
+        WALLET_FILE_EXISTS             = 209,  // Daemon never overwrites file during --generate-wallet.
+        WALLET_WITH_SAME_KEYS_IN_USE   = 210,  // Another walletd instance is using the same or another wallet file with the same keys.
+        WALLETD_WRONG_ARGS             = 211,
+        WALLETD_EXPORTKEYS_MORETHANONE = 212,  // We can export keys only if wallet file contains exactly 1 spend keypair
+        WALLETD_MNEMONIC_CRC           = 213,  // Unknown version or wrong crc
     };
-    Q_ENUM(ReturnCode)
+    Q_ENUM(ReturnCodes)
 
 
-    BuiltinWalletd(const QString& pathToWallet, bool createNew, QByteArray&& keys, QObject* parent = nullptr);
+    BuiltinWalletd(const QString& pathToWallet, bool createNew, bool createLegacy, QByteArray&& keys, QByteArray&& mnemonic, QObject* parent = nullptr);
     virtual ~BuiltinWalletd() override;
 
-    static QString errorMessage(ReturnCode err);
+    static QString errorMessage(ReturnCodes err);
 
     virtual void run() override;
     virtual void stop() override;
@@ -163,6 +159,7 @@ public:
     void changeWalletPassword(QString&& oldPassword, QString&& newPassword);
 
     void setPassword(QString&& password);
+    void setMnemonic(QString&& mnemonic);
 
     State getState() const;
     bool isRunning() const;
@@ -171,7 +168,7 @@ public:
 
     void exportViewOnlyKeys(QWidget* parent/*, const QString& exportPath*/);
     void exportKeys(QWidget* parent);
-
+    static QString generateMnemonic(QWidget* parent, std::function<void(QString)> errorCallback);
 
 signals:
     void daemonStandardOutputSignal(const QString& data);
@@ -186,6 +183,7 @@ signals:
     void requestPasswordSignal();
     void requestPasswordWithConfirmationSignal();
     void requestPasswordForExportSignal(QProcess* walletd, QString* pass);
+    void requestMnemonic();
 
 private:
     QProcess* walletd_;
@@ -194,8 +192,10 @@ private:
     QString password_;
     QString newPassword_;
     bool createNew_;
+    bool createLegacy_;
     bool changePassword_;
     QByteArray keys_;
+    QByteArray mnemonic_;
     RandomAuth auth_;
 
     void setState(State state);

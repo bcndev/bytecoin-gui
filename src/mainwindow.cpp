@@ -16,6 +16,7 @@
 #include <QUrlQuery>
 #include <QDesktopWidget>
 #include <QToolTip>
+#include <QStyle>
 
 #include "mainwindow.h"
 
@@ -48,7 +49,16 @@ const char DOWNLOAD_URL[] = "https://github.com/bcndev/bytecoin-gui/releases";
 
 const char BUTTON_STYLE_SHEET[] =
         "QPushButton {border: none;}"
-        "QPushButton:checked {background-color: #EE4486; color: #FFFFFF}";
+        "QPushButton:checked {background-color: %1; color: #FFFFFF}";
+
+const char WINDOW_MAIN_ICON_PATH[] = ":images/bytecoin";
+const char WINDOW_STAGE_ICON_PATH[] = ":images/bytecoin_stage";
+const char WINDOW_TEST_ICON_PATH[] = ":images/bytecoin_test";
+
+const char LOGO_LABEL_MAIN_ICON_PATH[] = ":icons/light/logo";
+const char LOGO_LABEL_STAGE_ICON_PATH[] = ":icons/logo_stage";
+const char LOGO_LABEL_TEST_ICON_PATH[] = ":icons/logo_test";
+
 }
 
 MainWindow::MainWindow(
@@ -67,6 +77,7 @@ MainWindow::MainWindow(
     , addressBookManager_(addressBookManager)
     , copiedToolTip_(new CopiedToolTip(this))
     , walletModel_(walletModel)
+    , netColor_(MAIN_NET_COLOR)
 {
     m_ui->setupUi(this);
 
@@ -74,14 +85,15 @@ MainWindow::MainWindow(
     m_ui->m_updateLabel->hide();
     m_ui->m_viewOnlyLabel->setText("");
     setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, this->size(), qApp->desktop()->availableGeometry()));
-    setWindowIcon(QIcon(":images/bytecoin_lin"));
+//    setWindowIcon(QIcon(WINDOW_MAIN_ICON_PATH));
     clearTitle();
 
-    m_ui->m_overviewButton->setStyleSheet(BUTTON_STYLE_SHEET);
-    m_ui->m_sendButton->setStyleSheet(BUTTON_STYLE_SHEET);
-    m_ui->m_addressBookButton->setStyleSheet(BUTTON_STYLE_SHEET);
-    m_ui->m_miningButton->setStyleSheet(BUTTON_STYLE_SHEET);
-    m_ui->m_logButton->setStyleSheet(BUTTON_STYLE_SHEET);
+    netChanged(RpcApi::MAIN_NET_NAME);
+//    m_ui->m_overviewButton->setStyleSheet(QString{BUTTON_STYLE_SHEET}.arg(MAIN_NET_COLOR));
+//    m_ui->m_sendButton->setStyleSheet(QString{BUTTON_STYLE_SHEET}.arg(MAIN_NET_COLOR));
+//    m_ui->m_addressBookButton->setStyleSheet(QString{BUTTON_STYLE_SHEET}.arg(MAIN_NET_COLOR));
+//    m_ui->m_miningButton->setStyleSheet(QString{BUTTON_STYLE_SHEET}.arg(MAIN_NET_COLOR));
+//    m_ui->m_logButton->setStyleSheet(QString{BUTTON_STYLE_SHEET}.arg(MAIN_NET_COLOR));
 
     m_addressBookModel = new AddressBookModel(addressBookManager_, this);
     m_sortedAddressBookModel = new SortedAddressBookModel(m_addressBookModel, this);
@@ -96,16 +108,16 @@ MainWindow::MainWindow(
     m_ui->m_balanceLabel->installEventFilter(this);
 
     m_ui->m_balanceIconLabel->setPixmap(QPixmap(QString(":icons/light/balance")));
-    m_ui->m_logoLabel->setPixmap(QPixmap(QString(":icons/light/logo")));
+//    m_ui->m_logoLabel->setPixmap(QPixmap(QString(LOGO_LABEL_MAIN_ICON_PATH)));
     m_ui->statusBar->setWalletModel(walletModel_);
     m_ui->m_syncProgress->setWalletModel(walletModel_);
 
     m_ui->m_addressesCountLabel->hide();
     m_ui->m_creationTimestampLabel->hide();
     m_addressesMapper->setModel(walletModel_);
-    m_addressesMapper->addMapping(m_ui->m_addressLabel, WalletModel::COLUMN_ADDRESS, "text");
-//    m_addressesMapper->addMapping(m_ui->m_addressesCountLabel, WalletModel::COLUMN_ADDRESSES_COUNT, "text");
-//    m_addressesMapper->addMapping(m_ui->m_creationTimestampLabel, WalletModel::COLUMN_CREATION_TIMESTAMP, "text");
+    m_addressesMapper->addMapping(m_ui->m_addressLabel, WalletModel::COLUMN_FIRST_ADDRESS, "text");
+//    m_addressesMapper->addMapping(m_ui->m_addressesCountLabel, WalletModel::COLUMN_TOTAL_ADDRESS_COUNT, "text");
+//    m_addressesMapper->addMapping(m_ui->m_creationTimestampLabel, WalletModel::COLUMN_WALLET_CREATION_TIMESTAMP, "text");
     m_addressesMapper->addMapping(m_ui->m_viewOnlyLabel, WalletModel::COLUMN_VIEW_ONLY, "text");
     m_addressesMapper->toFirst();
     connect(walletModel_, &QAbstractItemModel::modelReset, m_addressesMapper, &QDataWidgetMapper::toFirst);
@@ -155,6 +167,34 @@ MainWindow::MainWindow(
 
 MainWindow::~MainWindow()
 {}
+
+void MainWindow::netChanged(const QString& net)
+{
+    if (net == RpcApi::MAIN_NET_NAME)
+    {
+        netColor_ = MAIN_NET_COLOR;
+        setWindowIcon(QIcon(WINDOW_MAIN_ICON_PATH));
+        m_ui->m_logoLabel->setPixmap(QPixmap(QString(LOGO_LABEL_MAIN_ICON_PATH)));
+    }
+    else if (net == RpcApi::STAGE_NET_NAME)
+    {
+        netColor_ = STAGE_NET_COLOR;
+        setWindowIcon(QIcon(WINDOW_STAGE_ICON_PATH));
+        m_ui->m_logoLabel->setPixmap(QPixmap(QString(LOGO_LABEL_STAGE_ICON_PATH)));
+    }
+    else if (net == RpcApi::TEST_NET_NAME)
+    {
+        netColor_ = TEST_NET_COLOR;
+        setWindowIcon(QIcon(WINDOW_TEST_ICON_PATH));
+        m_ui->m_logoLabel->setPixmap(QPixmap(QString(LOGO_LABEL_TEST_ICON_PATH)));
+    }
+    m_ui->m_overviewButton->setStyleSheet(QString{BUTTON_STYLE_SHEET}.arg(netColor_.name()));
+    m_ui->m_sendButton->setStyleSheet(QString{BUTTON_STYLE_SHEET}.arg(netColor_.name()));
+    m_ui->m_addressBookButton->setStyleSheet(QString{BUTTON_STYLE_SHEET}.arg(netColor_.name()));
+    m_ui->m_miningButton->setStyleSheet(QString{BUTTON_STYLE_SHEET}.arg(netColor_.name()));
+    m_ui->m_logButton->setStyleSheet(QString{BUTTON_STYLE_SHEET}.arg(netColor_.name()));
+    m_ui->m_syncProgress->setColor(netColor_);
+}
 
 QString MainWindow::getAddress() const
 {
@@ -270,7 +310,7 @@ void MainWindow::about() {
 
 void MainWindow::copyAddress()
 {
-    QApplication::clipboard()->setText(walletModel_->index(0, WalletModel::COLUMN_ADDRESS).data().toString());
+    QApplication::clipboard()->setText(walletModel_->index(0, WalletModel::COLUMN_FIRST_ADDRESS).data().toString());
     copiedToClipboard();
 }
 
@@ -282,6 +322,11 @@ void MainWindow::copyBalance()
     copiedToClipboard();
 }
 
+void MainWindow::createLegacyWallet()
+{
+    emit createLegacyWalletSignal(this);
+}
+
 void MainWindow::createWallet()
 {
     emit createWalletSignal(this);
@@ -290,6 +335,11 @@ void MainWindow::createWallet()
 void MainWindow::openWallet()
 {
     emit openWalletSignal(this);
+}
+
+void MainWindow::restoreWalletFromMnemonic()
+{
+    emit restoreWalletFromMnemonicSignal(this);
 }
 
 void MainWindow::remoteWallet()
@@ -353,9 +403,9 @@ void MainWindow::setTitle()
         setWindowTitle(Settings::instance().getRpcEndPoint());
 #else
     const QString fileName =
-            Settings::instance().getConnectionMethod() == ConnectionMethod::BUILTIN ?
+            Settings::instance().getWalletdConnectionMethod() == ConnectionMethod::BUILTIN ?
                 Settings::instance().getWalletFile() :
-                Settings::instance().getRpcEndPoint();
+                Settings::instance().getWalletdEndPoint();
 
     setWindowTitle(fileName);
 #endif
@@ -412,12 +462,12 @@ void MainWindow::builtinRun()
     m_ui->m_exportViewOnlyKeysAction->setEnabled(true);
 }
 
-void MainWindow::jsonErrorResponse(const QString& /*id*/, const QString& errorString)
+void MainWindow::jsonErrorResponse(const QString& /*id*/, const JsonRpc::Error& error)
 {
     QMessageBox msg(this);
     msg.setIcon(QMessageBox::Critical);
     msg.setWindowTitle(tr("Error"));
-    msg.setText(errorString);
+    msg.setText(QString{"(%1) %2 %3"}.arg(error.code).arg(error.message).arg(error.data));
     msg.exec();
 
     m_ui->m_sendFrame->cancelSend();

@@ -27,12 +27,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_0394C65EF9544D1093390F27A773B039"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_11E11BEEB2774ADC8A9C2EDD8C11B0F1"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -58,6 +52,12 @@
         "Entry"
         {
         "MsmKey" = "8:_1E62FE20C3FB4EC6A7370FAFE9C47BF5"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_22FB6F3AD790418EBE8762A9843DF579"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -123,13 +123,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_787428CF3F3746B8A81F32E6C613F967"
+        "MsmKey" = "8:_7DD7945A6D81499A89DC5CF2E83459A0"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_7DD7945A6D81499A89DC5CF2E83459A0"
+        "MsmKey" = "8:_830BDEF72045486F81CE044501D656EB"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -280,6 +280,12 @@
         "Entry"
         {
         "MsmKey" = "8:_D70AF485CF2C4E26BE0AE5D5BB08BD35"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_EC0AE0AD496241509B115D7ED55BED4D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -528,6 +534,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_22FB6F3AD790418EBE8762A9843DF579"
+            {
+            "SourcePath" = "8:..\\bin\\bytecoind.pdb"
+            "TargetName" = "8:bytecoind.pdb"
+            "Tag" = "8:"
+            "Folder" = "8:_BB6FE95E6903428FBAEC9FE62CB0FE39"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2911A20E9FAB43759C37E3628DEDD0EA"
             {
             "SourcePath" = "8:..\\bin\\translations\\qt_uk.qm"
@@ -728,12 +754,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_787428CF3F3746B8A81F32E6C613F967"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7DD7945A6D81499A89DC5CF2E83459A0"
             {
-            "SourcePath" = "8:..\\bin\\bearer\\qnativewifibearer.dll"
-            "TargetName" = "8:qnativewifibearer.dll"
+            "SourcePath" = "8:..\\bin\\Qt5Svg.dll"
+            "TargetName" = "8:Qt5Svg.dll"
             "Tag" = "8:"
-            "Folder" = "8:_EA323EA245EE499B85F5030B0B43A82A"
+            "Folder" = "8:_BB6FE95E6903428FBAEC9FE62CB0FE39"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -748,10 +774,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7DD7945A6D81499A89DC5CF2E83459A0"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_830BDEF72045486F81CE044501D656EB"
             {
-            "SourcePath" = "8:..\\bin\\Qt5Svg.dll"
-            "TargetName" = "8:Qt5Svg.dll"
+            "SourcePath" = "8:..\\bin\\walletd.pdb"
+            "TargetName" = "8:walletd.pdb"
             "Tag" = "8:"
             "Folder" = "8:_BB6FE95E6903428FBAEC9FE62CB0FE39"
             "Condition" = "8:"
@@ -1483,23 +1509,23 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Bytecoin"
-        "ProductCode" = "8:{BDC4312B-0447-48BD-8D20-D5F79392639F}"
-        "PackageCode" = "8:{F567C990-2CB4-468A-BF20-B4B3C3672B51}"
+        "ProductCode" = "8:{05D20FF4-E7FF-40F8-8CA8-3ACA003F8516}"
+        "PackageCode" = "8:{E8EEE6EC-CD66-4B0C-ADEE-0D33B1F54345}"
         "UpgradeCode" = "8:{DC5C7D60-BB08-4B97-B634-E87679CCEB3C}"
         "AspNetVersion" = "8:"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:18.11.22"
+        "ProductVersion" = "8:18.12.12"
         "Manufacturer" = "8:Bytecoin Developers"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
-        "Title" = "8:Bytecoin 3.3.3 Installer"
+        "Title" = "8:Bytecoin 3.4.0-beta-20181212 Installer"
         "Subject" = "8:"
         "ARPCONTACT" = "8:Bytecoin Developers"
         "Keywords" = "8:"
-        "ARPCOMMENTS" = "8:Release version of bytecoin from 22 Nov 2018"
+        "ARPCOMMENTS" = "8:Release version of bytecoin from 12 Dec 2018"
         "ARPURLINFOABOUT" = "8:https://bytecoin.org"
         "ARPPRODUCTICON" = "8:_ABCF8F071D16461785EDF6D56ED2ABCE"
         "ARPIconIndex" = "3:0"
@@ -1706,7 +1732,7 @@
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
                             "Setting" = "3:2"
-                            "Value" = "8:Release version 3.3.3 of bytecoin core and GUI wallet from 2018/11/22."
+                            "Value" = "8:Release version 3.4.0-beta-20181212 of bytecoin core and GUI wallet from 2018/12/12."
                             "DefaultValue" = "8:#1202"
                             "UsePlugInResources" = "11:TRUE"
                             }
@@ -1945,7 +1971,7 @@
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
                             "Setting" = "3:2"
-                            "Value" = "8:Release version 3.3.3 of bytecoin core and GUI wallet from 2018/11/22."
+                            "Value" = "8:Release version 3.4.0-beta-20181212 of bytecoin core and GUI wallet from 2018/12/12."
                             "DefaultValue" = "8:#1202"
                             "UsePlugInResources" = "11:TRUE"
                             }
@@ -2028,11 +2054,11 @@
         }
         "MergeModule"
         {
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_0394C65EF9544D1093390F27A773B039"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_EC0AE0AD496241509B115D7ED55BED4D"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:FALSE"
-            "SourcePath" = "8:C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Redist\\MSVC\\14.12.25810\\MergeModules\\Microsoft_VC141_CRT_x64.msm"
+            "SourcePath" = "8:C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Redist\\MSVC\\14.16.27012\\MergeModules\\Microsoft_VC141_CRT_x64.msm"
                 "Properties"
                 {
                 }

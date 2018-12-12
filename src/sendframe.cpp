@@ -4,6 +4,7 @@
 #include <QMetaMethod>
 #include <QUrl>
 #include <QUrlQuery>
+#include <QStyle>
 
 #include "sendframe.h"
 #include "transferframe.h"

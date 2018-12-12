@@ -19,6 +19,12 @@ namespace Ui {
   class MainWindow;
 }
 
+namespace JsonRpc {
+
+struct Error;
+
+}
+
 namespace WalletGUI {
 
 class WalletModel;
@@ -54,7 +60,7 @@ public:
     Q_SLOT void builtinRun();
 //    Q_SLOT void remoteConnected();
 
-    Q_SLOT void jsonErrorResponse(const QString& id, const QString& errorString);
+    Q_SLOT void jsonErrorResponse(const QString& id, const JsonRpc::Error& error);
     Q_SLOT void createTxReceived(const RpcApi::CreatedTx& tx);
     Q_SLOT void createTx(const RpcApi::Transaction& tx, quint64 fee, bool subtractFee);
 
@@ -71,6 +77,7 @@ public:
     Q_SLOT void exportViewOnlyKeys();
     Q_SLOT void exportKeys();
     Q_SLOT void updateIsReady(const QString& newVersion);
+    Q_SLOT void netChanged(const QString& net);
 
 protected:
     void changeEvent(QEvent* event) override;
@@ -91,6 +98,8 @@ private:
 
     WalletModel* walletModel_;
 
+    QColor netColor_;
+
     void createRecentWalletMenu();
     void updateRecentWalletActions();
     void themeChanged();
@@ -106,8 +115,10 @@ private:
     Q_SLOT void communityForumTriggered();
     Q_SLOT void reportIssueTriggered();
 
+    Q_SLOT void createLegacyWallet();
     Q_SLOT void createWallet();
     Q_SLOT void openWallet();
+    Q_SLOT void restoreWalletFromMnemonic();
     Q_SLOT void remoteWallet();
     Q_SLOT void encryptWallet();
 
@@ -125,8 +136,10 @@ signals:
     void exportKeysSignal();
     void restartDaemon(QPrivateSignal);
 
+    void createLegacyWalletSignal(QWidget* parent);
     void createWalletSignal(QWidget* parent);
     void openWalletSignal(QWidget* parent);
+    void restoreWalletFromMnemonicSignal(QWidget* parent);
     void remoteWalletSignal(QWidget* parent);
     void encryptWalletSignal(QWidget* parent);
     void importKeysSignal(QWidget* parent);

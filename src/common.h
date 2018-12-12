@@ -9,10 +9,10 @@
 
 class QUrl;
 
-constexpr const char* CURRENCY_TICKER = "BCN";
-constexpr const uint64_t MAXIMUM_UNSYNCED_BLOCKS_WHEN_SEND_AVAILABLE = 5;
+constexpr const char CURRENCY_TICKER[] = "BCN";
+//constexpr const uint64_t MAXIMUM_UNSYNCED_BLOCKS_WHEN_SEND_AVAILABLE = 5;
 constexpr const uint64_t COIN = 100000000;
-constexpr const uint32_t CONFIRMATIONS = 3;
+constexpr const uint32_t CONFIRMATIONS = 5;
 constexpr const int NUMBER_OF_DECIMAL_PLACES = 8;
 constexpr const int64_t DEFAULT_MIXIN_VALUE = 6;
 constexpr const int64_t MAX_MIXIN_VALUE = 1000;
@@ -27,6 +27,10 @@ constexpr const uint32_t CRYPTONOTE_MAX_BLOCK_NUMBER = 500000000;
 
 namespace WalletGUI
 {
+
+constexpr const char MAIN_NET_COLOR[] = "#EE4486";
+constexpr const char STAGE_NET_COLOR[] = "#44EE86";
+constexpr const char TEST_NET_COLOR[] = "#8644EE";
 
 bool isTransactionSpendTimeUnlocked(uint64_t unlockTime, uint32_t blockIndex, uint64_t blockTimestampMedian);
 QString formatUnsignedAmount(quint64 amount, bool trim = true);

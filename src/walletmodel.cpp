@@ -16,19 +16,63 @@
 namespace WalletGUI
 {
 
+class TxList
+{
+public:
+    using Height = RpcApi::Height;
+    using Transaction = RpcApi::Transaction;
+    using Transfer = RpcApi::Transfer;
+    using Map = QMultiMap<Height, Transaction>;
+    using List = QList<Transaction>;
+
+    TxList() {}
+    void add(const Map& map, TxList::Height topHeight, TxList::Height from_height, TxList::Height to_height, TxList::Height next_from_height, TxList::Height next_to_height);
+    const Map& map() const { return map_; }
+    const List& list() const { return list_; }
+    Height topHeight() const { return topHeight_; }
+    int size() const { return map_.size(); }
+    static Height confirmationThreshold(Height height) { return height > CONFIRMATIONS + 2 ? height - CONFIRMATIONS - 2 : 0; }
+
+private:
+    Map map_;
+    List list_;
+    Height topHeight_ = 0;
+
+};
+
+void TxList::add(const Map& newMap, TxList::Height /*topHeight*/, TxList::Height from_height, TxList::Height to_height, TxList::Height /*next_from_height*/, TxList::Height /*next_to_height*/)
+{
+//    const Height newTopHeight = topHeight;
+//    const Height beginHeight = from_height;
+//    const Height endHeight = next_from_height; // not including
+
+    auto fhit = map_.upperBound(from_height);
+    auto thit = map_.lowerBound(to_height);
+//    auto thit = map_.upperBound(to_height);   // uncomment this!!
+    for (; fhit != thit;)
+        fhit = map_.erase(fhit);
+
+    map_.unite(newMap);
+    list_ = map_.values();
+}
+
 struct WalletModelState
 {
     RpcApi::Status status;
     RpcApi::Balance balance;
+    RpcApi::Height prevTopHeight = 0;
 //    QLinkedList<RpcApi::Transaction> confirmed_txs;
 //    QLinkedList<RpcApi::Transaction> unconfirmed_txs;
 //    QString firstAddress;
-    QList<RpcApi::Transaction> txs;
+//    QList<RpcApi::Transaction> txs;
+    TxList txs;
     QList<QString> addresses;
 
     bool viewOnly = false;
+    bool deterministic = false;
     QDateTime creationTimestamp;
     quint32 addressesCount = 0;
+    QString net{};
 
     RemoteWalletd::State walletdState = RemoteWalletd::State::STOPPED;
     int unconfirmedSize = 0;
@@ -94,8 +138,10 @@ QVariant WalletModel::headerData(int section, Qt::Orientation orientation, int r
             return tr("Height");
         case COLUMN_FEE:
             return tr("Fee");
-        case COLUMN_ADDRESS:
+        case COLUMN_FIRST_ADDRESS:
             return tr("Address");
+        case COLUMN_NET:
+            return tr("Net");
         case COLUMN_PROOF:
             return tr("Proof");
         }
@@ -190,72 +236,127 @@ void WalletModel::walletInfoReceived(const RpcApi::WalletInfo& response)
     pimpl_->viewOnly = response.view_only;
     pimpl_->addressesCount = response.total_address_count;
     pimpl_->creationTimestamp = response.wallet_creation_timestamp;
+    pimpl_->deterministic = response.deterministic;
+    if (pimpl_->net != response.net)
+    {
+        pimpl_->net = response.net;
+        emit netChangedSignal(pimpl_->net);
+    }
 
     QVector<int> changedAddressRoles;
     changedAddressRoles << Qt::EditRole << Qt::DisplayRole
-        << ROLE_ADDRESS
-        << ROLE_CREATION_TIMESTAMP
-        << ROLE_ADDRESSES_COUNT
+        << ROLE_FIRST_ADDRESS
+        << ROLE_DETERMINISTIC
+        << ROLE_AUDITABLE
+        << ROLE_WALLET_CREATION_TIMESTAMP
+        << ROLE_TOTAL_ADDRESS_COUNT
+        << ROLE_NET
+        << ROLE_SECRET_VIEW_KEY
+        << ROLE_PUBLIC_VIEW_KEY
+        << ROLE_IMPORT_KEYS
+        << ROLE_MNEMONIC
         << ROLE_VIEW_ONLY;
 
-    emit dataChanged(index(0, COLUMN_ADDRESS), index(pimpl_->addresses.size() - 1, COLUMN_VIEW_ONLY), changedAddressRoles);
+    emit dataChanged(index(0, COLUMN_FIRST_ADDRESS), index(pimpl_->addresses.size() - 1, COLUMN_VIEW_ONLY), changedAddressRoles);
 }
 
-void WalletModel::transfersReceived(const RpcApi::Transfers& history)
+void WalletModel::transfersReceived(const RpcApi::Transfers& history, RpcApi::Height topHeight, RpcApi::Height from_height, RpcApi::Height to_height)
 {
-    const quint32 highestConfirmedBlock = getHighestKnownConfirmedBlock();
-    if (history.next_from_height >= highestConfirmedBlock) // unconfirmed
+//    const RpcApi::Height confirmedThreshold = topHeight > CONFIRMATIONS + 2 ? topHeight - CONFIRMATIONS - 2 : 0;
+//    const RpcApi::Height prevConfirmedThreshold = pimpl_->prevTopHeight > CONFIRMATIONS + 2 ? pimpl_->prevTopHeight - CONFIRMATIONS - 2 : 0;
+
+    pimpl_->prevTopHeight = topHeight;
+
+    TxList::Map rcvdTxs;
+    for (const RpcApi::Block& block : history.blocks)
+        for (const RpcApi::Transaction& tx : block.transactions)
+            rcvdTxs.insert(tx.block_height, tx);
+
+    if (!rcvdTxs.empty())
     {
-//        QLinkedList<RpcApi::Transaction> rcvdTxs;
-        QList<RpcApi::Transaction> rcvdTxs;
-        for (const RpcApi::Block& block : history.blocks)
-            rcvdTxs.append(block.transactions);
-
-        if (rcvdTxs == pimpl_->txs.mid(0, pimpl_->unconfirmedSize))
-            return;
-
-        const QList<RpcApi::Transaction>& confirmedTxs = pimpl_->txs.mid(pimpl_->unconfirmedSize);
-        pimpl_->unconfirmedSize = rcvdTxs.size();
-        rcvdTxs.append(confirmedTxs);
-        containerReceived(pimpl_->txs, rcvdTxs, pimpl_->addresses.size());
+        TxList newList = pimpl_->txs;
+        newList.add(rcvdTxs, topHeight, from_height, to_height, history.next_from_height, history.next_to_height);
+        containerReceived(pimpl_->txs, newList, pimpl_->addresses.size());
     }
-    else if (history.next_to_height < highestConfirmedBlock) // confirmed
+
+    if (history.next_to_height == 0)
     {
-        QList<RpcApi::Transaction> rcvdTxs;
-        for (const RpcApi::Block& block : history.blocks)
-            rcvdTxs.append(block.transactions);
-
-        if (rcvdTxs.empty())
-            return;
-        if (rcvdTxs.first().block_height < getBottomConfirmedBlock())
-        {
-//            QList<RpcApi::Transaction> newTxs = pimpl_->txs;
-//            newTxs.append(rcvdTxs);
-
-            beginInsertRows(QModelIndex(), rowCount(), pimpl_->txs.size() + rcvdTxs.size() - 1);
-            pimpl_->txs.append(std::move(rcvdTxs));
-//            oldContainer = newContainer;
-            endInsertRows();
-
-//            containerReceived(pimpl_->txs, newTxs, pimpl_->addresses.size());
-            pimpl_->canFetchMore = history.next_to_height != 0;
-            if (pimpl_->canFetchMore)
-                emit fetchedSignal();
-            else
-                emit nothingToFetchSignal();
-        }
-        else if (rcvdTxs.last().block_height > getTopConfirmedBlock())
-        {
-            QList<RpcApi::Transaction> newTxs = pimpl_->txs.mid(0, pimpl_->unconfirmedSize);
-            newTxs.append(rcvdTxs);
-            newTxs.append(pimpl_->txs.mid(pimpl_->unconfirmedSize));
-            containerReceived(pimpl_->txs, newTxs, pimpl_->addresses.size());
-        }
+        const bool cantFetchMore = (history.next_to_height == history.next_from_height);
+        pimpl_->canFetchMore = !cantFetchMore;
     }
+    if (pimpl_->canFetchMore)
+        emit fetchedSignal();
     else
-    {
-        qDebug("Got %d block, but %d expected", history.next_from_height, highestConfirmedBlock);
-    }
+        emit nothingToFetchSignal();
+
+
+//    if (from_height >= pimpl_->prevTopHeight && history.next_from_height < )
+
+//    for (auto it = pimpl_->txs.begin(); it != pimpl_->txs.end() && it->block_height > confirmedThreshold; it = pimpl_->txs.erase(it))
+//        ;
+
+//    for (const RpcApi::Transaction& tx : pimpl_->txs)
+//        if (tx.block_height < )
+
+//    if (history.next_from_height)
+
+
+
+
+
+//    const quint32 highestConfirmedBlock = getHighestKnownConfirmedBlock();
+//    if (history.next_from_height >= highestConfirmedBlock) // unconfirmed
+//    {
+////        QLinkedList<RpcApi::Transaction> rcvdTxs;
+//        QList<RpcApi::Transaction> rcvdTxs;
+//        for (const RpcApi::Block& block : history.blocks)
+//            rcvdTxs.append(block.transactions);
+
+//        if (rcvdTxs == pimpl_->txs.mid(0, pimpl_->unconfirmedSize))
+//            return;
+
+//        const QList<RpcApi::Transaction>& confirmedTxs = pimpl_->txs.mid(pimpl_->unconfirmedSize);
+//        pimpl_->unconfirmedSize = rcvdTxs.size();
+//        rcvdTxs.append(confirmedTxs);
+//        containerReceived(pimpl_->txs, rcvdTxs, pimpl_->addresses.size());
+//    }
+//    else if (history.next_to_height < highestConfirmedBlock) // confirmed
+//    {
+//        QList<RpcApi::Transaction> rcvdTxs;
+//        for (const RpcApi::Block& block : history.blocks)
+//            rcvdTxs.append(block.transactions);
+
+//        if (rcvdTxs.empty())
+//            return;
+//        if (rcvdTxs.first().block_height < getBottomConfirmedBlock())
+//        {
+////            QList<RpcApi::Transaction> newTxs = pimpl_->txs;
+////            newTxs.append(rcvdTxs);
+
+//            beginInsertRows(QModelIndex(), rowCount(), pimpl_->txs.size() + rcvdTxs.size() - 1);
+//            pimpl_->txs.append(std::move(rcvdTxs));
+////            oldContainer = newContainer;
+//            endInsertRows();
+
+////            containerReceived(pimpl_->txs, newTxs, pimpl_->addresses.size());
+//            pimpl_->canFetchMore = history.next_to_height != 0;
+//            if (pimpl_->canFetchMore)
+//                emit fetchedSignal();
+//            else
+//                emit nothingToFetchSignal();
+//        }
+//        else if (rcvdTxs.last().block_height > getTopConfirmedBlock())
+//        {
+//            QList<RpcApi::Transaction> newTxs = pimpl_->txs.mid(0, pimpl_->unconfirmedSize);
+//            newTxs.append(rcvdTxs);
+//            newTxs.append(pimpl_->txs.mid(pimpl_->unconfirmedSize));
+//            containerReceived(pimpl_->txs, newTxs, pimpl_->addresses.size());
+//        }
+//    }
+//    else
+//    {
+//        qDebug("Got %d block, but %d expected", history.next_from_height, highestConfirmedBlock);
+//    }
 
     QVector<int> changedRoles;
     changedRoles << Qt::EditRole << Qt::DisplayRole
@@ -282,14 +383,14 @@ void WalletModel::statusReceived(const RpcApi::Status& status)
     if (status == pimpl_->status)
         return;
 
-    bool needToRequestUnconfirmed = false;
-    bool needToRequestConfirmed = false;
+//    bool needToRequestUnconfirmed = false;
+//    bool needToRequestConfirmed = false;
 
     QVector<int> changedRoles;
     if (status.top_block_hash != pimpl_->status.top_block_hash)
     {
         changedRoles << ROLE_TOP_BLOCK_HASH;
-        needToRequestConfirmed = needToRequestUnconfirmed = true;
+//        needToRequestConfirmed = needToRequestUnconfirmed = true;
     }
     if (status.outgoing_peer_count != pimpl_->status.outgoing_peer_count)
         changedRoles << ROLE_PEER_COUNT_OUTGOING << ROLE_PEER_COUNT_SUM;
@@ -312,12 +413,12 @@ void WalletModel::statusReceived(const RpcApi::Status& status)
     if (status.top_known_block_height != pimpl_->status.top_known_block_height)
     {
         changedRoles << ROLE_KNOWN_TOP_BLOCK_HEIGHT;
-        needToRequestConfirmed = needToRequestUnconfirmed = true;
+//        needToRequestConfirmed = needToRequestUnconfirmed = true;
     }
     if (status.transaction_pool_version != pimpl_->status.transaction_pool_version)
     {
         changedRoles << ROLE_TXPOOL_VERSION;
-        needToRequestUnconfirmed = true;
+//        needToRequestUnconfirmed = true;
     }
 
     pimpl_->status = status;
@@ -325,30 +426,40 @@ void WalletModel::statusReceived(const RpcApi::Status& status)
 
     emit dataChanged(index(0, COLUMN_TOP_BLOCK_HEIGHT), index(0, COLUMN_PEER_COUNT_SUM), changedRoles);
 
-    if (needToRequestConfirmed)
-    {
-        RpcApi::GetTransfers::Request req;
-        req.from_height = getTopConfirmedBlock();
-        req.to_height = getHighestKnownConfirmedBlock();
-        emit getTransfersSignal(req);
-    }
+    const bool firstRequest = pimpl_->prevTopHeight == 0;
 
-    if (needToRequestUnconfirmed)
-    {
-        RpcApi::GetTransfers::Request req;
-        req.from_height = getHighestKnownConfirmedBlock();
-        emit getTransfersSignal(req);
-    }
+    RpcApi::GetTransfers::Request req;
+    req.from_height = TxList::confirmationThreshold(pimpl_->prevTopHeight);
+    req.to_height = std::numeric_limits<RpcApi::Height>::max();
+    req.desired_transactions_count = firstRequest ? 300 : std::numeric_limits<RpcApi::Height>::max();
+    req.forward = false;
+    emit getTransfersSignal(req, status.top_block_height);
+
+
+//    if (needToRequestConfirmed)
+//    {
+//        RpcApi::GetTransfers::Request req;
+//        req.from_height = getTopConfirmedBlock();
+//        req.to_height = getHighestKnownConfirmedBlock();
+//        emit getTransfersSignal(req, 0);
+//    }
+
+//    if (needToRequestUnconfirmed)
+//    {
+//        RpcApi::GetTransfers::Request req;
+//        req.from_height = getHighestKnownConfirmedBlock();
+//        emit getTransfersSignal(req, 0);
+//    }
 }
 
-quint32 WalletModel::getTopConfirmedBlock() const
-{
-    return pimpl_->unconfirmedSize < pimpl_->txs.size() ? pimpl_->txs[pimpl_->unconfirmedSize].block_height : 0;
-}
+//quint32 WalletModel::getTopConfirmedBlock() const
+//{
+//    return pimpl_->unconfirmedSize < pimpl_->txs.size() ? pimpl_->txs[pimpl_->unconfirmedSize].block_height : 0;
+//}
 
 quint32 WalletModel::getBottomConfirmedBlock() const
 {
-    return pimpl_->unconfirmedSize < pimpl_->txs.size() ? pimpl_->txs.last().block_height : std::numeric_limits<quint32>::max();
+    return pimpl_->unconfirmedSize < pimpl_->txs.size() ? pimpl_->txs.map().first().block_height : std::numeric_limits<quint32>::max();
 }
 
 quint32 WalletModel::getHighestKnownConfirmedBlock() const
@@ -379,16 +490,6 @@ void WalletModel::balanceReceived(const RpcApi::Balance& balance)
     emit dataChanged(index(0, COLUMN_SPENDABLE), index(0, COLUMN_TOTAL), changedRoles);
 }
 
-void WalletModel::viewKeyReceived(const RpcApi::ViewKey& /*viewKey*/)
-{
-    // TODO
-}
-
-void WalletModel::unspentsReceived(const RpcApi::Unspents& /*unspents*/)
-{
-    // we do not use this api
-}
-
 void WalletModel::stateChanged(RemoteWalletd::State /*oldState*/, RemoteWalletd::State newState)
 {
     if (newState == pimpl_->walletdState)
@@ -407,7 +508,7 @@ QVariant WalletModel::getDisplayRoleData(const QModelIndex& index) const
     if (index.column() >= COLUMN_STATE && index.column() <= COLUMN_STATE)
         return getDisplayRoleState(index);
 
-    if (index.column() >= COLUMN_ADDRESS && index.column() <= COLUMN_VIEW_ONLY)
+    if (index.column() >= COLUMN_FIRST_ADDRESS && index.column() <= COLUMN_VIEW_ONLY)
         return getDisplayRoleAddresses(index);
 
     if (index.column() >= COLUMN_UNLOCK_TIME && index.column() <= COLUMN_PROOF)
@@ -427,7 +528,7 @@ QVariant WalletModel::getUserRoleData(const QModelIndex& index, int role) const
     if (role >= ROLE_STATE && role <= ROLE_STATE)
         return getUserRoleState(index, role);
 
-    if (role >= ROLE_ADDRESS && role <= ROLE_VIEW_ONLY)
+    if (role >= ROLE_FIRST_ADDRESS && role <= ROLE_VIEW_ONLY)
         return getUserRoleAddresses(index, role);
 
     if (role >= ROLE_UNLOCK_TIME && role <= ROLE_PROOF)
@@ -453,9 +554,9 @@ QVariant WalletModel::getDisplayRoleState(const QModelIndex& index) const
         case RemoteWalletd::State::STOPPED:
             return tr("Disconnected");
         case RemoteWalletd::State::CONNECTING:
-            return tr("Connecting to %1").arg(Settings::instance().getUserFriendlyConnectionMethod());
+            return tr("Connecting to %1").arg(Settings::instance().getUserFriendlyWalletdConnectionMethod());
         case RemoteWalletd::State::CONNECTED:
-            return tr("Connected to %1").arg(Settings::instance().getUserFriendlyConnectionMethod());
+            return tr("Connected to %1").arg(Settings::instance().getUserFriendlyWalletdConnectionMethod());
         case RemoteWalletd::State::NETWORK_ERROR:
             return tr("Network error");
         case RemoteWalletd::State::JSON_ERROR:
@@ -484,12 +585,16 @@ QVariant WalletModel::getDisplayRoleAddresses(const QModelIndex& index) const
 
     switch(index.column())
     {
-    case COLUMN_ADDRESS:
-        return pimpl_->addresses[index.row()];
-    case COLUMN_CREATION_TIMESTAMP:
+    case COLUMN_FIRST_ADDRESS:
+        return "<b>" + pimpl_->addresses[index.row()] + "</b>";
+    case COLUMN_DETERMINISTIC:
+        return pimpl_->deterministic ? QVariant{"<b>"+tr("HD")+"</b>"} : /*"<s>"+tr("HD")+"</s>"*/QVariant{};
+    case COLUMN_WALLET_CREATION_TIMESTAMP:
         return tr("Wallet created: %1.").arg(pimpl_->creationTimestamp.toString(Qt::SystemLocaleShortDate));
-    case COLUMN_ADDRESSES_COUNT:
+    case COLUMN_TOTAL_ADDRESS_COUNT:
         return tr("Total addresses in the wallet: %1.").arg(pimpl_->addressesCount);
+    case COLUMN_NET:
+        return pimpl_->net;
     case COLUMN_VIEW_ONLY:
         return pimpl_->viewOnly ? tr("The wallet is view only.") : QString{};
     }
@@ -504,12 +609,14 @@ QVariant WalletModel::getUserRoleAddresses(const QModelIndex& index, int role) c
 
     switch (role)
     {
-    case ROLE_ADDRESS:
+    case ROLE_FIRST_ADDRESS:
         return pimpl_->addresses[index.row()];
-    case ROLE_CREATION_TIMESTAMP:
+    case ROLE_WALLET_CREATION_TIMESTAMP:
         return pimpl_->creationTimestamp;
-    case ROLE_ADDRESSES_COUNT:
+    case ROLE_TOTAL_ADDRESS_COUNT:
         return pimpl_->addressesCount;
+    case ROLE_NET:
+        return pimpl_->net;
     case ROLE_VIEW_ONLY:
         return pimpl_->viewOnly;
     }
@@ -519,9 +626,13 @@ QVariant WalletModel::getUserRoleAddresses(const QModelIndex& index, int role) c
 
 QVariant WalletModel::getDisplayRoleHistory(const QModelIndex& index) const
 {
-    if (index.row() >= pimpl_->txs.size())
+    const int size = pimpl_->txs.size();
+    const int row = index.row();
+    if (row >= size)
         return QVariant();
-    const RpcApi::Transaction& tx = pimpl_->txs[index.row()];
+//    const RpcApi::Transaction& tx = pimpl_->txs[index.row()];
+//    const RpcApi::Transaction tx = pimpl_->txs.map().values().at(size - row - 1);
+    const RpcApi::Transaction& tx = pimpl_->txs.list()[size - row - 1];
 
     switch(index.column())
     {
@@ -569,13 +680,15 @@ QVariant WalletModel::getDisplayRoleHistory(const QModelIndex& index) const
     }
     case COLUMN_BLOCK_HEIGHT:
     {
-        if (tx.block_height > getLastBlockHeight())
+//        if (tx.block_height > getLastBlockHeight())
+        if (tx.block_hash.isEmpty())
             return tr("-", "n/a");
         return tx.block_height;
     }
     case COLUMN_BLOCK_HASH:
     {
-        if (tx.block_height > getLastBlockHeight())
+//        if (tx.block_height > getLastBlockHeight())
+        if (tx.block_hash.isEmpty())
             return tr("In mempool");
         return tx.block_hash;
     }
@@ -605,9 +718,13 @@ QVariant WalletModel::getDisplayRoleHistory(const QModelIndex& index) const
 
 QVariant WalletModel::getUserRoleHistory(const QModelIndex& index, int role) const
 {
-    if (index.row() >= pimpl_->txs.size())
+    const int size = pimpl_->txs.size();
+    const int row = index.row();
+    if (row >= size)
         return QVariant();
-    const RpcApi::Transaction& tx = pimpl_->txs[index.row()];
+//    const RpcApi::Transaction& tx = pimpl_->txs[index.row()];
+//    const RpcApi::Transaction tx = pimpl_->txs.map().values().at(size - row - 1);
+    const RpcApi::Transaction& tx = pimpl_->txs.list()[size - row - 1];
 
     switch (role)
     {
@@ -692,7 +809,7 @@ QVariant WalletModel::getDisplayRoleStatus(const QModelIndex& index) const
     }
     case COLUMN_LOWER_LEVEL_ERROR:
 //        return pimpl_->status.lower_level_error;
-        return pimpl_->status.lower_level_error.isEmpty() ? tr("Connected to bytecoind") : tr("Bytecoind status: %1").arg(pimpl_->status.lower_level_error);
+        return pimpl_->status.lower_level_error.isEmpty() || (pimpl_->status.top_block_height < pimpl_->status.top_known_block_height && pimpl_->status.lower_level_error == "SEND_ERROR") ? tr("Connected to bytecoind") : tr("Bytecoind status: %1").arg(pimpl_->status.lower_level_error);
     case COLUMN_NEXT_BLOCK_EFFECTIVE_MEDIAN_SIZE:
         return pimpl_->status.next_block_effective_median_size;
     case COLUMN_TXPOOL_VERSION:
@@ -947,9 +1064,17 @@ void WalletModel::fetchMore(const QModelIndex& parent)
 {
     if (parent.isValid())
         return;
+//    RpcApi::GetTransfers::Request req;
+//    req.to_height = getBottomConfirmedBlock() - 1;
+//    emit getTransfersSignal(req, 0);
+
     RpcApi::GetTransfers::Request req;
+    req.from_height = 0;
     req.to_height = getBottomConfirmedBlock() - 1;
-    emit getTransfersSignal(req);
+    req.desired_transactions_count = 300;
+    req.forward = false;
+    emit getTransfersSignal(req, pimpl_->status.top_block_height);
+
 }
 
 bool WalletModel::canFetchMore(const QModelIndex& parent) const
@@ -957,10 +1082,10 @@ bool WalletModel::canFetchMore(const QModelIndex& parent) const
     return !parent.isValid() && pimpl_->canFetchMore;
 }
 
-int WalletModel::getTopFetchedHeight() const
-{
-    return getTopConfirmedBlock();
-}
+//int WalletModel::getTopFetchedHeight() const
+//{
+//    return getTopConfirmedBlock();
+//}
 
 int WalletModel::getBottomFetchedHeight() const
 {

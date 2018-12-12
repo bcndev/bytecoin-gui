@@ -4,6 +4,7 @@
 #include <QClipboard>
 #include <QCompleter>
 #include <QWheelEvent>
+#include <QStyle>
 
 #include "transferframe.h"
 //#include "Settings/Settings.h"

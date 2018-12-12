@@ -7,6 +7,7 @@
 #include <QThread>
 #include <QStandardPaths>
 #include <QApplication>
+#include <type_traits>
 
 #include "settings.h"
 #include "common.h"
@@ -19,16 +20,30 @@ namespace
 {
 
 constexpr char OPTION_WALLET_FILE[] = "walletFile";
-constexpr char OPTION_LOCAL_RPC_PORT[] = "localRpcPort";
-constexpr char OPTION_REMOTE_RPC_END_POINT[] = "remoteRpcEndPoint";
-constexpr char OPTION_CONNECTION_METHOD[] = "connectionMethod";
+constexpr char OPTION_LOCAL_RPC_PORT[] = "localRpcPort"; // obsolete
+constexpr char OPTION_REMOTE_RPC_END_POINT[] = "remoteRpcEndPoint"; // obsolete
+constexpr char OPTION_LOCAL_WALLETD_PORT[] = "localWalletdPort";
+constexpr char OPTION_REMOTE_WALLETD_END_POINT[] = "remoteWalletdEndPoint";
+constexpr char OPTION_CONNECTION_METHOD[] = "connectionMethod"; // obsolete
+constexpr char OPTION_WALLETD_CONNECTION_METHOD[] = "walletdConnectionMethod";
+constexpr char OPTION_BYTECOIND_CONNECTION_METHOD[] = "bytecoindConnectionMethod";
+constexpr char OPTION_BYTECOIND_HOST[] = "bytecoindHost";
+constexpr char OPTION_BYTECOIND_PORT[] = "bytecoindPort";
+constexpr char OPTION_NETWORK_TYPE[] = "networkType";
 constexpr char OPTION_MINING_POOL_SWITCH_STRATEGY[] = "miningPoolSwitchStrategy";
 constexpr char OPTION_MINING_CPU_CORE_COUNT[] = "miningCpuCoreCount";
 constexpr char OPTION_MINING_POOL_LIST[] = "miningPoolList";
 constexpr char OPTION_RECENT_WALLETS[] = "recentWallets";
 constexpr char OPTION_WALLETD_PARAMS[] = "walletdParams";
 
-constexpr quint16 DEFAULT_LOCAL_RPC_PORT = 8070;
+constexpr quint16 DEFAULT_MAIN_WALLETD_RPC_PORT = 8070;
+constexpr quint16 DEFAULT_TEST_WALLETD_RPC_PORT = DEFAULT_MAIN_WALLETD_RPC_PORT + 1000;
+constexpr quint16 DEFAULT_STAGE_WALLETD_RPC_PORT = DEFAULT_MAIN_WALLETD_RPC_PORT + 2000;
+
+constexpr quint16 DEFAULT_MAIN_BYTECOIND_RPC_PORT = 8081;
+constexpr quint16 DEFAULT_TEST_BYTECOIND_RPC_PORT = DEFAULT_MAIN_BYTECOIND_RPC_PORT + 1000;
+constexpr quint16 DEFAULT_STAGE_BYTECOIND_RPC_PORT = DEFAULT_MAIN_BYTECOIND_RPC_PORT + 2000;
+
 constexpr char LOCAL_HOST[] = "127.0.0.1";
 
 #if defined(Q_OS_LINUX)
@@ -69,6 +84,23 @@ Settings::Settings()
     const QString jsonFile = getDefaultWorkDir().absoluteFilePath("bytecoin-gui.config");
 
     settings_.reset(new QSettings(jsonFile, jsonFormat));
+
+    renameLegacyParameter(OPTION_CONNECTION_METHOD   , OPTION_WALLETD_CONNECTION_METHOD);
+    renameLegacyParameter(OPTION_LOCAL_RPC_PORT      , OPTION_LOCAL_WALLETD_PORT);
+    renameLegacyParameter(OPTION_REMOTE_RPC_END_POINT, OPTION_REMOTE_WALLETD_END_POINT);
+}
+
+void Settings::renameLegacyParameter(const QString& legacyName, const QString& newName)
+{
+    if (settings_->contains(legacyName))
+    {
+        if (!settings_->contains(newName))
+        {
+            const QVariant& value = settings_->value(legacyName);
+            settings_->setValue(newName, value);
+        }
+        settings_->remove(legacyName);
+    }
 }
 
 Settings& Settings::instance()
@@ -77,61 +109,120 @@ Settings& Settings::instance()
     return settings;
 }
 
+template<typename EnumT>
+EnumT Settings::getEnumValue(const QString& key, EnumT defaultValue) const
+{
+    static_assert(std::is_enum<EnumT>::value, "EnumT must be an enumeration");
+    using underlying_t = std::underlying_type_t<EnumT>;
+    return static_cast<EnumT>(qvariant_cast<underlying_t>(settings_->value(key, static_cast<underlying_t>(defaultValue))));
+}
+
 QSettings::Format Settings::getFormat() const
 {
     return settings_->format();
 }
 
-quint16 Settings::getLocalRpcPort() const
+//quint16 Settings::getLocalRpcPort() const
+//{
+//    return settings_->value(OPTION_LOCAL_RPC_PORT, getDefaultWalletdPort()).toUInt();
+//}
+
+quint16 Settings::getLocalWalletdPort() const
 {
-    return settings_->value(OPTION_LOCAL_RPC_PORT, getDefaultRpcPort()).toUInt();
+    return settings_->value(OPTION_LOCAL_WALLETD_PORT, getDefaultWalletdPort()).toUInt();
 }
 
-QString Settings::getRemoteRpcEndPoint() const
+//QString Settings::getRemoteRpcEndPoint() const
+//{
+//    return settings_->value(OPTION_REMOTE_RPC_END_POINT).toString();
+//}
+
+QString Settings::getRemoteWalletdEndPoint() const
 {
-    return settings_->value(OPTION_REMOTE_RPC_END_POINT).toString();
+    return settings_->value(OPTION_REMOTE_WALLETD_END_POINT).toString();
 }
 
-QString Settings::getLocalRpcEndPoint() const
+QString Settings::getLocalWalletdEndPoint() const
 {
-    return QString("%1:%2").arg(LOCAL_HOST).arg(getLocalRpcPort());
+    return QString("%1:%2").arg(LOCAL_HOST).arg(getLocalWalletdPort());
 }
 
-QString Settings::getBuilinRpcEndPoint() const
+QString Settings::getBuiltinWalletdEndPoint() const
 {
-    return QString("%1:%2").arg(LOCAL_HOST).arg(getDefaultRpcPort());
+    return QString("%1:%2").arg(LOCAL_HOST).arg(getDefaultWalletdPort());
 }
 
-QString Settings::getRpcEndPoint() const
+QString Settings::getWalletdEndPoint() const
 {
-    switch(getConnectionMethod())
+    switch(getWalletdConnectionMethod())
     {
-    case ConnectionMethod::BUILTIN:return getBuilinRpcEndPoint();
-    case ConnectionMethod::LOCAL:   return getLocalRpcEndPoint();
-    case ConnectionMethod::REMOTE:  return getRemoteRpcEndPoint();
+    case ConnectionMethod::BUILTIN: return getBuiltinWalletdEndPoint();
+    case ConnectionMethod::LOCAL:   return getLocalWalletdEndPoint();
+    case ConnectionMethod::REMOTE:  return getRemoteWalletdEndPoint();
     }
     return QString();
 }
 
-ConnectionMethod Settings::getConnectionMethod() const
+ConnectionMethod Settings::getWalletdConnectionMethod() const
 {
-    return static_cast<ConnectionMethod>(settings_->value(OPTION_CONNECTION_METHOD, static_cast<int>(getDefaultConnectionMethod())).toInt());
+//    return static_cast<ConnectionMethod>(settings_->value(OPTION_WALLETD_CONNECTION_METHOD, static_cast<int>(getWalletdDefaultConnectionMethod())).toInt());
+    return getEnumValue<ConnectionMethod>(OPTION_WALLETD_CONNECTION_METHOD, getWalletdDefaultConnectionMethod());
 }
 
-QString Settings::getUserFriendlyConnectionMethod() const
+QString Settings::getUserFriendlyWalletdConnectionMethod() const
 {
-    switch(getConnectionMethod())
+    switch(getWalletdConnectionMethod())
     {
     case ConnectionMethod::BUILTIN:return tr("built-in walletd");
     case ConnectionMethod::LOCAL:   return tr("local walletd");
-    case ConnectionMethod::REMOTE:  return getRemoteRpcEndPoint();
+    case ConnectionMethod::REMOTE:  return getRemoteWalletdEndPoint();
     }
     return QString();
+}
+
+ConnectionMethod Settings::getBytecoindConnectionMethod() const
+{
+//    return static_cast<ConnectionMethod>(settings_->value(OPTION_BYTECOIND_CONNECTION_METHOD, static_cast<int>(getBytecoindDefaultConnectionMethod())).toInt());
+    return getEnumValue<ConnectionMethod>(OPTION_BYTECOIND_CONNECTION_METHOD, getBytecoindDefaultConnectionMethod());
+}
+
+QString Settings::getBytecoindEndPoint() const
+{
+    const quint16 port = getBytecoindPort();
+    return QString{"%1:%2"}.arg(getBytecoindHost()).arg(port ? port : getDefaultBytecoindPort());
+}
+
+QString Settings::getBytecoindHost() const
+{
+    return settings_->value(OPTION_BYTECOIND_HOST).toString();
+}
+
+quint16 Settings::getBytecoindPort() const
+{
+    return static_cast<quint16>(settings_->value(OPTION_BYTECOIND_PORT).toUInt());
+}
+
+NetworkType Settings::getNetworkType() const
+{
+//    return static_cast<NetworkType>(settings_->value(OPTION_NETWORK_TYPE, static_cast<int>(getDefaultNetworkType())).toInt());
+    return getEnumValue<NetworkType>(OPTION_NETWORK_TYPE, getDefaultNetworkType());
+}
+
+QString Settings::getNetworkTypeString() const
+{
+    switch(getNetworkType())
+    {
+    case NetworkType::MAIN:  return QString{"main"};
+    case NetworkType::STAGE: return QString{"stage"};
+    case NetworkType::TEST:  return QString{"test"};
+    }
+    return QString{};
 }
 
 MiningPoolSwitchStrategy Settings::getMiningPoolSwitchStrategy() const
 {
-    return static_cast<MiningPoolSwitchStrategy>(settings_->value(OPTION_MINING_POOL_SWITCH_STRATEGY, static_cast<int>(getDefaultMiningPoolSwitchStrategy())).toInt());
+//    return static_cast<MiningPoolSwitchStrategy>(settings_->value(OPTION_MINING_POOL_SWITCH_STRATEGY, static_cast<int>(getDefaultMiningPoolSwitchStrategy())).toInt());
+    return getEnumValue<MiningPoolSwitchStrategy>(OPTION_MINING_POOL_SWITCH_STRATEGY, getDefaultMiningPoolSwitchStrategy());
 }
 
 quint32 Settings::getMiningCpuCoreCount() const
@@ -161,25 +252,74 @@ QStringList Settings::getWalletdParams() const
     return settings_->value(OPTION_WALLETD_PARAMS).toString().split(QChar(' '), QString::SkipEmptyParts);
 }
 
+quint16 Settings::getDefaultWalletdPort() const
+{
+    switch(getNetworkType())
+    {
+    case NetworkType::MAIN:  return DEFAULT_MAIN_WALLETD_RPC_PORT;
+    case NetworkType::STAGE: return DEFAULT_STAGE_WALLETD_RPC_PORT;
+    case NetworkType::TEST:  return DEFAULT_TEST_WALLETD_RPC_PORT;
+    }
+    return DEFAULT_MAIN_WALLETD_RPC_PORT;
+}
+
+quint16 Settings::getDefaultBytecoindPort() const
+{
+    switch(getNetworkType())
+    {
+    case NetworkType::MAIN:  return DEFAULT_MAIN_BYTECOIND_RPC_PORT;
+    case NetworkType::STAGE: return DEFAULT_STAGE_BYTECOIND_RPC_PORT;
+    case NetworkType::TEST:  return DEFAULT_TEST_BYTECOIND_RPC_PORT;
+    }
+    return DEFAULT_MAIN_BYTECOIND_RPC_PORT;
+}
+
 
 void Settings::setWalletdParams(const QString& params)
 {
     settings_->setValue(OPTION_WALLETD_PARAMS, params);
 }
 
-void Settings::setLocalRpcPort(quint16 port)
+//void Settings::setLocalRpcPort(quint16 port)
+//{
+//    settings_->setValue(OPTION_LOCAL_RPC_PORT, port);
+//}
+
+void Settings::setLocalWalletdPort(quint16 port)
 {
-    settings_->setValue(OPTION_LOCAL_RPC_PORT, port);
+    settings_->setValue(OPTION_LOCAL_WALLETD_PORT, port);
 }
 
-void Settings::setRemoteRpcEndPoint(const QString& host, quint16 port)
+//void Settings::setRemoteRpcEndPoint(const QString& host, quint16 port)
+//{
+//    settings_->setValue(OPTION_REMOTE_RPC_END_POINT, QString("%1:%2").arg(host).arg(port));
+//}
+
+void Settings::setRemoteWalletdEndPoint(const QString& host, quint16 port)
 {
-    settings_->setValue(OPTION_REMOTE_RPC_END_POINT, QString("%1:%2").arg(host).arg(port));
+    settings_->setValue(OPTION_REMOTE_WALLETD_END_POINT, QString("%1:%2").arg(host).arg(port));
 }
 
-void Settings::setConnectionMethod(ConnectionMethod method)
+void Settings::setBytecoindEndPoint(const QString& host, quint16 port)
 {
-    settings_->setValue(OPTION_CONNECTION_METHOD, static_cast<int>(method));
+    settings_->setValue(OPTION_BYTECOIND_HOST, host);
+    settings_->setValue(OPTION_BYTECOIND_PORT, port);
+//    settings_->setValue(OPTION_BYTECOIND_END_POINT, QString("%1:%2").arg(host).arg(port));
+}
+
+void Settings::setWalletdConnectionMethod(ConnectionMethod method)
+{
+    settings_->setValue(OPTION_WALLETD_CONNECTION_METHOD, static_cast<int>(method));
+}
+
+void Settings::setBytecoindConnectionMethod(ConnectionMethod method)
+{
+    settings_->setValue(OPTION_BYTECOIND_CONNECTION_METHOD, static_cast<int>(method));
+}
+
+void Settings::setNetworkType(NetworkType type)
+{
+    settings_->setValue(OPTION_NETWORK_TYPE, static_cast<int>(type));
 }
 
 void Settings::setMiningPoolSwitchStrategy(MiningPoolSwitchStrategy strategy)
@@ -221,12 +361,6 @@ void Settings::clearRecentWallets()
 }
 
 /*static*/
-quint16 Settings::getDefaultRpcPort()
-{
-    return DEFAULT_LOCAL_RPC_PORT;
-}
-
-/*static*/
 QDir Settings::getDefaultWorkDir()
 {
 #if defined(Q_OS_WIN32)
@@ -258,9 +392,21 @@ QString Settings::getDefaultWalletdPath()
 }
 
 /*static*/
-ConnectionMethod Settings::getDefaultConnectionMethod()
+ConnectionMethod Settings::getWalletdDefaultConnectionMethod()
 {
     return ConnectionMethod::BUILTIN;
+}
+
+/*static*/
+ConnectionMethod Settings::getBytecoindDefaultConnectionMethod()
+{
+    return ConnectionMethod::BUILTIN;
+}
+
+/*static*/
+NetworkType Settings::getDefaultNetworkType()
+{
+    return NetworkType::MAIN;
 }
 
 /*static*/
@@ -338,9 +484,9 @@ QStringList Settings::getStringList(const QString& key, const QVariant& defaultV
     return settings_->value(key, defaultValue).value<QStringList>();
 }
 
-bool Settings::connectionMethodSet() const
+bool Settings::walletdConnectionMethodSet() const
 {
-    return settings_->contains(OPTION_CONNECTION_METHOD);
+    return settings_->contains(OPTION_WALLETD_CONNECTION_METHOD);
 }
 
 

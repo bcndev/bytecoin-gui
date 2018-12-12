@@ -27,14 +27,14 @@ BalanceOverviewFrame::BalanceOverviewFrame(QWidget *parent)
 
     ui->m_overviewSpendableBalanceLabel->installEventFilter(this);
     ui->m_overviewLockedOrUnconfirmedBalanceLabel->installEventFilter(this);
-    ui->m_overviewSpendableDustBalanceLabel->installEventFilter(this);
+//    ui->m_overviewSpendableDustBalanceLabel->installEventFilter(this);
     ui->m_overviewTotalBalanceLabel->installEventFilter(this);
 
     QFont font = ui->m_overviewSpendableBalanceLabel->font();
     font.setBold(true);
     ui->m_overviewSpendableBalanceLabel->setFont(font);
     ui->m_overviewLockedOrUnconfirmedBalanceLabel->setFont(font);
-    ui->m_overviewSpendableDustBalanceLabel->setFont(font);
+//    ui->m_overviewSpendableDustBalanceLabel->setFont(font);
     ui->m_overviewTotalBalanceLabel->setFont(font);
 }
 
@@ -52,7 +52,7 @@ void BalanceOverviewFrame::setWalletModel(WalletModel* walletModel)
     walletModel_ = walletModel;
     stateMapper_->setModel(walletModel_); // clears all previously set mappings
     stateMapper_->addMapping(ui->m_overviewSpendableBalanceLabel, WalletModel::COLUMN_SPENDABLE, "text");
-    stateMapper_->addMapping(ui->m_overviewSpendableDustBalanceLabel, WalletModel::COLUMN_SPENDABLE_DUST, "text");
+//    stateMapper_->addMapping(ui->m_overviewSpendableDustBalanceLabel, WalletModel::COLUMN_SPENDABLE_DUST, "text");
     stateMapper_->addMapping(ui->m_overviewLockedOrUnconfirmedBalanceLabel, WalletModel::COLUMN_LOCKED_OR_UNCONFIRMED, "text");
     stateMapper_->addMapping(ui->m_overviewTotalBalanceLabel, WalletModel::COLUMN_TOTAL, "text");
     stateMapper_->toFirst();
@@ -102,8 +102,8 @@ bool BalanceOverviewFrame::eventFilter(QObject* object, QEvent* event)
     {
         if (object == ui->m_overviewSpendableBalanceLabel)
             copySpendableBalance();
-        else if (object == ui->m_overviewSpendableDustBalanceLabel)
-            copySpendableDustBalance();
+//        else if (object == ui->m_overviewSpendableDustBalanceLabel)
+//            copySpendableDustBalance();
         else if (object == ui->m_overviewLockedOrUnconfirmedBalanceLabel)
             copyLockedOrUnconfirmedBalance();
         else if (object == ui->m_overviewTotalBalanceLabel)

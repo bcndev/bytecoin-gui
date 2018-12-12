@@ -14,36 +14,6 @@ namespace JsonRpc
 
 constexpr char DEFAULT_RPC_PATH[] = "/json_rpc";
 
-//namespace
-//{
-
-//template<typename... Ts>
-//struct MapFromArgsMaker;
-
-//template<typename NameType, typename ValueType, typename... Ts>
-//struct MapFromArgsMaker<NameType, ValueType, Ts...>
-//{
-//    static
-//    QVariantMap make(NameType&& name, ValueType&& value, Ts&&... args)
-//    {
-//        QVariantMap map = MapFromArgsMaker<Ts...>::make(std::forward<Ts>(args)...);
-//        map.insert(std::forward<NameType>(name), QVariant(std::forward<ValueType>(value)));
-//        return map;
-//    }
-//};
-
-//template<>
-//struct MapFromArgsMaker<>
-//{
-//    static
-//    QVariantMap make()
-//    {
-//        return QVariantMap();
-//    }
-//};
-
-//}
-
 Client::Client(const QUrl& url, QObject* parent)
     : Client(parent)
 {
@@ -61,7 +31,7 @@ Client::Client(QObject* parent)
     , httpClient_(new QNetworkAccessManager(this))
     , idCount_(0)
 {
-    connect(httpClient_, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
+    connect(httpClient_, &QNetworkAccessManager::finished, this, &Client::replyFinished);
     connect(httpClient_, &QNetworkAccessManager::authenticationRequired, this, &Client::authenticationRequired);
 }
 
@@ -80,10 +50,12 @@ void Client::setUrl(const QUrl& url)
     url_ = url;
 }
 
-void Client::insertResponseHandler(const QString& id, FunctionHandler handler)
+void Client::insertResponseHandler(const QString& id, FunctionHandler&& handler)
 {
     Q_ASSERT(!responseHandlers_.contains(id));
-    responseHandlers_.insert(id, handler);
+    responseHandlers_.insert(id, std::move(handler));
+    if (responseHandlers_.size() > 1000)
+        responseHandlers_.erase(responseHandlers_.begin());
 }
 
 //template<typename... Ts>
@@ -99,16 +71,26 @@ void Client::insertResponseHandler(const QString& id, FunctionHandler handler)
 //    return req.getId();
 //}
 
-QString Client::sendRequest(const QString& method, const QVariantMap& json)
+/*QString*/ void Client::sendRequest(const QString& method, const QVariantMap& json, FunctionHandler&& handler)
 {
+//    JsonRpcRequest req;
+//    req.setId(QString::number(idCount_++));
+//    req.setMethod(method);
+//    req.setParamsFromObject(json);
+
+//    sendJson(req.toString());
+
+//    return req.getId();
+
+    const QString id = QString::number(idCount_++);
     JsonRpcRequest req;
-    req.setId(QString::number(idCount_++));
+    req.setId(id);
     req.setMethod(method);
     req.setParamsFromObject(json);
 
-    sendJson(req.toString());
+    insertResponseHandler(id, std::move(handler));
 
-    return req.getId();
+    sendJson(req.toString());
 }
 
 //void Client::destroyedReply(QObject* obj)
@@ -149,36 +131,25 @@ void Client::replyFinished(QNetworkReply* reply)
     }
     const QJsonObject json = jsonDocument.object();
 
-    int errorCode = 0;
-    QString errorString;
-    QString errorData;
-    QScopedPointer<JsonRpcObject> jsonRpcObject(JsonRpcObjectFactory::createJsonRpcObject(json, errorCode, errorString, errorData));
+    Error error;
+    QScopedPointer<JsonRpcObject> jsonRpcObject(JsonRpcObjectFactory::createJsonRpcObject(json, error.code, error.message, error.data));
     if (jsonRpcObject.isNull())
     {
-        qDebug("[JsonRpcClient] Failed to create JsonRpcObject (%d) %s:%s", errorCode, qPrintable(errorString), qPrintable(errorData));
-        emit jsonParsingError(errorString);
+        qDebug("[JsonRpcClient] Failed to create JsonRpcObject (%d) %s:%s", error.code, qPrintable(error.message), qPrintable(error.data));
+        emit jsonParsingError(error.message);
         return;
     }
-    if (jsonRpcObject->isResponse())
+    if (jsonRpcObject->isResponse()) // error is a response too
     {
         const JsonRpcResponse& response = static_cast<JsonRpcResponse&>(*jsonRpcObject);
-        auto it = responseHandlers_.find(response.getId());
-//        if (response.isErrorResponse())
-//        {
-//            qDebug("[JsonRpcClient] Error response for %s id. %s", qPrintable(response.getId()), qPrintable(response.getErrorMessage()));
-//            if (it != responseHandlers_.end())
-//                responseHandlers_.erase(it);
-//            emit jsonErrorResponse(response.getId(), response.getErrorMessage());
-//            return;
-//        }
+        const QString& id = response.getId();
+        auto it = responseHandlers_.find(id);
         if (it == responseHandlers_.end())
         {
-            qDebug("[JsonRpcClient] Cannot find handler for id '%s'.", qPrintable(response.getId()));
-            emit jsonUnknownMessageId(response.getId());
+            qDebug("[JsonRpcClient] Cannot find handler for id '%s'.", qPrintable(id));
+            emit jsonUnknownMessageId(id);
             return;
         }
-//        const QVariantMap result = response.getResultAsObject();
-//        it.value()(result);
         it.value()(response);
         responseHandlers_.erase(it);
     }
@@ -221,192 +192,192 @@ WalletClient::WalletClient(const QString& endPoint, QObject* parent)
     : Client(endPoint, parent)
 {}
 
-void WalletClient::sendGetStatus(const RpcApi::GetStatus::Request& req)
-{
-    const QString requestID = sendRequest(RpcApi::GetStatus::METHOD, req.toJson());
-    insertResponseHandler(requestID, std::bind(&WalletClient::statusHandler, this, _1));
-}
-
-//void WalletClient::sendGetHistory(const QList<QString>& addresses, quint32 blockIndex, quint32 blockCount)
+//void WalletClient::sendGetStatus(const RpcApi::GetStatus::Request& req)
 //{
-//    const QString requestID = sendRequest(RpcApi::GetHistory::METHOD
-//            , GetHistory::Request::ADDRESSES, addresses
-//            , GetHistory::Request::BLOCK_INDEX, blockIndex
-//            , GetHistory::Request::BLOCK_COUNT, blockCount);
-//    insertResponseHandler(requestID, std::bind(&WalletClient::historyHandler, this, _1));
+//    const QString requestID = sendRequest(RpcApi::GetStatus::METHOD, req.toJson());
+//    insertResponseHandler(requestID, std::bind(&WalletClient::statusHandler, this, _1));
 //}
 
-void WalletClient::sendGetTransfers(const RpcApi::GetTransfers::Request& req)
-{
-    const QString requestID = sendRequest(RpcApi::GetTransfers::METHOD, req.toJson());
-    insertResponseHandler(requestID, std::bind(&WalletClient::transfersHandler, this, _1));
-}
+////void WalletClient::sendGetHistory(const QList<QString>& addresses, quint32 blockIndex, quint32 blockCount)
+////{
+////    const QString requestID = sendRequest(RpcApi::GetHistory::METHOD
+////            , GetHistory::Request::ADDRESSES, addresses
+////            , GetHistory::Request::BLOCK_INDEX, blockIndex
+////            , GetHistory::Request::BLOCK_COUNT, blockCount);
+////    insertResponseHandler(requestID, std::bind(&WalletClient::historyHandler, this, _1));
+////}
 
-void WalletClient::sendGetWalletInfo()
-{
-    const QString requestID = sendRequest(RpcApi::GetWalletInfo::METHOD);
-    insertResponseHandler(requestID, std::bind(&WalletClient::walletInfoHandler, this, _1));
-}
-
-void WalletClient::sendGetViewKey()
-{
-    const QString requestID = sendRequest(RpcApi::GetViewKey::METHOD);
-    insertResponseHandler(requestID, std::bind(&WalletClient::viewKeyHandler, this, _1));
-}
-
-void WalletClient::sendGetBalance(const RpcApi::GetBalance::Request& req)
-{
-    const QString requestID = sendRequest(RpcApi::GetBalance::METHOD, req.toJson());
-    insertResponseHandler(requestID, std::bind(&WalletClient::balanceHandler, this, _1));
-}
-
-//void WalletClient::sendGetUnspent(const RpcApi::GetUnspent::Request& /*req*/)
+//void WalletClient::sendGetTransfers(const RpcApi::GetTransfers::Request& req)
 //{
-//    const QString requestID = sendRequest(RpcApi::GetUnspent::METHOD, req.toJson());
-//    insertResponseHandler(requestID, std::bind(&WalletClient::unspentHandler, this, _1));
+//    const QString requestID = sendRequest(RpcApi::GetTransfers::METHOD, req.toJson());
+//    insertResponseHandler(requestID, std::bind(&WalletClient::transfersHandler, this, _1));
 //}
 
-void WalletClient::sendCreateTx(const RpcApi::CreateTransaction::Request& req)
-{
-    const QString requestID = sendRequest(RpcApi::CreateTransaction::METHOD, req.toJson());
-    insertResponseHandler(requestID, std::bind(&WalletClient::createTxHandler, this, _1));
-}
+//void WalletClient::sendGetWalletInfo()
+//{
+//    const QString requestID = sendRequest(RpcApi::GetWalletInfo::METHOD);
+//    insertResponseHandler(requestID, std::bind(&WalletClient::walletInfoHandler, this, _1));
+//}
 
-void WalletClient::sendSendTx(const RpcApi::SendTransaction::Request& req)
-{
-    const QString requestID = sendRequest(RpcApi::SendTransaction::METHOD, req.toJson());
-    insertResponseHandler(requestID, std::bind(&WalletClient::sendTxHandler, this, _1));
-}
+//void WalletClient::sendGetViewKey()
+//{
+//    const QString requestID = sendRequest(RpcApi::GetViewKey::METHOD);
+//    insertResponseHandler(requestID, std::bind(&WalletClient::viewKeyHandler, this, _1));
+//}
 
-void WalletClient::sendCreateProof(const RpcApi::CreateSendProof::Request& req)
-{
-    const QString requestID = sendRequest(RpcApi::CreateSendProof::METHOD, req.toJson());
-    insertResponseHandler(requestID, std::bind(&WalletClient::proofsHandler, this, _1));
-}
+//void WalletClient::sendGetBalance(const RpcApi::GetBalance::Request& req)
+//{
+//    const QString requestID = sendRequest(RpcApi::GetBalance::METHOD, req.toJson());
+//    insertResponseHandler(requestID, std::bind(&WalletClient::balanceHandler, this, _1));
+//}
 
-void WalletClient::sendCheckProof(const RpcApi::CheckSendProof::Request& req)
-{
-    const QString requestID = sendRequest(RpcApi::CheckSendProof::METHOD, req.toJson());
-    insertResponseHandler(requestID, std::bind(&WalletClient::checkProofHandler, this, _1));
-}
+////void WalletClient::sendGetUnspent(const RpcApi::GetUnspent::Request& /*req*/)
+////{
+////    const QString requestID = sendRequest(RpcApi::GetUnspent::METHOD, req.toJson());
+////    insertResponseHandler(requestID, std::bind(&WalletClient::unspentHandler, this, _1));
+////}
 
-void WalletClient::statusHandler(const JsonRpcResponse& response)
-{
-    if (response.isErrorResponse())
-    {
-        qDebug("[JsonRpcClient] Error response for %s id. %s", qPrintable(response.getId()), qPrintable(response.getErrorMessage()));
-        emit jsonErrorResponse(response.getId(), response.getErrorMessage());
-        return;
-    }
+//void WalletClient::sendCreateTx(const RpcApi::CreateTransaction::Request& req)
+//{
+//    const QString requestID = sendRequest(RpcApi::CreateTransaction::METHOD, req.toJson());
+//    insertResponseHandler(requestID, std::bind(&WalletClient::createTxHandler, this, _1));
+//}
 
-    const QVariantMap result = response.getResultAsObject();
-    emit statusReceived(RpcApi::Status::fromJson(result));
-}
+//void WalletClient::sendSendTx(const RpcApi::SendTransaction::Request& req)
+//{
+//    const QString requestID = sendRequest(RpcApi::SendTransaction::METHOD, req.toJson());
+//    insertResponseHandler(requestID, std::bind(&WalletClient::sendTxHandler, this, _1));
+//}
 
-void WalletClient::transfersHandler(const JsonRpcResponse& response)
-{
-    if (response.isErrorResponse())
-    {
-        qDebug("[JsonRpcClient] Error response for %s id. %s", qPrintable(response.getId()), qPrintable(response.getErrorMessage()));
-        emit jsonErrorResponse(response.getId(), response.getErrorMessage());
-        return;
-    }
+//void WalletClient::sendCreateProof(const RpcApi::CreateSendProof::Request& req)
+//{
+//    const QString requestID = sendRequest(RpcApi::CreateSendProof::METHOD, req.toJson());
+//    insertResponseHandler(requestID, std::bind(&WalletClient::proofsHandler, this, _1));
+//}
 
-    const QVariantMap result = response.getResultAsObject();
-    emit transfersReceived(RpcApi::Transfers::fromJson(result));
-}
+//void WalletClient::sendCheckProof(const RpcApi::CheckSendProof::Request& req)
+//{
+//    const QString requestID = sendRequest(RpcApi::CheckSendProof::METHOD, req.toJson());
+//    insertResponseHandler(requestID, std::bind(&WalletClient::checkProofHandler, this, _1));
+//}
 
-void WalletClient::walletInfoHandler(const JsonRpcResponse& response)
-{
-    if (response.isErrorResponse())
-    {
-        qDebug("[JsonRpcClient] Error response for %s id. %s", qPrintable(response.getId()), qPrintable(response.getErrorMessage()));
-        emit jsonErrorResponse(response.getId(), response.getErrorMessage());
-        return;
-    }
+//void WalletClient::statusHandler(const JsonRpcResponse& response)
+//{
+//    if (response.isErrorResponse())
+//    {
+//        qDebug("[JsonRpcClient] Error response for %s id. %s", qPrintable(response.getId()), qPrintable(response.getErrorMessage()));
+//        emit jsonErrorResponse(response.getId(), response.getErrorMessage());
+//        return;
+//    }
 
-    const QVariantMap result = response.getResultAsObject();
-    emit walletInfoReceived(RpcApi::WalletInfo::fromJson(result));
-}
+//    const QVariantMap result = response.getResultAsObject();
+//    emit statusReceived(RpcApi::Status::fromJson(result));
+//}
 
-void WalletClient::balanceHandler(const JsonRpcResponse& response)
-{
-    if (response.isErrorResponse())
-    {
-        qDebug("[JsonRpcClient] Error response for %s id. %s", qPrintable(response.getId()), qPrintable(response.getErrorMessage()));
-        emit jsonErrorResponse(response.getId(), response.getErrorMessage());
-        return;
-    }
+//void WalletClient::transfersHandler(const JsonRpcResponse& response)
+//{
+//    if (response.isErrorResponse())
+//    {
+//        qDebug("[JsonRpcClient] Error response for %s id. %s", qPrintable(response.getId()), qPrintable(response.getErrorMessage()));
+//        emit jsonErrorResponse(response.getId(), response.getErrorMessage());
+//        return;
+//    }
 
-    const QVariantMap result = response.getResultAsObject();
-    emit balanceReceived(RpcApi::Balance::fromJson(result));
-}
+//    const QVariantMap result = response.getResultAsObject();
+//    emit transfersReceived(RpcApi::Transfers::fromJson(result));
+//}
 
-void WalletClient::createTxHandler(const JsonRpcResponse& response)
-{
-    if (response.isErrorResponse())
-    {
-        qDebug("[JsonRpcClient] Error response for %s id. %s", qPrintable(response.getId()), qPrintable(response.getErrorMessage()));
-        emit jsonErrorResponse(response.getId(), response.getErrorMessage());
-        return;
-    }
+//void WalletClient::walletInfoHandler(const JsonRpcResponse& response)
+//{
+//    if (response.isErrorResponse())
+//    {
+//        qDebug("[JsonRpcClient] Error response for %s id. %s", qPrintable(response.getId()), qPrintable(response.getErrorMessage()));
+//        emit jsonErrorResponse(response.getId(), response.getErrorMessage());
+//        return;
+//    }
 
-    const QVariantMap result = response.getResultAsObject();
-    emit createTxReceived(RpcApi::CreatedTx::fromJson(result));
-}
+//    const QVariantMap result = response.getResultAsObject();
+//    emit walletInfoReceived(RpcApi::WalletInfo::fromJson(result));
+//}
 
-void WalletClient::sendTxHandler(const JsonRpcResponse& response)
-{
-    if (response.isErrorResponse())
-    {
-        qDebug("[JsonRpcClient] Error response for %s id. %s", qPrintable(response.getId()), qPrintable(response.getErrorMessage()));
-        emit jsonErrorResponse(response.getId(), response.getErrorMessage());
-        return;
-    }
+//void WalletClient::balanceHandler(const JsonRpcResponse& response)
+//{
+//    if (response.isErrorResponse())
+//    {
+//        qDebug("[JsonRpcClient] Error response for %s id. %s", qPrintable(response.getId()), qPrintable(response.getErrorMessage()));
+//        emit jsonErrorResponse(response.getId(), response.getErrorMessage());
+//        return;
+//    }
 
-    const QVariantMap result = response.getResultAsObject();
-    emit sendTxReceived(RpcApi::SentTx::fromJson(result));
-}
+//    const QVariantMap result = response.getResultAsObject();
+//    emit balanceReceived(RpcApi::Balance::fromJson(result));
+//}
 
-void WalletClient::viewKeyHandler(const JsonRpcResponse& response)
-{
-    if (response.isErrorResponse())
-    {
-        qDebug("[JsonRpcClient] Error response for %s id. %s", qPrintable(response.getId()), qPrintable(response.getErrorMessage()));
-        emit jsonErrorResponse(response.getId(), response.getErrorMessage());
-        return;
-    }
+//void WalletClient::createTxHandler(const JsonRpcResponse& response)
+//{
+//    if (response.isErrorResponse())
+//    {
+//        qDebug("[JsonRpcClient] Error response for %s id. %s", qPrintable(response.getId()), qPrintable(response.getErrorMessage()));
+//        emit jsonErrorResponse(response.getId(), response.getErrorMessage());
+//        return;
+//    }
 
-    const QVariantMap result = response.getResultAsObject();
-    emit viewKeyReceived(RpcApi::ViewKey::fromJson(result));
-}
+//    const QVariantMap result = response.getResultAsObject();
+//    emit createTxReceived(RpcApi::CreatedTx::fromJson(result));
+//}
 
-void WalletClient::proofsHandler(const JsonRpcResponse& response)
-{
-    if (response.isErrorResponse())
-    {
-        qDebug("[JsonRpcClient] Error response for %s id. %s", qPrintable(response.getId()), qPrintable(response.getErrorMessage()));
-        emit jsonErrorResponse(response.getId(), response.getErrorMessage());
-        return;
-    }
+//void WalletClient::sendTxHandler(const JsonRpcResponse& response)
+//{
+//    if (response.isErrorResponse())
+//    {
+//        qDebug("[JsonRpcClient] Error response for %s id. %s", qPrintable(response.getId()), qPrintable(response.getErrorMessage()));
+//        emit jsonErrorResponse(response.getId(), response.getErrorMessage());
+//        return;
+//    }
 
-    const QVariantMap result = response.getResultAsObject();
-    emit proofsReceived(RpcApi::Proofs::fromJson(result));
-}
+//    const QVariantMap result = response.getResultAsObject();
+//    emit sendTxReceived(RpcApi::SentTx::fromJson(result));
+//}
 
-void WalletClient::checkProofHandler(const JsonRpcResponse& response)
-{
-    if (response.isErrorResponse())
-    {
-        RpcApi::ProofCheck pc;
-        pc.validation_error = response.getErrorMessage();
-        emit checkProofReceived(pc);
-        return;
-    }
+//void WalletClient::viewKeyHandler(const JsonRpcResponse& response)
+//{
+//    if (response.isErrorResponse())
+//    {
+//        qDebug("[JsonRpcClient] Error response for %s id. %s", qPrintable(response.getId()), qPrintable(response.getErrorMessage()));
+//        emit jsonErrorResponse(response.getId(), response.getErrorMessage());
+//        return;
+//    }
 
-    const QVariantMap result = response.getResultAsObject();
-    emit checkProofReceived(RpcApi::ProofCheck::fromJson(result));
-}
+//    const QVariantMap result = response.getResultAsObject();
+//    emit viewKeyReceived(RpcApi::ViewKey::fromJson(result));
+//}
+
+//void WalletClient::proofsHandler(const JsonRpcResponse& response)
+//{
+//    if (response.isErrorResponse())
+//    {
+//        qDebug("[JsonRpcClient] Error response for %s id. %s", qPrintable(response.getId()), qPrintable(response.getErrorMessage()));
+//        emit jsonErrorResponse(response.getId(), response.getErrorMessage());
+//        return;
+//    }
+
+//    const QVariantMap result = response.getResultAsObject();
+//    emit proofsReceived(RpcApi::Proofs::fromJson(result));
+//}
+
+//void WalletClient::checkProofHandler(const JsonRpcResponse& response)
+//{
+//    if (response.isErrorResponse())
+//    {
+//        RpcApi::ProofCheck pc;
+//        pc.validation_error = response.getErrorMessage();
+//        emit checkProofReceived(pc);
+//        return;
+//    }
+
+//    const QVariantMap result = response.getResultAsObject();
+//    emit checkProofReceived(RpcApi::ProofCheck::fromJson(result));
+//}
 
 
 //#undef CHECK_CONVERTIBLE

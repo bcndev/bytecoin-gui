@@ -13,6 +13,11 @@ ExportKeyDialog::ExportKeyDialog(const QString& key, QWidget *parent)
 {
     ui->setupUi(this);
     ui->keyEdit->setPlainText(key);
+    if (key.contains(' '))
+    {
+        ui->saveButton->setEnabled(false);
+        ui->saveButton->setVisible(false);
+    }
 }
 
 ExportKeyDialog::~ExportKeyDialog()

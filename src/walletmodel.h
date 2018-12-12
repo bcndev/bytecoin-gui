@@ -24,9 +24,16 @@ class WalletModel : public QAbstractItemModel
 public:
     enum Columns
     {
-        COLUMN_ADDRESS = 0, // getAddresses
-        COLUMN_CREATION_TIMESTAMP,
-        COLUMN_ADDRESSES_COUNT,
+        COLUMN_FIRST_ADDRESS = 0, // getWalletInfo
+        COLUMN_DETERMINISTIC,
+        COLUMN_AUDITABLE,
+        COLUMN_WALLET_CREATION_TIMESTAMP,
+        COLUMN_TOTAL_ADDRESS_COUNT,
+        COLUMN_NET,
+        COLUMN_SECRET_VIEW_KEY,
+        COLUMN_PUBLIC_VIEW_KEY,
+        COLUMN_IMPORT_KEYS,
+        COLUMN_MNEMONIC,
         COLUMN_VIEW_ONLY,
 
         COLUMN_UNLOCK_TIME, // listHistory (transactions)
@@ -68,9 +75,16 @@ public:
 
     enum Roles
     {
-        ROLE_ADDRESS = Qt::UserRole,
-        ROLE_CREATION_TIMESTAMP,
-        ROLE_ADDRESSES_COUNT,
+        ROLE_FIRST_ADDRESS = Qt::UserRole,
+        ROLE_DETERMINISTIC,
+        ROLE_AUDITABLE,
+        ROLE_WALLET_CREATION_TIMESTAMP,
+        ROLE_TOTAL_ADDRESS_COUNT,
+        ROLE_NET,
+        ROLE_SECRET_VIEW_KEY,
+        ROLE_PUBLIC_VIEW_KEY,
+        ROLE_IMPORT_KEYS,
+        ROLE_MNEMONIC,
         ROLE_VIEW_ONLY,
 
         ROLE_UNLOCK_TIME, // listHistory (transactions)
@@ -141,17 +155,16 @@ public:
     int getBottomFetchedHeight() const;
 
 signals:
-    void getTransfersSignal(const RpcApi::GetTransfers::Request& req);
+    void getTransfersSignal(const RpcApi::GetTransfers::Request& req, RpcApi::Height topHeight);
     void fetchedSignal();
     void nothingToFetchSignal();
+    void netChangedSignal(const QString& net);
 
 public slots:
     void statusReceived(const RpcApi::Status& status);
-    void transfersReceived(const RpcApi::Transfers& history);
+    void transfersReceived(const RpcApi::Transfers& history, RpcApi::Height topHeight, RpcApi::Height from_height, RpcApi::Height to_height);
     void walletInfoReceived(const RpcApi::WalletInfo& info);
     void balanceReceived(const RpcApi::Balance& balance);
-    void viewKeyReceived(const RpcApi::ViewKey& viewKey);
-    void unspentsReceived(const RpcApi::Unspents& unspents);
 
     void stateChanged(RemoteWalletd::State oldState, RemoteWalletd::State newState);
 
