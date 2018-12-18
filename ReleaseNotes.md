@@ -1,5 +1,20 @@
 ## Release Notes
 
+### v3.4.0-beta-20181218
+
+- Made minor improvements and bug fixes.
+- Updated the Bytecoin daemons.
+
+### v3.4.0-beta-20181212
+
+- Added HD wallets (BIP 39) support.
+- Improved `walletd` parameters dialog box.
+- Added stagenet/testnet support.
+- Improved external nodes support.
+- Increased minimal anonymity level.
+- Made minor improvements and bug fixes.
+- Updated the Bytecoin daemons.
+
 ### v3.3.3
 
 - Updated the Bytecoin daemons.

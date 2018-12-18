@@ -696,7 +696,7 @@ QVariant WalletModel::getDisplayRoleHistory(const QModelIndex& index) const
     {
         if (tx.timestamp.isNull())
             return tr("Unknown");
-        return tx.timestamp.toString(Qt::SystemLocaleShortDate);
+        return tx.timestamp.toLocalTime().toString(Qt::SystemLocaleShortDate);
     }
     case COLUMN_PROOF:
     {

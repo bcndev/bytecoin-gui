@@ -36,7 +36,8 @@ bool isTransactionSpendTimeUnlocked(uint64_t unlockTime, uint32_t blockIndex, ui
 QString formatUnsignedAmount(quint64 amount, bool trim = true);
 QString formatAmount(qint64 amount);
 QString formatHashRate(quint64 hashRate);
-quint64 convertAmountFromHumanReadable(double amount);
+//quint64 convertAmountFromHumanReadable(double amount);
+bool parseAmount(const QString& str, qint64& amount);
 
 bool isIpOrHostName(const QString& string);
 

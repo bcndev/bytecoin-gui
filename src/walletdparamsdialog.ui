@@ -187,14 +187,14 @@
         <item>
          <widget class="QRadioButton" name="radioStageNet">
           <property name="text">
-           <string>stagenet</string>
+           <string>&amp;stagenet</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QRadioButton" name="radioTestNet">
           <property name="text">
-           <string>test&amp;net</string>
+           <string>&amp;testnet</string>
           </property>
          </widget>
         </item>

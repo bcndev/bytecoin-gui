@@ -61,10 +61,10 @@ bool isIpOrHostName(const QString& string)
     return !string.isEmpty() && (ipRegExp.exactMatch(string) || hostNameRegExp.exactMatch(string));
 }
 
-quint64 convertAmountFromHumanReadable(double amount)
-{
-    return quint64(amount * COIN + .5); // 0.5 - to avoid floating point errors
-}
+//quint64 convertAmountFromHumanReadable(double amount)
+//{
+//    return quint64(amount * COIN + .5); // 0.5 - to avoid floating point errors
+//}
 
 QString rpcUrlToString(const QUrl& url)
 {
@@ -90,5 +90,43 @@ QString formatHashRate(quint64 hashRate)
     return QString("%1 %2H/s").arg(intPart).arg(RATE_PREFIXES[i]);
 }
 
+bool parseAmount(const QString& str, qint64& amount)
+{
+    static const int numberOfDecimalPlaces = 8;
+    static const QChar separator = '.';
+    static const QChar minus = '-';
+    static const QChar plus = '+';
+    static const QChar zero = '0';
+
+    QString trimmedStr = str.trimmed();
+    if (trimmedStr.isEmpty())
+        return false;
+    const QChar first = trimmedStr[0];
+    const bool negative = (first == minus);
+    if (first == minus || first == plus)
+        trimmedStr.remove(0, 1);
+
+    const int fracPos = trimmedStr.indexOf(separator);
+    if (fracPos != trimmedStr.lastIndexOf(separator))
+        return false;
+    if (fracPos == -1)
+        trimmedStr.append(separator);
+    const QStringList splitted = trimmedStr.split(separator, QString::KeepEmptyParts);
+    Q_ASSERT(splitted.size() == 2);
+    const QString& integerPart = splitted.first();
+    const QString& fractionalPart = splitted.last();
+    const QString justifiedFrac = fractionalPart.leftJustified(numberOfDecimalPlaces, zero, true /*truncate*/);
+
+    bool ok = true;
+    const qint64 integer = integerPart.isEmpty() ? 0 : integerPart.toLongLong(&ok);
+    if (!ok)
+        return false;
+    const qint64 frac = justifiedFrac.isEmpty() ? 0 : justifiedFrac.toLongLong(&ok);
+    if (!ok)
+        return false;
+    const qint64 value = integer * COIN + frac;
+    amount = negative ? -value : value;
+    return true;
+}
 
 }

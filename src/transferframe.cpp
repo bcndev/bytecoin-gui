@@ -45,45 +45,6 @@ namespace {
 
 }
 
-bool parseAmount(const QString& str, qint64& amount)
-{
-    static const int numberOfDecimalPlaces = 8;
-    static const QChar separator = '.';
-    static const QChar minus = '-';
-    static const QChar plus = '+';
-    static const QChar zero = '0';
-
-    QString trimmedStr = str.trimmed();
-    if (trimmedStr.isEmpty())
-        return false;
-    const QChar first = trimmedStr[0];
-    const bool negative = (first == minus);
-    if (first == minus || first == plus)
-        trimmedStr.remove(0, 1);
-
-    const int fracPos = trimmedStr.indexOf(separator);
-    if (fracPos != trimmedStr.lastIndexOf(separator))
-        return false;
-    if (fracPos == -1)
-        trimmedStr.append(separator);
-    const QStringList splitted = trimmedStr.split(separator, QString::KeepEmptyParts);
-    Q_ASSERT(splitted.size() == 2);
-    const QString& integerPart = splitted.first();
-    const QString& fractionalPart = splitted.last();
-    const QString justifiedFrac = fractionalPart.leftJustified(numberOfDecimalPlaces, zero, true /*truncate*/);
-
-    bool ok = true;
-    const qint64 integer = integerPart.isEmpty() ? 0 : integerPart.toLongLong(&ok);
-    if (!ok)
-        return false;
-    const qint64 frac = justifiedFrac.isEmpty() ? 0 : justifiedFrac.toLongLong(&ok);
-    if (!ok)
-        return false;
-    const qint64 value = integer * COIN + frac;
-    amount = negative ? -value : value;
-    return true;
-}
-
 TransferFrame::TransferFrame(QWidget* parent)
     : QFrame(parent)
     , m_ui(new Ui::TransferFrame)
@@ -102,8 +63,8 @@ TransferFrame::~TransferFrame()
 
 bool TransferFrame::readyToSend() const
 {
-    QString address = getAddress();
-    double amount = m_ui->m_sendAmountSpin->value();
+    const QString address = getAddress();
+    const double amount = m_ui->m_sendAmountSpin->value();
     return !address.isEmpty() && amount > 0/* && m_cryptoNoteAdapter->isValidAddress(address)*/;
 }
 

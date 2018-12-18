@@ -310,7 +310,7 @@ void MainWindow::about() {
 
 void MainWindow::copyAddress()
 {
-    QApplication::clipboard()->setText(walletModel_->index(0, WalletModel::COLUMN_FIRST_ADDRESS).data().toString());
+    QApplication::clipboard()->setText(walletModel_->index(0, WalletModel::COLUMN_FIRST_ADDRESS).data(WalletModel::ROLE_FIRST_ADDRESS).toString());
     copiedToClipboard();
 }
 
@@ -397,10 +397,10 @@ void MainWindow::setTitle()
 {
     clearTitle();
 #ifdef Q_OS_MAC
-    if (Settings::instance().getConnectionMethod() == ConnectionMethod::BUILTIN)
+    if (Settings::instance().getWalletdConnectionMethod() == ConnectionMethod::BUILTIN)
         setWindowFilePath(Settings::instance().getWalletFile());
     else
-        setWindowTitle(Settings::instance().getRpcEndPoint());
+        setWindowTitle(Settings::instance().getWalletdEndPoint());
 #else
     const QString fileName =
             Settings::instance().getWalletdConnectionMethod() == ConnectionMethod::BUILTIN ?

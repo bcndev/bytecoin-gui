@@ -229,8 +229,11 @@ void SendFrame::sendClicked()
                                 addressBookManager_->findAddressByLabel(label) == INVALID_ADDRESS_INDEX)
             addressBookManager_->addAddress(label, address);
 
-        const double damount = transfer->getAmountString().toDouble();
-        if (damount <= 0)
+//        const double damount = transfer->getAmountString().toDouble();
+        qint64 amount = 0;
+        if (!parseAmount(transfer->getAmountString(), amount))
+            return;
+        if (amount <= 0)
         {
             transfer->setAmountFormatError(true);
             m_ui->m_sendScrollarea->ensureWidgetVisible(transfer);
@@ -238,7 +241,6 @@ void SendFrame::sendClicked()
             m_ui->m_sendButton->setText(tr("Send"));
             return;
         }
-        const quint64 amount = convertAmountFromHumanReadable(damount);
         transferSum += amount;
 
         RpcApi::Transfer tr;
