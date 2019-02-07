@@ -871,12 +871,12 @@
   </action>
   <action name="m_createNewWalletAction">
    <property name="text">
-    <string>&amp;Create HD (BIP39) wallet file</string>
+    <string>&amp;Create Amethyst wallet file</string>
    </property>
   </action>
   <action name="m_restoreWalletFromMnemonicAction">
    <property name="text">
-    <string>&amp;Restore HD (BIP39) wallet from mnemonic</string>
+    <string>&amp;Restore Amethyst wallet from mnemonic</string>
    </property>
   </action>
  </widget>

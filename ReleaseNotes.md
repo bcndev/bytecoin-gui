@@ -1,5 +1,9 @@
 ## Release Notes
 
+### v3.4.0
+
+- Updated the Bytecoin daemons.
+
 ### v3.4.0-beta-20181218
 
 - Made minor improvements and bug fixes.

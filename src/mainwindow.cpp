@@ -175,18 +175,24 @@ void MainWindow::netChanged(const QString& net)
         netColor_ = MAIN_NET_COLOR;
         setWindowIcon(QIcon(WINDOW_MAIN_ICON_PATH));
         m_ui->m_logoLabel->setPixmap(QPixmap(QString(LOGO_LABEL_MAIN_ICON_PATH)));
+        m_ui->m_createNewWalletAction->setEnabled(false);
+        m_ui->m_restoreWalletFromMnemonicAction->setEnabled(false);
     }
     else if (net == RpcApi::STAGE_NET_NAME)
     {
         netColor_ = STAGE_NET_COLOR;
         setWindowIcon(QIcon(WINDOW_STAGE_ICON_PATH));
         m_ui->m_logoLabel->setPixmap(QPixmap(QString(LOGO_LABEL_STAGE_ICON_PATH)));
+        m_ui->m_createNewWalletAction->setEnabled(true);
+        m_ui->m_restoreWalletFromMnemonicAction->setEnabled(true);
     }
     else if (net == RpcApi::TEST_NET_NAME)
     {
         netColor_ = TEST_NET_COLOR;
         setWindowIcon(QIcon(WINDOW_TEST_ICON_PATH));
         m_ui->m_logoLabel->setPixmap(QPixmap(QString(LOGO_LABEL_TEST_ICON_PATH)));
+        m_ui->m_createNewWalletAction->setEnabled(true);
+        m_ui->m_restoreWalletFromMnemonicAction->setEnabled(true);
     }
     m_ui->m_overviewButton->setStyleSheet(QString{BUTTON_STYLE_SHEET}.arg(netColor_.name()));
     m_ui->m_sendButton->setStyleSheet(QString{BUTTON_STYLE_SHEET}.arg(netColor_.name()));

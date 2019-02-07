@@ -426,7 +426,7 @@ void BuiltinWalletd::run()
     QStringList args;
     args << QString{"--wallet-file=%1"}.arg(pathToWallet_);
     if (createLegacy_)
-        args << "--create-legacy-wallet" << "--launch-after-command";
+        args << "--create-wallet" << "--wallet-type=legacy" << "--launch-after-command";
 
     const bool restoreFromMnemonic = !mnemonic_.isEmpty();
     if (createNew_)
@@ -847,8 +847,12 @@ QString BuiltinWalletd::generateMnemonic(QWidget* parent, std::function<void(QSt
 
     if (walletd.exitCode() != 0)
         return QString{};
-    QByteArray data = walletd.readAllStandardOutput();
-    return QString{data}.simplified();
+    const QByteArray data = walletd.readAllStandardOutput();
+    const QString dataStr = data;
+    const QVector<QStringRef> strList = dataStr.splitRef('\n', QString::SkipEmptyParts);
+    if (strList.empty())
+        return QString{};
+    return strList.last().toString().simplified();
 }
 
 /*static*/
