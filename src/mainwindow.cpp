@@ -175,24 +175,24 @@ void MainWindow::netChanged(const QString& net)
         netColor_ = MAIN_NET_COLOR;
         setWindowIcon(QIcon(WINDOW_MAIN_ICON_PATH));
         m_ui->m_logoLabel->setPixmap(QPixmap(QString(LOGO_LABEL_MAIN_ICON_PATH)));
-        m_ui->m_createNewWalletAction->setEnabled(false);
-        m_ui->m_restoreWalletFromMnemonicAction->setEnabled(false);
+//        m_ui->m_createNewWalletAction->setEnabled(false);
+//        m_ui->m_restoreWalletFromMnemonicAction->setEnabled(false);
     }
     else if (net == RpcApi::STAGE_NET_NAME)
     {
         netColor_ = STAGE_NET_COLOR;
         setWindowIcon(QIcon(WINDOW_STAGE_ICON_PATH));
         m_ui->m_logoLabel->setPixmap(QPixmap(QString(LOGO_LABEL_STAGE_ICON_PATH)));
-        m_ui->m_createNewWalletAction->setEnabled(true);
-        m_ui->m_restoreWalletFromMnemonicAction->setEnabled(true);
+//        m_ui->m_createNewWalletAction->setEnabled(true);
+//        m_ui->m_restoreWalletFromMnemonicAction->setEnabled(true);
     }
     else if (net == RpcApi::TEST_NET_NAME)
     {
         netColor_ = TEST_NET_COLOR;
         setWindowIcon(QIcon(WINDOW_TEST_ICON_PATH));
         m_ui->m_logoLabel->setPixmap(QPixmap(QString(LOGO_LABEL_TEST_ICON_PATH)));
-        m_ui->m_createNewWalletAction->setEnabled(true);
-        m_ui->m_restoreWalletFromMnemonicAction->setEnabled(true);
+//        m_ui->m_createNewWalletAction->setEnabled(true);
+//        m_ui->m_restoreWalletFromMnemonicAction->setEnabled(true);
     }
     m_ui->m_overviewButton->setStyleSheet(QString{BUTTON_STYLE_SHEET}.arg(netColor_.name()));
     m_ui->m_sendButton->setStyleSheet(QString{BUTTON_STYLE_SHEET}.arg(netColor_.name()));
@@ -437,6 +437,10 @@ void MainWindow::setConnectedState()
     if (m_ui->m_logFrame->isVisible())
         m_ui->m_overviewButton->click();
 
+    walletModel_->isAmethyst() ?
+                m_ui->m_exportKeysAction->setText(tr("Export mnemonic")) :
+                m_ui->m_exportKeysAction->setText(tr("Export keys"));
+
     setTitle();
 }
 
@@ -500,9 +504,9 @@ void MainWindow::packetReceived(const QByteArray& data)
     m_ui->m_logFrame->addNetworkMessage(QString("<-- ") + QString::fromUtf8(data) + '\n');
 }
 
-void MainWindow::createProof(const QString& txHash, bool needToFind)
+void MainWindow::createProof(const QString& txHash, const QStringList& addresses, bool needToFind)
 {
-    emit createProofSignal(txHash, needToFind);
+    emit createProofSignal(txHash, addresses, needToFind);
 }
 
 void MainWindow::checkProof()
@@ -517,12 +521,12 @@ void MainWindow::showWalletdParams()
 
 void MainWindow::exportViewOnlyKeys()
 {
-    emit exportViewOnlyKeysSignal();
+    emit exportViewOnlyKeysSignal(walletModel_->isAmethyst());
 }
 
 void MainWindow::exportKeys()
 {
-    emit exportKeysSignal();
+    emit exportKeysSignal(walletModel_->isAmethyst());
 }
 
 void MainWindow::updateIsReady(const QString& newVersion)

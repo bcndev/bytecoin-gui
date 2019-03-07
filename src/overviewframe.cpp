@@ -180,7 +180,9 @@ bool OverviewFrame::eventFilter(QObject* object, QEvent* event)
         if (proofColumn)
         {
             const QString txHash = m_transactionsModel->data(modelIndex, WalletModel::ROLE_HASH).toString();
-            emit createProofSignal(txHash, !proof);
+            const QStringList addresses = m_transactionsModel->data(modelIndex, WalletModel::ROLE_RECIPIENTS).toStringList();
+//            emit createProofSignal(txHash, !proof);
+            emit createProofSignal(txHash, addresses, !proof);
         }
     }
     else if (event->type() == QEvent::MouseMove)

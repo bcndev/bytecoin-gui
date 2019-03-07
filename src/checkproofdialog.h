@@ -5,6 +5,7 @@
 #define CHECKPROOFDIALOG_H
 
 #include <QDialog>
+#include "rpcapi.h"
 
 namespace Ui {
 class CheckProofDialog;
@@ -22,7 +23,7 @@ public:
     ~CheckProofDialog();
 
 public slots:
-    void showCheckResult(const QString& result);
+    void showCheckResult(const RpcApi::ProofCheck& result);
 
 signals:
     void checkProofSignal(const QString& proof);

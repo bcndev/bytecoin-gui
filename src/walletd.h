@@ -144,6 +144,7 @@ public:
         WALLETD_WRONG_ARGS             = 211,
         WALLETD_EXPORTKEYS_MORETHANONE = 212,  // We can export keys only if wallet file contains exactly 1 spend keypair
         WALLETD_MNEMONIC_CRC           = 213,  // Unknown version or wrong crc
+        WALLET_FILE_HARDWARE_DECRYPT_ERROR = 214 // This wallet file is backed by hardware and no hardware could decrypt wallet file
     };
     Q_ENUM(ReturnCodes)
 
@@ -166,8 +167,8 @@ public:
     QString errorString() const;
     QProcess::ProcessError error() const;
 
-    void exportViewOnlyKeys(QWidget* parent/*, const QString& exportPath*/);
-    void exportKeys(QWidget* parent);
+    void exportViewOnlyKeys(QWidget* parent, bool isAmethyst/*, const QString& exportPath*/);
+    void exportKeys(QWidget* parent, bool isAmethyst);
     static QString generateMnemonic(QWidget* parent, std::function<void(QString)> errorCallback);
 
 signals:

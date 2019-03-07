@@ -344,9 +344,26 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>editHost</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>WalletdParamsDialog</receiver>
+   <slot>hostChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>203</x>
+     <y>135</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>325</x>
+     <y>156</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>saveParams()</slot>
   <slot>applyParams()</slot>
+  <slot>hostChanged()</slot>
  </slots>
 </ui>

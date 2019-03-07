@@ -24,6 +24,7 @@ public:
 public slots:
     void saveParams();
     void applyParams();
+    void hostChanged();
 
 signals:
     void restartWalletd();

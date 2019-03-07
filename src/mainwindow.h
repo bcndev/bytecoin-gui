@@ -122,18 +122,18 @@ private:
     Q_SLOT void remoteWallet();
     Q_SLOT void encryptWallet();
 
-    Q_SLOT void createProof(const QString& txHash, bool needToFind);
+    Q_SLOT void createProof(const QString& txHash, const QStringList& addresses, bool needToFind);
     Q_SLOT void checkProof();
     Q_SLOT void showWalletdParams();
 
 signals:
     void createTxSignal(const RpcApi::CreateTransaction::Request& req, QPrivateSignal);
     void sendTxSignal(const RpcApi::SendTransaction::Request& req, QPrivateSignal);
-    void createProofSignal(const QString& txHash, bool needToFind);
+    void createProofSignal(const QString& txHash, const QStringList& addresses, bool needToFind);
     void checkProofSignal();
     void showWalletdParamsSignal();
-    void exportViewOnlyKeysSignal();
-    void exportKeysSignal();
+    void exportViewOnlyKeysSignal(bool isAmethyst);
+    void exportKeysSignal(bool isAmethyst);
     void restartDaemon(QPrivateSignal);
 
     void createLegacyWalletSignal(QWidget* parent);

@@ -69,7 +69,7 @@ struct WalletModelState
     QList<QString> addresses;
 
     bool viewOnly = false;
-    bool deterministic = false;
+    bool amethyst = false;
     QDateTime creationTimestamp;
     quint32 addressesCount = 0;
     QString net{};
@@ -236,7 +236,7 @@ void WalletModel::walletInfoReceived(const RpcApi::WalletInfo& response)
     pimpl_->viewOnly = response.view_only;
     pimpl_->addressesCount = response.total_address_count;
     pimpl_->creationTimestamp = response.wallet_creation_timestamp;
-    pimpl_->deterministic = response.deterministic;
+    pimpl_->amethyst = response.amethyst;
     if (pimpl_->net != response.net)
     {
         pimpl_->net = response.net;
@@ -246,8 +246,9 @@ void WalletModel::walletInfoReceived(const RpcApi::WalletInfo& response)
     QVector<int> changedAddressRoles;
     changedAddressRoles << Qt::EditRole << Qt::DisplayRole
         << ROLE_FIRST_ADDRESS
-        << ROLE_DETERMINISTIC
-        << ROLE_AUDITABLE
+        << ROLE_AMETHYST
+        << ROLE_CAN_VIEW_OUTGOING_ADDRESSES
+        << ROLE_HAS_VIEW_SECRET_KEY
         << ROLE_WALLET_CREATION_TIMESTAMP
         << ROLE_TOTAL_ADDRESS_COUNT
         << ROLE_NET
@@ -406,8 +407,8 @@ void WalletModel::statusReceived(const RpcApi::Status& status)
         changedRoles << ROLE_TOP_BLOCK_TIMESTAMP;
     if (status.top_block_timestamp_median != pimpl_->status.top_block_timestamp_median)
         changedRoles << ROLE_TOP_BLOCK_TIMESTAMP_MEDIAN;
-    if (status.next_block_effective_median_size != pimpl_->status.next_block_effective_median_size)
-        changedRoles << ROLE_NEXT_BLOCK_EFFECTIVE_MEDIAN_SIZE;
+    if (status.recommended_max_transaction_size != pimpl_->status.recommended_max_transaction_size)
+        changedRoles << ROLE_RECOMMENDED_MAX_TRANSACTION_SIZE;
     if (status.recommended_fee_per_byte != pimpl_->status.recommended_fee_per_byte)
         changedRoles << ROLE_RECOMMENDED_FEE_PER_BYTE;
     if (status.top_known_block_height != pimpl_->status.top_known_block_height)
@@ -480,6 +481,9 @@ void WalletModel::balanceReceived(const RpcApi::Balance& balance)
         << ROLE_SPENDABLE
         << ROLE_SPENDABLE_DUST
         << ROLE_LOCKED_OR_UNCONFIRMED
+        << ROLE_SPENDABLE_OUTPUTS
+        << ROLE_SPENDABLE_DUST_OUTPUTS
+        << ROLE_LOCKED_OR_UNCONFIRMED_OUTPUTS
         << ROLE_TOTAL;
 
 //    qDebug("[WalletModel] Balance changed.\n\tSpendable: %s\n\tSpendable dust: %s\n\tLocked or unconfirmed: %s\n\tTotal: %s",
@@ -587,8 +591,8 @@ QVariant WalletModel::getDisplayRoleAddresses(const QModelIndex& index) const
     {
     case COLUMN_FIRST_ADDRESS:
         return "<b>" + pimpl_->addresses[index.row()] + "</b>";
-    case COLUMN_DETERMINISTIC:
-        return pimpl_->deterministic ? QVariant{"<b>"+tr("HD")+"</b>"} : /*"<s>"+tr("HD")+"</s>"*/QVariant{};
+    case COLUMN_AMETHYST:
+        return pimpl_->amethyst ? QVariant{"<b>"+tr("HD")+"</b>"} : /*"<s>"+tr("HD")+"</s>"*/QVariant{};
     case COLUMN_WALLET_CREATION_TIMESTAMP:
         return tr("Wallet created: %1.").arg(pimpl_->creationTimestamp.toString(Qt::SystemLocaleShortDate));
     case COLUMN_TOTAL_ADDRESS_COUNT:
@@ -709,7 +713,7 @@ QVariant WalletModel::getDisplayRoleHistory(const QModelIndex& index) const
                 break;
             }
         }
-        return pimpl_->viewOnly ? QVariant{} : proof ? QVariant(tr("Get")) : QVariant(tr("Try"));
+        return pimpl_->viewOnly ? QVariant{} : proof ? QVariant(tr("Get")) : QVariant(/*tr("Try")*/);
     }
     }
 
@@ -736,6 +740,16 @@ QVariant WalletModel::getUserRoleHistory(const QModelIndex& index, int role) con
         return tx.anonymity;
     case ROLE_HASH:
         return tx.hash;
+    case ROLE_RECIPIENTS:
+    {
+        QStringList addresses;
+        for (const RpcApi::Transfer& tr : tx.transfers)
+        {
+            if (!tr.ours)
+                addresses << tr.address;
+        }
+        return addresses;
+    }
     case ROLE_FEE:
         return tx.fee;
     case ROLE_PK:
@@ -810,8 +824,8 @@ QVariant WalletModel::getDisplayRoleStatus(const QModelIndex& index) const
     case COLUMN_LOWER_LEVEL_ERROR:
 //        return pimpl_->status.lower_level_error;
         return pimpl_->status.lower_level_error.isEmpty() || (pimpl_->status.top_block_height < pimpl_->status.top_known_block_height && pimpl_->status.lower_level_error == "SEND_ERROR") ? tr("Connected to bytecoind") : tr("Bytecoind status: %1").arg(pimpl_->status.lower_level_error);
-    case COLUMN_NEXT_BLOCK_EFFECTIVE_MEDIAN_SIZE:
-        return pimpl_->status.next_block_effective_median_size;
+    case COLUMN_RECOMMENDED_MAX_TRANSACTION_SIZE:
+        return pimpl_->status.recommended_max_transaction_size;
     case COLUMN_TXPOOL_VERSION:
         return pimpl_->status.transaction_pool_version;
     case COLUMN_PEER_COUNT_OUTGOING:
@@ -847,8 +861,8 @@ QVariant WalletModel::getUserRoleStatus(const QModelIndex& /*index*/, int role) 
         return pimpl_->status.top_block_difficulty / DIFFICULTY_TARGET;
     case ROLE_LOWER_LEVEL_ERROR:
         return pimpl_->status.lower_level_error;
-    case ROLE_NEXT_BLOCK_EFFECTIVE_MEDIAN_SIZE:
-        return pimpl_->status.next_block_effective_median_size;
+    case ROLE_RECOMMENDED_MAX_TRANSACTION_SIZE:
+        return pimpl_->status.recommended_max_transaction_size;
     case ROLE_TXPOOL_VERSION:
         return pimpl_->status.transaction_pool_version;
     case ROLE_PEER_COUNT_OUTGOING:
@@ -1012,6 +1026,11 @@ QString WalletModel::getAddress() const
     return pimpl_->addresses.first();
 }
 
+bool WalletModel::isAmethyst() const
+{
+    return pimpl_->amethyst;
+}
+
 void WalletModel::reset()
 {
     beginResetModel();
@@ -1042,7 +1061,7 @@ void WalletModel::reset()
         << ROLE_TOP_BLOCK_DIFFICULTY
         << ROLE_NETWORK_HASHRATE
         << ROLE_LOWER_LEVEL_ERROR
-        << ROLE_NEXT_BLOCK_EFFECTIVE_MEDIAN_SIZE
+        << ROLE_RECOMMENDED_MAX_TRANSACTION_SIZE
         << ROLE_TXPOOL_VERSION
         << ROLE_PEER_COUNT_OUTGOING
         << ROLE_PEER_COUNT_INCOMING
@@ -1055,6 +1074,9 @@ void WalletModel::reset()
         << ROLE_SPENDABLE
         << ROLE_SPENDABLE_DUST
         << ROLE_LOCKED_OR_UNCONFIRMED
+        << ROLE_SPENDABLE_OUTPUTS
+        << ROLE_SPENDABLE_DUST_OUTPUTS
+        << ROLE_LOCKED_OR_UNCONFIRMED_OUTPUTS
         << ROLE_TOTAL;
 
     emit dataChanged(index(0, COLUMN_UNLOCK_TIME), index(0, COLUMN_TOTAL), changedRoles);

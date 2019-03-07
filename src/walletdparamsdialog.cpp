@@ -69,4 +69,9 @@ void WalletdParamsDialog::applyParams()
         emit restartWalletd();
 }
 
+void WalletdParamsDialog::hostChanged()
+{
+    ui->applyButton->setEnabled(!ui->editHost->text().isEmpty());
+}
+
 }

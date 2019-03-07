@@ -408,7 +408,7 @@ void WalletApplication::openWallet(QWidget* parent)
                 parent,
                 tr("Open wallet file"),
                 QDir::homePath(),
-                tr("Wallet files (*.wallet);;All files (*)"));
+                tr("All files (*);;Wallet files (*.wallet)"));
     if (fileName.isEmpty())
         return;
 
@@ -530,26 +530,30 @@ void WalletApplication::requestWalletdAuth(QAuthenticator* authenticator)
     }
 }
 
-void WalletApplication::createProof(const QString& txHash, bool needToFind)
+void WalletApplication::createProof(const QString& txHash, const QStringList& addresses, bool /*needToFind*/)
 {
-    QStringList addresses;
+//    QStringList addresses;
+//    if (needToFind)
+//    {
+//        QStringList addresses_from_address_book;
+//        QuestionDialog qdlg{tr("Question"), tr("Cannot find history for the selected transaction.\nDo you want to try to find appropriate addresses in your address book?"), m_mainWindow};
+//        if (qdlg.exec() != QDialog::Accepted)
+//            return;
+//        for (auto i = addressBookManager_->getAddressCount() - 1; i >= 0; --i)
+//            addresses_from_address_book.append(addressBookManager_->getAddress(i).address);
+//        addresses = addresses_from_address_book;
+//    }
+//    else
+//        addresses = tx_addresses;
 
-    if (needToFind)
-    {
-        QuestionDialog qdlg{tr("Question"), tr("Cannot find history for the selected transaction.\nDo you want to try to find appropriate addresses in your address book?"), m_mainWindow};
-        if (qdlg.exec() != QDialog::Accepted)
-            return;
-        for (auto i = addressBookManager_->getAddressCount() - 1; i >= 0; --i)
-            addresses.append(addressBookManager_->getAddress(i).address);
-    }
+    CreateProofDialog dlg{txHash, addresses, m_mainWindow};
 
-    CreateProofDialog dlg{txHash, m_mainWindow};
 
     connect(&dlg, &CreateProofDialog::generateProofSignal,
             this,
-            [this, &addresses](const QString& txHash, const QString& message)
+            [this](const QString& txHash, const QString& address, const QString& message)
             {
-                sendCreateProof(txHash, message, addresses);
+                sendCreateProof(txHash, message, QStringList{address});
             });
 
     connect(walletd_, &RemoteWalletd::proofsReceivedSignal,
@@ -570,7 +574,7 @@ void WalletApplication::checkProof()
             &dlg,
             [&dlg](const RpcApi::ProofCheck& check)
             {
-                dlg.showCheckResult(check.validation_error);
+                dlg.showCheckResult(check);
             });
     dlg.exec();
 }
@@ -585,14 +589,14 @@ void WalletApplication::showWalletdParams()
     dlg.exec();
 }
 
-void WalletApplication::exportViewOnlyKeys()
+void WalletApplication::exportViewOnlyKeys(bool isAmethyst)
 {
-    emit exportViewOnlyKeysSignal(m_mainWindow, QPrivateSignal{});
+    emit exportViewOnlyKeysSignal(m_mainWindow, isAmethyst, QPrivateSignal{});
 }
 
-void WalletApplication::exportKeys()
+void WalletApplication::exportKeys(bool isAmethyst)
 {
-    emit exportKeysSignal(m_mainWindow, QPrivateSignal{});
+    emit exportKeysSignal(m_mainWindow, isAmethyst, QPrivateSignal{});
 }
 
 void WalletApplication::checkForUpdate()

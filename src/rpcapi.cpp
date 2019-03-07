@@ -127,7 +127,7 @@ GetStatus::Response::fromJson(const QVariantMap& json)
     RPCAPI_DESERIALIZE_TIMESTAMP(value, json, top_block_timestamp);
     RPCAPI_DESERIALIZE_TIMESTAMP(value, json, top_block_timestamp_median);
 
-    RPCAPI_DESERIALIZE_FIELD(value, json, next_block_effective_median_size);
+    RPCAPI_DESERIALIZE_FIELD(value, json, recommended_max_transaction_size);
     RPCAPI_DESERIALIZE_FIELD(value, json, recommended_fee_per_byte);
     RPCAPI_DESERIALIZE_FIELD(value, json, top_known_block_height);
 
@@ -182,16 +182,17 @@ GetWalletInfo::Response::fromJson(const QVariantMap& json)
     GetWalletInfo::Response value;
 
     RPCAPI_DESERIALIZE_FIELD(value, json, view_only);
-    RPCAPI_DESERIALIZE_FIELD(value, json, deterministic);
-    RPCAPI_DESERIALIZE_FIELD(value, json, auditable);
+    RPCAPI_DESERIALIZE_FIELD(value, json, amethyst);
+    RPCAPI_DESERIALIZE_FIELD(value, json, can_view_outgoing_addresses);
+    RPCAPI_DESERIALIZE_FIELD(value, json, has_view_secret_key);
     RPCAPI_DESERIALIZE_TIMESTAMP(value, json, wallet_creation_timestamp);
     RPCAPI_DESERIALIZE_FIELD(value, json, first_address);
     RPCAPI_DESERIALIZE_FIELD(value, json, total_address_count);
     RPCAPI_DESERIALIZE_FIELD(value, json, net);
-    RPCAPI_DESERIALIZE_FIELD(value, json, secret_view_key);
-    RPCAPI_DESERIALIZE_FIELD(value, json, public_view_key);
-    RPCAPI_DESERIALIZE_FIELD(value, json, import_keys);
-    RPCAPI_DESERIALIZE_FIELD(value, json, mnemonic);
+//    RPCAPI_DESERIALIZE_FIELD(value, json, secret_view_key);
+//    RPCAPI_DESERIALIZE_FIELD(value, json, public_view_key);
+//    RPCAPI_DESERIALIZE_FIELD(value, json, import_keys);
+//    RPCAPI_DESERIALIZE_FIELD(value, json, mnemonic);
 
     return value;
 }
@@ -214,11 +215,8 @@ GetBalance::Response::fromJson(const QVariantMap& json)
     GetBalance::Response value;
 
     RPCAPI_DESERIALIZE_FIELD(value, json, spendable);
-//    RPCAPI_DESERIALIZE_FIELD(value, json, spendable_hi);
     RPCAPI_DESERIALIZE_FIELD(value, json, spendable_dust);
-//    RPCAPI_DESERIALIZE_FIELD(value, json, spendable_dust_hi);
     RPCAPI_DESERIALIZE_FIELD(value, json, locked_or_unconfirmed);
-//    RPCAPI_DESERIALIZE_FIELD(value, json, locked_or_unconfirmed_hi);
     RPCAPI_DESERIALIZE_FIELD(value, json, spendable_outputs);
     RPCAPI_DESERIALIZE_FIELD(value, json, spendable_dust_outputs);
     RPCAPI_DESERIALIZE_FIELD(value, json, locked_or_unconfirmed_outputs);
@@ -333,7 +331,8 @@ Output::fromJson(const QVariantMap& json)
 
     RPCAPI_DESERIALIZE_FIELD(value, json, amount);
     RPCAPI_DESERIALIZE_FIELD(value, json, public_key);
-    RPCAPI_DESERIALIZE_FIELD(value, json, index);
+    RPCAPI_DESERIALIZE_FIELD(value, json, stack_index);
+    RPCAPI_DESERIALIZE_FIELD(value, json, global_index);
     RPCAPI_DESERIALIZE_FIELD(value, json, height);
     RPCAPI_DESERIALIZE_FIELD(value, json, unlock_block_or_timestamp);
     RPCAPI_DESERIALIZE_FIELD(value, json, index_in_transaction);
@@ -353,7 +352,8 @@ Output::toJson() const
 
     RPCAPI_SERIALIZE_FIELD(value, json, amount);
     RPCAPI_SERIALIZE_FIELD(value, json, public_key);
-    RPCAPI_SERIALIZE_FIELD(value, json, index);
+    RPCAPI_SERIALIZE_FIELD(value, json, stack_index);
+    RPCAPI_SERIALIZE_FIELD(value, json, global_index);
     RPCAPI_SERIALIZE_FIELD(value, json, height);
     RPCAPI_SERIALIZE_FIELD(value, json, unlock_block_or_timestamp);
     RPCAPI_SERIALIZE_FIELD(value, json, index_in_transaction);
@@ -409,7 +409,7 @@ BlockHeader::fromJson(const QVariantMap& json)
     RPCAPI_DESERIALIZE_FIELD(value, json, minor_version);
     RPCAPI_DESERIALIZE_TIMESTAMP(value, json, timestamp);
     RPCAPI_DESERIALIZE_FIELD(value, json, previous_block_hash);
-    RPCAPI_DESERIALIZE_FIELD(value, json, nonce);
+    RPCAPI_DESERIALIZE_FIELD(value, json, binary_nonce);
 
     RPCAPI_DESERIALIZE_FIELD(value, json, height);
     RPCAPI_DESERIALIZE_FIELD(value, json, hash);
@@ -422,6 +422,7 @@ BlockHeader::fromJson(const QVariantMap& json)
     RPCAPI_DESERIALIZE_FIELD(value, json, transactions_size);
     RPCAPI_DESERIALIZE_FIELD(value, json, already_generated_coins);
     RPCAPI_DESERIALIZE_FIELD(value, json, already_generated_transactions);
+    RPCAPI_DESERIALIZE_FIELD(value, json, already_generated_key_outputs);
     RPCAPI_DESERIALIZE_FIELD(value, json, size_median);
     RPCAPI_DESERIALIZE_FIELD(value, json, effective_size_median);
     RPCAPI_DESERIALIZE_FIELD(value, json, block_capacity_vote);
@@ -451,9 +452,11 @@ Transaction::fromJson(const QVariantMap& json)
     Transaction value;
 
     RPCAPI_DESERIALIZE_FIELD(value, json, unlock_block_or_timestamp);
-    RPCAPI_DESERIALIZE_FIELD(value, json, payment_id);
+//    RPCAPI_DESERIALIZE_FIELD(value, json, payment_id);
     RPCAPI_DESERIALIZE_FIELD(value, json, anonymity);
     RPCAPI_DESERIALIZE_FIELD(value, json, hash);
+    RPCAPI_DESERIALIZE_FIELD(value, json, prefix_hash);
+    RPCAPI_DESERIALIZE_FIELD(value, json, inputs_hash);
     RPCAPI_DESERIALIZE_FIELD(value, json, fee);
     RPCAPI_DESERIALIZE_FIELD(value, json, public_key);
     RPCAPI_DESERIALIZE_FIELD(value, json, extra);
@@ -479,6 +482,8 @@ Transaction::toJson() const
     RPCAPI_SERIALIZE_FIELD(value, json, payment_id);
     RPCAPI_SERIALIZE_FIELD(value, json, anonymity);
     RPCAPI_SERIALIZE_FIELD(value, json, hash);
+    RPCAPI_SERIALIZE_FIELD(value, json, prefix_hash);
+    RPCAPI_SERIALIZE_FIELD(value, json, inputs_hash);
     RPCAPI_SERIALIZE_FIELD(value, json, fee);
     RPCAPI_SERIALIZE_FIELD(value, json, public_key);
     RPCAPI_SERIALIZE_FIELD(value, json, extra);
@@ -495,19 +500,19 @@ Transaction::toJson() const
 }
 
 /*static*/
-Proof
-Proof::fromJson(const QVariantMap& json)
-{
-    Proof value;
+//Proof
+//Proof::fromJson(const QVariantMap& json)
+//{
+//    Proof value;
 
-    RPCAPI_DESERIALIZE_FIELD(value, json, message);
-    RPCAPI_DESERIALIZE_FIELD(value, json, address);
-    RPCAPI_DESERIALIZE_FIELD(value, json, amount);
-    RPCAPI_DESERIALIZE_FIELD(value, json, transaction_hash);
-    RPCAPI_DESERIALIZE_FIELD(value, json, proof);
+//    RPCAPI_DESERIALIZE_FIELD(value, json, message);
+//    RPCAPI_DESERIALIZE_FIELD(value, json, address);
+//    RPCAPI_DESERIALIZE_FIELD(value, json, amount);
+//    RPCAPI_DESERIALIZE_FIELD(value, json, transaction_hash);
+//    RPCAPI_DESERIALIZE_FIELD(value, json, proof);
 
-    return value;
-}
+//    return value;
+//}
 
 
 /*static*/

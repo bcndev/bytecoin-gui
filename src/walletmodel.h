@@ -25,8 +25,9 @@ public:
     enum Columns
     {
         COLUMN_FIRST_ADDRESS = 0, // getWalletInfo
-        COLUMN_DETERMINISTIC,
-        COLUMN_AUDITABLE,
+        COLUMN_AMETHYST,
+        COLUMN_CAN_VIEW_OUTGOING_ADDRESSES,
+        COLUMN_HAS_VIEW_SECRET_KEY,
         COLUMN_WALLET_CREATION_TIMESTAMP,
         COLUMN_TOTAL_ADDRESS_COUNT,
         COLUMN_NET,
@@ -40,6 +41,8 @@ public:
         COLUMN_PAYMENT_ID,
         COLUMN_ANONYMITY,
         COLUMN_HASH,
+        COLUMN_PREFIX_HASH,
+        COLUMN_INPUTS_HASH,
         COLUMN_FEE,
         COLUMN_PK,
         COLUMN_EXTRA,
@@ -57,7 +60,7 @@ public:
         COLUMN_TOP_BLOCK_DIFFICULTY,
         COLUMN_NETWORK_HASHRATE,
         COLUMN_LOWER_LEVEL_ERROR,
-        COLUMN_NEXT_BLOCK_EFFECTIVE_MEDIAN_SIZE,
+        COLUMN_RECOMMENDED_MAX_TRANSACTION_SIZE,
         COLUMN_TXPOOL_VERSION,
         COLUMN_PEER_COUNT_OUTGOING,
         COLUMN_PEER_COUNT_INCOMING,
@@ -70,14 +73,18 @@ public:
         COLUMN_SPENDABLE, // getBalance
         COLUMN_SPENDABLE_DUST,
         COLUMN_LOCKED_OR_UNCONFIRMED,
+        COLUMN_SPENDABLE_OUTPUTS,
+        COLUMN_SPENDABLE_DUST_OUTPUTS,
+        COLUMN_LOCKED_OR_UNCONFIRMED_OUTPUTS,
         COLUMN_TOTAL,
     };
 
     enum Roles
     {
         ROLE_FIRST_ADDRESS = Qt::UserRole,
-        ROLE_DETERMINISTIC,
-        ROLE_AUDITABLE,
+        ROLE_AMETHYST,
+        ROLE_CAN_VIEW_OUTGOING_ADDRESSES,
+        ROLE_HAS_VIEW_SECRET_KEY,
         ROLE_WALLET_CREATION_TIMESTAMP,
         ROLE_TOTAL_ADDRESS_COUNT,
         ROLE_NET,
@@ -91,6 +98,8 @@ public:
         ROLE_PAYMENT_ID,
         ROLE_ANONYMITY,
         ROLE_HASH,
+        ROLE_PREFIX_HASH,
+        ROLE_INPUTS_HASH,
         ROLE_FEE,
         ROLE_PK,
         ROLE_EXTRA,
@@ -99,6 +108,7 @@ public:
         ROLE_BLOCK_HEIGHT,
         ROLE_BLOCK_HASH,
         ROLE_TIMESTAMP,
+        ROLE_RECIPIENTS,
         ROLE_PROOF,
 
         ROLE_TOP_BLOCK_HEIGHT, // getStatus
@@ -108,7 +118,7 @@ public:
         ROLE_TOP_BLOCK_DIFFICULTY,
         ROLE_NETWORK_HASHRATE,
         ROLE_LOWER_LEVEL_ERROR,
-        ROLE_NEXT_BLOCK_EFFECTIVE_MEDIAN_SIZE,
+        ROLE_RECOMMENDED_MAX_TRANSACTION_SIZE,
         ROLE_TXPOOL_VERSION,
         ROLE_PEER_COUNT_OUTGOING,
         ROLE_PEER_COUNT_INCOMING,
@@ -121,6 +131,9 @@ public:
         ROLE_SPENDABLE, // getBalance
         ROLE_SPENDABLE_DUST,
         ROLE_LOCKED_OR_UNCONFIRMED,
+        ROLE_SPENDABLE_OUTPUTS,
+        ROLE_SPENDABLE_DUST_OUTPUTS,
+        ROLE_LOCKED_OR_UNCONFIRMED_OUTPUTS,
         ROLE_TOTAL,
     };
 
@@ -140,6 +153,7 @@ public:
     void reset();
 
     QString getAddress() const;
+    bool isAmethyst() const;
 
     quint32 getLastBlockHeight() const;
     QString getLastBlockHash() const;

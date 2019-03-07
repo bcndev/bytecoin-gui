@@ -7,7 +7,6 @@
 
 #include "checkproofdialog.h"
 #include "ui_checkproofdialog.h"
-#include "rpcapi.h"
 #include "common.h"
 
 namespace WalletGUI
@@ -45,29 +44,29 @@ void CheckProofDialog::proofChanged()
 
     clear();
 
-    const QString proofString = ui->proofEdit->toPlainText();
-    const QByteArray proofBytes = proofString.toLatin1();
+//    const QString proofString = ui->proofEdit->toPlainText();
+//    const QByteArray proofBytes = proofString.toLatin1();
 
-    QJsonParseError parseError;
-    QJsonDocument jsonDocument = QJsonDocument::fromJson(proofBytes, &parseError);
-    if (parseError.error != QJsonParseError::NoError)
-    {
-        ui->resultLabel->setText(QString("<b><font color='red'>%1</font></b>").arg(tr("The entered text is not a valid JSON object")));
-        return;
-    }
+//    QJsonParseError parseError;
+//    QJsonDocument jsonDocument = QJsonDocument::fromJson(proofBytes, &parseError);
+//    if (parseError.error != QJsonParseError::NoError)
+//    {
+//        ui->resultLabel->setText(QString("<b><font color='red'>%1</font></b>").arg(tr("The entered text is not a valid JSON object")));
+//        return;
+//    }
 
-    if (!jsonDocument.isObject())
-    {
-        ui->resultLabel->setText(QString("<b><font color='red'>%1</font></b>").arg(tr("The entered text is not a valid JSON object")));
-        return;
-    }
-    const QJsonObject json = jsonDocument.object();
-    const RpcApi::Proof proof = RpcApi::Proof::fromJson(json.toVariantMap());
+//    if (!jsonDocument.isObject())
+//    {
+//        ui->resultLabel->setText(QString("<b><font color='red'>%1</font></b>").arg(tr("The entered text is not a valid JSON object")));
+//        return;
+//    }
+//    const QJsonObject json = jsonDocument.object();
+//    const RpcApi::Proof proof = RpcApi::Proof::fromJson(json.toVariantMap());
 
-    ui->messageLabel->setText(proof.message);
-    ui->amountLabel->setText(formatAmount(proof.amount) + " BCN");
-    ui->addressLabel->setText(proof.address);
-    ui->txHashLabel->setText(proof.transaction_hash);
+//    ui->messageLabel->setText(proof.message);
+//    ui->amountLabel->setText(formatAmount(proof.amount) + " BCN");
+//    ui->addressLabel->setText(proof.address);
+//    ui->txHashLabel->setText(proof.transaction_hash);
 }
 
 void CheckProofDialog::checkProof()
@@ -75,12 +74,18 @@ void CheckProofDialog::checkProof()
     emit checkProofSignal(ui->proofEdit->toPlainText());
 }
 
-void CheckProofDialog::showCheckResult(const QString& result)
+void CheckProofDialog::showCheckResult(const RpcApi::ProofCheck& result)
 {
-    if (result.isEmpty())
-        ui->resultLabel->setText(QString("<b><font color='green'>%1</font></b>").arg(tr("The proof is correct!")));
+    if (!result.validation_error.isEmpty())
+        ui->resultLabel->setText(QString("<b><font color='red'>%1</font></b>").arg(result.validation_error));
     else
-        ui->resultLabel->setText(QString("<b><font color='red'>%1</font></b>").arg(result));
+    {
+        ui->resultLabel->setText(QString("<b><font color='green'>%1</font></b>").arg(tr("The proof is correct!")));
+        ui->messageLabel->setText(result.message);
+        ui->amountLabel->setText(formatAmount(result.amount) + " BCN");
+        ui->addressLabel->setText(result.address);
+        ui->txHashLabel->setText(result.transaction_hash);
+    }
 }
 
 }

@@ -19,7 +19,7 @@ class CreateProofDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit CreateProofDialog(const QString& txHash, QWidget *parent = 0);
+    explicit CreateProofDialog(const QString& txHash, const QStringList& addresses, QWidget *parent = 0);
     ~CreateProofDialog();
 
 public slots:
@@ -29,7 +29,7 @@ public slots:
     void currentAddressChanged();
 
 signals:
-    void generateProofSignal(const QString& txHash, const QString& message);
+    void generateProofSignal(const QString& txHash, const QString& address, const QString& message);
 
 private slots:
     void generateProof();
@@ -39,8 +39,8 @@ private:
     QString txHash_;
     QMap<int, QString> proofs_;
 
-    QString extractAddress(const QString& proof);
-    void showElements(bool show);
+//    QString extractAddress(const QString& proof);
+//    void showElements(bool show);
 };
 
 }

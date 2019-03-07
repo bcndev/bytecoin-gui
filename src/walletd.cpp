@@ -15,6 +15,7 @@
 #include "settings.h"
 #include "common.h"
 #include "exportkeydialog.h"
+#include "questiondialog.h"
 
 namespace
 {
@@ -376,7 +377,14 @@ void RemoteWalletd::checkSendProof(const RpcApi::CheckSendProof::Request& proof)
     jsonClient_->sendRequest<RpcApi::CheckSendProof>(
                 proof,
                 std::bind(&RemoteWalletd::checkProofReceived, this, _2),
-                std::bind(&RemoteWalletd::jsonErrorResponse, this, _1, _2));
+                [this](const QString& /*id*/, const JsonRpc::Error& error)
+                {
+                    RpcApi::ProofCheck proofCheck;
+                    proofCheck.validation_error = error.message;
+                    this->checkProofReceived(proofCheck);
+                });
+
+//                std::bind(&RemoteWalletd::jsonErrorResponse, this, _1, _2));
 }
 
 void RemoteWalletd::authRequired(QAuthenticator* authenticator)
@@ -651,7 +659,7 @@ void BuiltinWalletd::authRequired(QAuthenticator* authenticator)
     authenticator->setPassword(auth_.getPass());
 }
 
-void BuiltinWalletd::exportViewOnlyKeys(QWidget* parent/*, const QString& exportPath*/)
+void BuiltinWalletd::exportViewOnlyKeys(QWidget* parent, bool isAmethyst/*, const QString& exportPath*/)
 {
     QProcess walletd;
     walletd.setProgram(Settings::getDefaultWalletdPath());
@@ -662,9 +670,18 @@ void BuiltinWalletd::exportViewOnlyKeys(QWidget* parent/*, const QString& export
     if (pass.isNull())
         return;
 
+    bool allow_view_outgoing_addresses = false;
+    if (isAmethyst)
+    {
+        QString text(tr("Allow view only wallet to see outgoing addresses?"));
+
+        QuestionDialog dlg(tr("Export view only wallet"), text, parent);
+        allow_view_outgoing_addresses = (dlg.exec() == QDialog::Accepted);
+    }
+
     const QString fileName = QFileDialog::getSaveFileName(
                 parent,
-                tr("Create wallet file"),
+                tr("Save view only wallet file"),
                 QDir::homePath(),
                 tr("Wallet files (*.wallet);;All files (*)"));
     if (fileName.isEmpty())
@@ -706,6 +723,8 @@ void BuiltinWalletd::exportViewOnlyKeys(QWidget* parent/*, const QString& export
     QStringList args;
     args << QString{"--wallet-file=%1"}.arg(pathToWallet_);
     args << QString{"--export-view-only=%1"}.arg(fileName);
+    if (allow_view_outgoing_addresses)
+        args << QString{"--view-outgoing-addresses"};
     walletd.setArguments(args);
     walletd.start();
 
@@ -720,7 +739,7 @@ void BuiltinWalletd::exportViewOnlyKeys(QWidget* parent/*, const QString& export
         qDebug("[Walletd] Walletd terminating is timed out.");
 }
 
-void BuiltinWalletd::exportKeys(QWidget* parent)
+void BuiltinWalletd::exportKeys(QWidget* parent, bool isAmethyst)
 {
     QProcess walletd;
     walletd.setProgram(Settings::getDefaultWalletdPath());
@@ -765,7 +784,10 @@ void BuiltinWalletd::exportKeys(QWidget* parent)
 
     QStringList args;
     args << QString("--wallet-file=%1").arg(pathToWallet_);
-    args << QString("--export-keys");
+    if (isAmethyst)
+        args << QString{"--export-mnemonic"};
+    else
+        args << QString{"--export-keys"};
     walletd.setArguments(args);
     walletd.start();
 
@@ -903,6 +925,9 @@ QString BuiltinWalletd::errorMessage(ReturnCodes err)
         break;
     case ReturnCodes::WALLETD_MNEMONIC_CRC:
         msg = tr("Wrong mnemonic or unknown version of mnemonic");
+        break;
+    case ReturnCodes::WALLET_FILE_HARDWARE_DECRYPT_ERROR:
+        msg = tr("This wallet file is backed by hardware and no hardware could decrypt wallet file\n(") + Settings::instance().getWalletFile() + ").";
         break;
     }
 

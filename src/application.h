@@ -67,14 +67,14 @@ signals:
     void builtinRunSignal();
     void remoteConnectedSignal();
     void createWalletdSignal(QPrivateSignal);
-    void exportViewOnlyKeysSignal(QWidget* parent/*, const QString& exportPath*/, QPrivateSignal);
-    void exportKeysSignal(QWidget* parent, QPrivateSignal);
+    void exportViewOnlyKeysSignal(QWidget* parent, bool isAmethyst/*, const QString& exportPath*/, QPrivateSignal);
+    void exportKeysSignal(QWidget* parent, bool isAmethyst, QPrivateSignal);
     void updateIsReadySignal(const QString& newVersion);
 
 public slots:
     void createTx(const RpcApi::CreateTransaction::Request& req);
     void sendTx(const RpcApi::SendTransaction::Request& req);
-    void createProof(const QString& txHash, bool needToFind);
+    void createProof(const QString& txHash, const QStringList& tx_addresses, bool needToFind);
     void sendCreateProof(const QString& txHash, const QString& message, const QStringList& addresses);
     void checkProof();
     void sendCheckProof(const QString& proof);
@@ -94,8 +94,8 @@ public slots:
 
     void splashMsg(const QString& msg);
 
-    void exportViewOnlyKeys();
-    void exportKeys();
+    void exportViewOnlyKeys(bool isAmethyst);
+    void exportKeys(bool isAmethyst);
 
 private slots:
     void connectedToWalletd();

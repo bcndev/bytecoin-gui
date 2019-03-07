@@ -43,7 +43,7 @@ public slots:
 
 signals:
     void copiedToClipboardSignal();
-    void createProofSignal(const QString& txHash, bool needToFind);
+    void createProofSignal(const QString& txHash, const QStringList& addresses, bool needToFind);
 
 private:
     QScopedPointer<Ui::OverviewFrame> m_ui;

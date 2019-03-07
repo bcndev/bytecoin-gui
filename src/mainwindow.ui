@@ -888,7 +888,7 @@
    <container>1</container>
    <slots>
     <signal>copiedToClipboardSignal()</signal>
-    <signal>createProofSignal(QString,bool)</signal>
+    <signal>createProofSignal(QString,QStringList,bool)</signal>
    </slots>
   </customwidget>
   <customwidget>
@@ -1171,22 +1171,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>m_overviewFrame</sender>
-   <signal>createProofSignal(QString,bool)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>createProof(QString,bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>318</x>
-     <y>456</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>636</x>
-     <y>411</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>m_checkProofAction</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
@@ -1282,6 +1266,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>m_overviewFrame</sender>
+   <signal>createProofSignal(QString,QStringList,bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>createProof(QString,QStringList,bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>318</x>
+     <y>456</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>636</x>
+     <y>411</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>aboutQt()</slot>
@@ -1296,7 +1296,7 @@
   <slot>copiedToClipboard()</slot>
   <slot>openDataFolder()</slot>
   <slot>importKeys()</slot>
-  <slot>createProof(QString,bool)</slot>
+  <slot>createProof(QString,QStringList,bool)</slot>
   <slot>checkProof()</slot>
   <slot>showWalletdParams()</slot>
   <slot>exportViewOnlyKeys()</slot>

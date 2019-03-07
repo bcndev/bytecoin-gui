@@ -1,5 +1,14 @@
 ## Release Notes
 
+### v3.4.1
+
+- Fixed creating Amethyst wallets.
+- Added support of the new format of sendproofs.
+- Fixed mnemonic export.
+- Added an option that view-only wallets can detect outgoing addresses.
+- Made minor improvements and bug fixes. 
+- Update the Bytecoin daemons.
+
 ### v3.4.0
 
 - Updated the Bytecoin daemons.
@@ -11,7 +20,7 @@
 
 ### v3.4.0-beta-20181212
 
-- Added HD wallets (BIP 39) support.
+- Added support of deterministic wallets (BIP 39).
 - Improved `walletd` parameters dialog box.
 - Added stagenet/testnet support.
 - Improved external nodes support.
