@@ -259,7 +259,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>(View Only)</string>
+                 <string>(view-only)</string>
                 </property>
                </widget>
               </item>
@@ -861,7 +861,7 @@
   </action>
   <action name="m_exportViewOnlyKeysAction">
    <property name="text">
-    <string>&amp;Export view only wallet file</string>
+    <string>&amp;Export view-only wallet file</string>
    </property>
   </action>
   <action name="m_exportKeysAction">

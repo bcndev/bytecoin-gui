@@ -600,7 +600,7 @@ QVariant WalletModel::getDisplayRoleAddresses(const QModelIndex& index) const
     case COLUMN_NET:
         return pimpl_->net;
     case COLUMN_VIEW_ONLY:
-        return pimpl_->viewOnly ? tr("The wallet is view only.") : QString{};
+        return pimpl_->viewOnly ? tr("The wallet is view-only.") : QString{};
     }
 
     return QVariant();

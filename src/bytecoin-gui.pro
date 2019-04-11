@@ -15,7 +15,7 @@ TEMPLATE = app
 macx: QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.11
 macx: ICON = images/bytecoin.icns
 win32: RC_ICONS = images/bytecoin.ico
-win32: VERSION = 3.19.3.7
+win32: VERSION = 3.19.4.11
 
 #QMAKE_CXXFLAGS += -fno-omit-frame-pointer -fsanitize=address,undefined
 #LIBS += -lasan -lubsan
@@ -30,18 +30,22 @@ WALLETD_BY_SRC_PATH = $$shell_path($$clean_path("$$PWD/../../bytecoin/bin/wallet
 WALLETD2_BY_SRC_PATH = $$shell_path($$clean_path("$$PWD/../../bytecoin/bin/walletd.pdb"))
 BYTECOIND_BY_SRC_PATH = $$shell_path($$clean_path("$$PWD/../../bytecoin/bin/bytecoind.exe"))
 BYTECOIND2_BY_SRC_PATH = $$shell_path($$clean_path("$$PWD/../../bytecoin/bin/bytecoind.pdb"))
+LIBUSB_BY_SRC_PATH = $$shell_path($$clean_path("$$PWD/../../bytecoin/bin/libusb-1.0.dll"))
 Debug:BY_DST_PATH = $$shell_path($$clean_path("$$DESTDIR"))
 Release:BY_DST_PATH = $$shell_path($$clean_path("$$DESTDIR"))
 copywalletd.commands = $(COPY_FILE) $${WALLETD_BY_SRC_PATH} $${BY_DST_PATH}
 copywalletd2.commands = $(COPY_FILE) $${WALLETD2_BY_SRC_PATH} $${BY_DST_PATH}
 copybytecoind.commands = $(COPY_FILE) $${BYTECOIND_BY_SRC_PATH} $${BY_DST_PATH}
 copybytecoind2.commands = $(COPY_FILE) $${BYTECOIND2_BY_SRC_PATH} $${BY_DST_PATH}
-first.depends = $(first) copywalletd copywalletd2 copybytecoind copybytecoind2
-QMAKE_EXTRA_TARGETS += first copywalletd copywalletd2 copybytecoind copybytecoind2
+copylibusb.commands = $(COPY_FILE) $${LIBUSB_BY_SRC_PATH} $${BY_DST_PATH}
+first.depends = $(first) copywalletd copywalletd2 copybytecoind copybytecoind2 copylibusb
+QMAKE_EXTRA_TARGETS += first copywalletd copywalletd2 copybytecoind copybytecoind2 copylibusb
 }else:macx {
 copywalletd.commands += $(COPY_FILE) $$PWD/../../bytecoin/bin/walletd $$DESTDIR/bytecoin-gui.app/Contents/MacOS
 copybytecoind.commands += $(COPY_FILE) $$PWD/../../bytecoin/bin/bytecoind $$DESTDIR/bytecoin-gui.app/Contents/MacOS
-first.depends = $(first) copywalletd copybytecoind
+first.depends = copywalletd copybytecoind
+copywalletd.depends = $(TARGET)
+copybytecoind.depends = $(TARGET)
 QMAKE_EXTRA_TARGETS += first copywalletd copybytecoind
 }else {
 copywalletd.commands += $(COPY_FILE) $$PWD/../../bytecoin/bin/walletd $$DESTDIR

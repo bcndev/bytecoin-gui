@@ -25,6 +25,7 @@ public slots:
     void saveParams();
     void applyParams();
     void hostChanged();
+    void externalBytecoindToggled(bool checked);
 
 signals:
     void restartWalletd();

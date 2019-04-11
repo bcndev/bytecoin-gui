@@ -360,10 +360,27 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>radioExternalBytecoind</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>WalletdParamsDialog</receiver>
+   <slot>externalBytecoindToggled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>242</x>
+     <y>85</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>325</x>
+     <y>156</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>saveParams()</slot>
   <slot>applyParams()</slot>
   <slot>hostChanged()</slot>
+  <slot>externalBytecoindToggled(bool)</slot>
  </slots>
 </ui>

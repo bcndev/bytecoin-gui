@@ -673,9 +673,9 @@ void BuiltinWalletd::exportViewOnlyKeys(QWidget* parent, bool isAmethyst/*, cons
     bool allow_view_outgoing_addresses = false;
     if (isAmethyst)
     {
-        QString text(tr("Allow view only wallet to see outgoing addresses?"));
+        QString text(tr("Allow view-only wallet to see outgoing addresses?"));
 
-        QuestionDialog dlg(tr("Export view only wallet"), text, parent);
+        QuestionDialog dlg(tr("Export view-only wallet"), text, parent);
         allow_view_outgoing_addresses = (dlg.exec() == QDialog::Accepted);
     }
 
@@ -696,7 +696,7 @@ void BuiltinWalletd::exportViewOnlyKeys(QWidget* parent, bool isAmethyst/*, cons
             {
                 if (error != QProcess::FailedToStart)
                     return;
-                QMessageBox::critical(parent, QObject::tr("Error"), tr("Failed to export view only keys. ") + walletd.errorString());
+                QMessageBox::critical(parent, QObject::tr("Error"), tr("Failed to export view-only keys. ") + walletd.errorString());
             });
 #else
     connect(
@@ -705,7 +705,7 @@ void BuiltinWalletd::exportViewOnlyKeys(QWidget* parent, bool isAmethyst/*, cons
             {
                 if (error != QProcess::FailedToStart)
                     return;
-                QMessageBox::critical(parent, QObject::tr("Error"), tr("Failed to export view only keys. ") + walletd.errorString());
+                QMessageBox::critical(parent, QObject::tr("Error"), tr("Failed to export view-only keys. ") + walletd.errorString());
             });
 #endif
     connect(&walletd, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
@@ -716,7 +716,7 @@ void BuiltinWalletd::exportViewOnlyKeys(QWidget* parent, bool isAmethyst/*, cons
                 const QString walletdMsg = BuiltinWalletd::errorMessage(static_cast<BuiltinWalletd::ReturnCodes>(exitCode));
                 const QString msg = !walletdMsg.isEmpty() ?
                                         walletdMsg :
-                                        tr("Failed to export view only keys. %1. Return code %2. ").arg(walletd.errorString()).arg(exitCode);
+                                        tr("Failed to export view-only keys. %1. Return code %2. ").arg(walletd.errorString()).arg(exitCode);
                 QMessageBox::critical(parent, QObject::tr("Error"), msg);
             });
 

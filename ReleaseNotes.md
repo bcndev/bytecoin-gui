@@ -1,5 +1,10 @@
 ## Release Notes
 
+### v3.4.2-beta-20190411
+
+- Fixed a bug in a dialog box.
+- Update the Bytecoin daemons.
+
 ### v3.4.1
 
 - Fixed creating Amethyst wallets.
@@ -77,7 +82,7 @@
 - Updated the Bytecoin daemons and API bindings.
 - Fix minor bugs found in the beta release.
 
-### 3.2.0-beta-20180723
+### v3.2.0-beta-20180723
 
 - Removed logging wallet file names on Windows.
 - Made minor UI improvements.

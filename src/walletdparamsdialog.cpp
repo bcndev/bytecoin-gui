@@ -74,4 +74,12 @@ void WalletdParamsDialog::hostChanged()
     ui->applyButton->setEnabled(!ui->editHost->text().isEmpty());
 }
 
+void WalletdParamsDialog::externalBytecoindToggled(bool checked)
+{
+    if (checked)
+        ui->applyButton->setEnabled(!ui->editHost->text().isEmpty());
+    else
+        ui->applyButton->setEnabled(true);
+}
+
 }
