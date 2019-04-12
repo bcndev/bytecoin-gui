@@ -1,9 +1,13 @@
 ## Release Notes
 
+### v3.4.2-beta-20190412
+
+- Updated the Bytecoin daemons.
+
 ### v3.4.2-beta-20190411
 
 - Fixed a bug in a dialog box.
-- Update the Bytecoin daemons.
+- Updated the Bytecoin daemons.
 
 ### v3.4.1
 
@@ -12,7 +16,7 @@
 - Fixed mnemonic export.
 - Added an option that view-only wallets can detect outgoing addresses.
 - Made minor improvements and bug fixes. 
-- Update the Bytecoin daemons.
+- Updated the Bytecoin daemons.
 
 ### v3.4.0
 
