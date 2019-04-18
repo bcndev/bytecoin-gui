@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='utf-8'?>
 
-<!-- 
-Build example: 
-    candle -arch x64 -dVersion=3.4.2 -dProductVersion=19.3.8 -dDate='2019/03/07' Installer.wxs && light -ext WixUIExtension -out bytecoin-desktop-3.4.2-win64.msi Installer.wixobj
+<!--
+Build example:
+    candle -arch x64 -dVersion=3.4.2 -dProductVersion=19.3.8 -dDate='2019/03/07' -dVC_MERGE_MODULES_PATH="<your path x64>" Installer.wxs && light -ext WixUIExtension -out bytecoin-desktop-3.4.2-win64.msi Installer.wixobj
     or
-    candle -arch x86 -dVersion=3.4.2 -dProductVersion=19.3.8 -dDate='2019/03/07' Installer.wxs && light -ext WixUIExtension -out bytecoin-desktop-3.4.2-win32.msi Installer.wixobj
+    candle -arch x86 -dVersion=3.4.2 -dProductVersion=19.3.8 -dDate='2019/03/07' -dVC_MERGE_MODULES_PATH="<your path x86>" Installer.wxs && light -ext WixUIExtension -out bytecoin-desktop-3.4.2-win32.msi Installer.wixobj
 -->
 
 <!-- These values can be passed thru command line: -->
@@ -22,13 +22,13 @@ Build example:
 
 <Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
 
-    <Product Name='$(var.ProductName) $(var.Version)' Manufacturer='Bytecoin Developers' 
+    <Product Name='$(var.ProductName) $(var.Version)' Manufacturer='Bytecoin Developers'
         Id='*' UpgradeCode='DC5C7D60-BB08-4B97-B634-E87679CCEB3C'
         Language='1033' Codepage='1252' Version='$(var.ProductVersion)'>
 
-        <Package Id='*' Keywords='Installer' Description='$(var.ProductName) $(var.Version) Installer' 
+        <Package Id='*' Keywords='Installer' Description='$(var.ProductName) $(var.Version) Installer'
             Comments='Release version of bytecoin from $(var.Date)' Manufacturer='Bytecoin Developers'
-            InstallerVersion='300' Languages='1033' Compressed='yes' SummaryCodepage='1252' InstallScope='perMachine'/>
+            InstallerVersion='301' Languages='1033' Compressed='yes' SummaryCodepage='1252' InstallScope='perMachine'/>
 
         <MajorUpgrade DowngradeErrorMessage='A newer version of $(var.ProductName) is already installed.' />
 
@@ -36,6 +36,8 @@ Build example:
         <Property Id='DiskPrompt' Value='$(var.ProductName) $(var.Version) Installation [1]' />
 
         <Directory Id='TARGETDIR' Name='SourceDir'>
+
+            <Merge Id="VCRedist" SourceFile="$(var.VC_MERGE_MODULES_PATH)"  DiskId="1" Language="0"/>
 
             <Directory Id='$(var.PlatformProgramFilesFolder)' Name='PFiles'>
                 <Directory Id='INSTALLDIR' Name='Bytecoin'>
@@ -69,6 +71,8 @@ Build example:
 
             <ComponentRef Id='AppStartMenuShortcutComp' />
             <ComponentRef Id='AppDataStartMenuShortcutComp' />
+
+            <MergeRef Id="VCRedist"/>
         </Feature>
 
         <Icon Id='bytecoin.ico' SourceFile='..\src\images\bytecoin.ico' />
@@ -83,7 +87,7 @@ Build example:
             <UIRef Id='WixUI_InstallDir' />
             <UIRef Id='WixUI_ErrorProgressText' />
             <Publish Dialog='WelcomeDlg' Control='Next' Event='NewDialog' Value='InstallDirDlg' Order='2'>1</Publish>
-            <Publish Dialog='InstallDirDlg' Control='Back' Event='NewDialog' Value='WelcomeDlg' Order='2'>1</Publish>		
+            <Publish Dialog='InstallDirDlg' Control='Back' Event='NewDialog' Value='WelcomeDlg' Order='2'>1</Publish>
         </UI>
 
     </Product>
@@ -265,7 +269,7 @@ Build example:
                 <RegistryValue Root='HKCU' Key='Software\[Manufacturer]\$(var.ProductName)' Name='AppDataShortcutInstalled' Type='integer' Value='1' KeyPath='yes' />
             </Component>
         </DirectoryRef>
-        
+
         <DirectoryRef Id='StartMenuDir'>
             <Component Id='AppStartMenuShortcutComp' Guid='*'>
                 <Shortcut Id='AppStartMenuShortcut' Name='Wallet (GUI)' Target='[!BytecoinGuiExe]' WorkingDirectory='INSTALLDIR' />
@@ -275,4 +279,4 @@ Build example:
         </DirectoryRef>
     </Fragment>
 
-</Wix> 
+</Wix>

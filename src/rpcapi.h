@@ -378,7 +378,7 @@ struct GetWalletInfo
     struct Response
     {
         bool view_only = false;
-        bool amethyst = false;
+        QString wallet_type;
         bool can_view_outgoing_addresses = false;
         bool has_view_secret_key = false;
         QDateTime wallet_creation_timestamp;
@@ -396,7 +396,7 @@ struct GetWalletInfo
         {
             return std::tie(
                 view_only,
-                amethyst,
+                wallet_type,
                 can_view_outgoing_addresses,
                 has_view_secret_key,
                 wallet_creation_timestamp,

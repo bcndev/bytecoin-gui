@@ -69,7 +69,7 @@ struct WalletModelState
     QList<QString> addresses;
 
     bool viewOnly = false;
-    bool amethyst = false;
+    QString walletType;
     QDateTime creationTimestamp;
     quint32 addressesCount = 0;
     QString net{};
@@ -172,7 +172,7 @@ QVariant WalletModel::data(const QModelIndex& index, int role /*= Qt::DisplayRol
     case Qt::TextAlignmentRole:
         return headerData(index.column(), Qt::Horizontal, role);
     case Qt::ToolTipRole:
-        return getToolTipRoleData(index);
+        return getToolTipRoleData(index, role);
     case Qt::FontRole:
         return getFontRoleData(index);
     default:
@@ -236,7 +236,7 @@ void WalletModel::walletInfoReceived(const RpcApi::WalletInfo& response)
     pimpl_->viewOnly = response.view_only;
     pimpl_->addressesCount = response.total_address_count;
     pimpl_->creationTimestamp = response.wallet_creation_timestamp;
-    pimpl_->amethyst = response.amethyst;
+    pimpl_->walletType = response.wallet_type;
     if (pimpl_->net != response.net)
     {
         pimpl_->net = response.net;
@@ -246,7 +246,7 @@ void WalletModel::walletInfoReceived(const RpcApi::WalletInfo& response)
     QVector<int> changedAddressRoles;
     changedAddressRoles << Qt::EditRole << Qt::DisplayRole
         << ROLE_FIRST_ADDRESS
-        << ROLE_AMETHYST
+        << ROLE_WALLET_TYPE
         << ROLE_CAN_VIEW_OUTGOING_ADDRESSES
         << ROLE_HAS_VIEW_SECRET_KEY
         << ROLE_WALLET_CREATION_TIMESTAMP
@@ -591,8 +591,8 @@ QVariant WalletModel::getDisplayRoleAddresses(const QModelIndex& index) const
     {
     case COLUMN_FIRST_ADDRESS:
         return "<b>" + pimpl_->addresses[index.row()] + "</b>";
-    case COLUMN_AMETHYST:
-        return pimpl_->amethyst ? QVariant{"<b>"+tr("HD")+"</b>"} : /*"<s>"+tr("HD")+"</s>"*/QVariant{};
+    case COLUMN_WALLET_TYPE:
+        return (pimpl_->walletType == "amethyst") ? QVariant{"<b>"+tr("HD")+"</b>"} : (pimpl_->walletType == "hardware") ? QVariant{"<b>"+tr("HW")+"</b>"} : QVariant{};
     case COLUMN_WALLET_CREATION_TIMESTAMP:
         return tr("Wallet created: %1.").arg(pimpl_->creationTimestamp.toString(Qt::SystemLocaleShortDate));
     case COLUMN_TOTAL_ADDRESS_COUNT:
@@ -914,8 +914,14 @@ QVariant WalletModel::getUserRoleBalance(const QModelIndex& /*index*/, int role)
     return QVariant();
 }
 
-QVariant WalletModel::getToolTipRoleData(const QModelIndex& /*index*/) const
+QVariant WalletModel::getToolTipRoleData(const QModelIndex& /*index*/, int role) const
 {
+    switch(role)
+    {
+    case ROLE_WALLET_TYPE:
+        return (pimpl_->walletType == "amethyst") ? QVariant{"Amethyst wallet"} : (pimpl_->walletType == "hardware") ? QVariant{"Hardware wallet"} : QVariant{};
+    }
+
     return QVariant();
 }
 
@@ -1028,7 +1034,7 @@ QString WalletModel::getAddress() const
 
 bool WalletModel::isAmethyst() const
 {
-    return pimpl_->amethyst;
+    return pimpl_->walletType == "amethyst" || pimpl_->walletType == "hardware";
 }
 
 void WalletModel::reset()

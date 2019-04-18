@@ -182,7 +182,7 @@ GetWalletInfo::Response::fromJson(const QVariantMap& json)
     GetWalletInfo::Response value;
 
     RPCAPI_DESERIALIZE_FIELD(value, json, view_only);
-    RPCAPI_DESERIALIZE_FIELD(value, json, amethyst);
+    RPCAPI_DESERIALIZE_FIELD(value, json, wallet_type);
     RPCAPI_DESERIALIZE_FIELD(value, json, can_view_outgoing_addresses);
     RPCAPI_DESERIALIZE_FIELD(value, json, has_view_secret_key);
     RPCAPI_DESERIALIZE_TIMESTAMP(value, json, wallet_creation_timestamp);

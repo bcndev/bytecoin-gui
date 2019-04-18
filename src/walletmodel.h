@@ -25,7 +25,7 @@ public:
     enum Columns
     {
         COLUMN_FIRST_ADDRESS = 0, // getWalletInfo
-        COLUMN_AMETHYST,
+        COLUMN_WALLET_TYPE,
         COLUMN_CAN_VIEW_OUTGOING_ADDRESSES,
         COLUMN_HAS_VIEW_SECRET_KEY,
         COLUMN_WALLET_CREATION_TIMESTAMP,
@@ -82,7 +82,7 @@ public:
     enum Roles
     {
         ROLE_FIRST_ADDRESS = Qt::UserRole,
-        ROLE_AMETHYST,
+        ROLE_WALLET_TYPE,
         ROLE_CAN_VIEW_OUTGOING_ADDRESSES,
         ROLE_HAS_VIEW_SECRET_KEY,
         ROLE_WALLET_CREATION_TIMESTAMP,
@@ -185,7 +185,7 @@ public slots:
 private:
     QVariant getEditRoleData(const QModelIndex& index) const;
     QVariant getDecorationRoleData(const QModelIndex& index) const;
-    QVariant getToolTipRoleData(const QModelIndex& index) const;
+    QVariant getToolTipRoleData(const QModelIndex& index, int role) const;
     QVariant getFontRoleData(const QModelIndex& index) const;
 
     QVariant getDisplayRoleData(const QModelIndex& index) const;
