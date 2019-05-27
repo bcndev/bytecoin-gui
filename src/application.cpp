@@ -49,7 +49,7 @@ WalletApplication::WalletApplication(int& argc, char** argv)
     , crashDialog_(new CrashDialog())
     , m_isAboutToQuit(false)
 {
-    setApplicationName("bytecoin"); // do not change becasuse it also changes data directory under Mac and Win
+    setApplicationName("bytecoin"); // do not change because it also changes data directory under Mac and Win
     setApplicationDisplayName(tr("Bytecoin Wallet") + ' ' + Settings::getFullVersion());
     setApplicationVersion(VERSION);
     setQuitOnLastWindowClosed(false);
@@ -609,7 +609,7 @@ void WalletApplication::updateReceived()
     const QString newVersionStr = downloader_->downloadedData();
     if (newVersionStr.length() > 15)
         return;
-    const QString currentVersionStr = Settings::getFullVersion();
+    const QString currentVersionStr = Settings::getVersion();
 
     if (compareVersion(newVersionStr, currentVersionStr) > 0)
         emit updateIsReadySignal(newVersionStr);

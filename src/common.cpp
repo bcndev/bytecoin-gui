@@ -124,6 +124,8 @@ bool parseAmount(const QString& str, qint64& amount)
     const qint64 frac = justifiedFrac.isEmpty() ? 0 : justifiedFrac.toLongLong(&ok);
     if (!ok)
         return false;
+    if (integer > std::numeric_limits<qint64>::max() / static_cast<qint64>(COIN))
+        return false;
     const qint64 value = integer * COIN + frac;
     amount = negative ? -value : value;
     return true;

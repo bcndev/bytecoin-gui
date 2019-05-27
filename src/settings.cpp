@@ -247,9 +247,9 @@ QString Settings::getWalletFile() const
     return settings_->value(OPTION_WALLET_FILE).toString();
 }
 
-QStringList Settings::getWalletdParams() const
+QString Settings::getWalletdParams() const
 {
-    return settings_->value(OPTION_WALLETD_PARAMS).toString().split(QChar(' '), QString::SkipEmptyParts);
+    return settings_->value(OPTION_WALLETD_PARAMS).toString();
 }
 
 quint16 Settings::getDefaultWalletdPort() const
@@ -440,7 +440,7 @@ QStringList Settings::getDefaultMiningPoolList()
 /*static*/
 QString Settings::getVersion()
 {
-    return VERSION;
+    return shortVersion();
 }
 
 /*static*/

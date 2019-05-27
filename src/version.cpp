@@ -40,4 +40,9 @@ QString fullVersion()
     return isStableVersion() ? QString{"%1 %2"}.arg(VERSION).arg(CODENAME) : QString{"%1-%2-%3-%4"}.arg(VERSION).arg(CODENAME).arg(VERSION_SUFFIX).arg(REVISION);
 }
 
+QString shortVersion()
+{
+    return isStableVersion() ? QString{"%1"}.arg(VERSION) : QString{"%1-%2-%3"}.arg(VERSION).arg(VERSION_SUFFIX).arg(REVISION);
+}
+
 }

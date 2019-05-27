@@ -1,5 +1,16 @@
 ## Release Notes
 
+### v3.4.3 (Amethyst)
+
+- Fixed a falsy update notification.
+- Fixed parsing `walletd` parameters.
+- Remove `libusb` dependency.
+- Updated the Bytecoin daemons.
+
+### v3.4.2 (Amethyst)
+
+- Updated the Bytecoin daemons.
+
 ### v3.4.2-beta-20190412
 
 - Updated the Bytecoin daemons.
@@ -9,7 +20,7 @@
 - Fixed a bug in a dialog box.
 - Updated the Bytecoin daemons.
 
-### v3.4.1
+### v3.4.1 (Amethyst)
 
 - Fixed creating Amethyst wallets.
 - Added support of the new format of sendproofs.
@@ -18,7 +29,7 @@
 - Made minor improvements and bug fixes. 
 - Updated the Bytecoin daemons.
 
-### v3.4.0
+### v3.4.0 (Amethyst)
 
 - Updated the Bytecoin daemons.
 

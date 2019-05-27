@@ -42,13 +42,8 @@ private:
 
 void TxList::add(const Map& newMap, TxList::Height /*topHeight*/, TxList::Height from_height, TxList::Height to_height, TxList::Height /*next_from_height*/, TxList::Height /*next_to_height*/)
 {
-//    const Height newTopHeight = topHeight;
-//    const Height beginHeight = from_height;
-//    const Height endHeight = next_from_height; // not including
-
     auto fhit = map_.upperBound(from_height);
     auto thit = map_.lowerBound(to_height);
-//    auto thit = map_.upperBound(to_height);   // uncomment this!!
     for (; fhit != thit;)
         fhit = map_.erase(fhit);
 
@@ -61,10 +56,6 @@ struct WalletModelState
     RpcApi::Status status;
     RpcApi::Balance balance;
     RpcApi::Height prevTopHeight = 0;
-//    QLinkedList<RpcApi::Transaction> confirmed_txs;
-//    QLinkedList<RpcApi::Transaction> unconfirmed_txs;
-//    QString firstAddress;
-//    QList<RpcApi::Transaction> txs;
     TxList txs;
     QList<QString> addresses;
 

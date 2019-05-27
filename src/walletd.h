@@ -204,6 +204,7 @@ private:
     void run(const QStringList& args);
     void connected();
     virtual void authRequired(QAuthenticator* authenticator) override;
+    QStringList parseWalletdParams(const QString& params);
 
 private slots:
     void daemonStandardOutputReady();

@@ -77,7 +77,7 @@ public:
 
     QStringList getRecentWallets() const;
 
-    QStringList getWalletdParams() const;
+    QString getWalletdParams() const;
 
     void setWalletdParams(const QString& params);
 //    void setLocalRpcPort(quint16 port);

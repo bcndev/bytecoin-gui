@@ -232,9 +232,6 @@ Build example:
             <Component Id='LibGLESV2DllComp' Guid='*'>
                 <File Id='LibGLESV2Dll' Source='..\bin\libGLESV2.dll' KeyPath='yes' />
             </Component>
-            <Component Id='LibUsbDllComp' Guid='*'>
-                <File Id='LibUsbDll' Source='..\bin\libusb-1.0.dll' KeyPath='yes' />
-            </Component>
             <Component Id='Opengl32swDllComp' Guid='*'>
                 <File Id='Opengl32swDll' Source='..\bin\opengl32sw.dll' KeyPath='yes' />
             </Component>

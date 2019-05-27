@@ -428,6 +428,33 @@ BuiltinWalletd::~BuiltinWalletd()
     stop();
 }
 
+QStringList BuiltinWalletd::parseWalletdParams(const QString& params)
+{
+    QStringList result = params.split(QChar(' '), QString::SkipEmptyParts);
+    bool inQuotes = false;
+    int quotesStart = -1;
+    for (int i = 0; i < result.size(); )
+    {
+        const bool hasUnclosedQuotes = result[i].count('\"') % 2;
+        result[i].remove('\"');
+        if (inQuotes)
+        {
+            result[quotesStart].append(' ').append(result[i]);
+            result.removeAt(i);
+            if (hasUnclosedQuotes)
+                inQuotes = false;
+            continue;
+        }
+        if (hasUnclosedQuotes)
+        {
+            inQuotes = true;
+            quotesStart = i;
+        }
+        ++i;
+    }
+    return result;
+}
+
 /*virtual*/
 void BuiltinWalletd::run()
 {
@@ -479,7 +506,7 @@ void BuiltinWalletd::run(const QStringList& args)
             });
 #endif
 
-    QStringList savedArgs = Settings::instance().getWalletdParams();
+    QStringList savedArgs = parseWalletdParams(Settings::instance().getWalletdParams());
     walletd_->setArguments(savedArgs + args);
     walletd_->start();
 
