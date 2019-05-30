@@ -385,5 +385,5 @@ jobs:
     displayName: Create github release in desktop repo
 
   - script: |
-      curl -H "Authorization: token $(GithubPAT)" -X DELETE https://api.github.com/repos/$(daemonsRepo)/git/$(Build.SourceBranch)
+      curl -H "Authorization: token $(GithubPAT)" -X DELETE https://api.github.com/repos/$(desktopRepo)/git/$(Build.SourceBranch)
     displayName: Remove branch created for the build

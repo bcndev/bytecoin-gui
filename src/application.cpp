@@ -133,6 +133,7 @@ bool WalletApplication::init()
 
     connect(m_mainWindow, &MainWindow::createLegacyWalletSignal, this, &WalletApplication::createLegacyWallet);
     connect(m_mainWindow, &MainWindow::createWalletSignal, this, &WalletApplication::createWallet);
+    connect(m_mainWindow, &MainWindow::createHWWalletSignal, this, &WalletApplication::createHWWallet);
     connect(m_mainWindow, &MainWindow::importKeysSignal, this, &WalletApplication::importKeys);
     connect(m_mainWindow, &MainWindow::openWalletSignal, this, &WalletApplication::openWallet);
     connect(m_mainWindow, &MainWindow::restoreWalletFromMnemonicSignal, this, &WalletApplication::restoreWalletFromMnemonic);
@@ -242,7 +243,7 @@ void WalletApplication::createWalletd()
     {
         const QString& walletFile = Settings::instance().getWalletFile();
         Q_ASSERT(!walletFile.isEmpty());
-        runBuiltinWalletd(walletFile, false, false, QByteArray{}, QByteArray{});
+        runBuiltinWalletd(walletFile, false, false, false, QByteArray{}, QByteArray{});
     }
     else
         connectToRemoteWalletd();
@@ -260,7 +261,7 @@ void WalletApplication::splashMsg(const QString& msg)
         m_mainWindow->splashMsg(msg);
 }
 
-void WalletApplication::runBuiltinWalletd(const QString& walletFile, bool createNew, bool createLegacy, QByteArray&& keys, QByteArray&& mnemonic)
+void WalletApplication::runBuiltinWalletd(const QString& walletFile, bool createNew, bool createLegacy, bool createHardware, QByteArray&& keys, QByteArray&& mnemonic)
 {
     if (walletd_)
     {
@@ -271,7 +272,7 @@ void WalletApplication::runBuiltinWalletd(const QString& walletFile, bool create
     }
 
     splashMsg(tr("Running walletd..."));
-    BuiltinWalletd* walletd = new BuiltinWalletd(walletFile, createNew, createLegacy, std::move(keys), std::move(mnemonic), this);
+    BuiltinWalletd* walletd = new BuiltinWalletd(walletFile, createNew, createLegacy, createHardware, std::move(keys), std::move(mnemonic), this);
     walletd_ = walletd;
 
     connect(walletd, &BuiltinWalletd::daemonStandardOutputSignal, m_mainWindow, &MainWindow::addDaemonOutput);
@@ -381,7 +382,7 @@ void WalletApplication::createLegacyWallet(QWidget* parent)
     if (fileName.isEmpty())
         return;
 
-    runBuiltinWalletd(fileName, false, true, QByteArray{}, QByteArray{});
+    runBuiltinWalletd(fileName, false, true, false, QByteArray{}, QByteArray{});
 }
 
 void WalletApplication::createWallet(QWidget* parent)
@@ -399,7 +400,20 @@ void WalletApplication::createWallet(QWidget* parent)
         return;
 
     QByteArray mnemonic = dlg.getMnemonic();
-    runBuiltinWalletd(fileName, true, false, QByteArray{}, std::move(mnemonic));
+    runBuiltinWalletd(fileName, true, false, false, QByteArray{}, std::move(mnemonic));
+}
+
+void WalletApplication::createHWWallet(QWidget *parent)
+{
+    const QString fileName = QFileDialog::getSaveFileName(
+                parent,
+                tr("Create wallet file"),
+                QDir::homePath(),
+                tr("Wallet files (*.wallet);;All files (*)"));
+    if (fileName.isEmpty())
+        return;
+
+    runBuiltinWalletd(fileName, false, false, true, QByteArray{}, QByteArray{});
 }
 
 void WalletApplication::openWallet(QWidget* parent)
@@ -412,7 +426,7 @@ void WalletApplication::openWallet(QWidget* parent)
     if (fileName.isEmpty())
         return;
 
-    runBuiltinWalletd(fileName, false, false, QByteArray{}, QByteArray{});
+    runBuiltinWalletd(fileName, false, false, false, QByteArray{}, QByteArray{});
 }
 
 void WalletApplication::restoreWalletFromMnemonic(QWidget *parent)
@@ -430,7 +444,7 @@ void WalletApplication::restoreWalletFromMnemonic(QWidget *parent)
         return;
 
     QByteArray mnemonic = dlg.getMnemonic();
-    runBuiltinWalletd(fileName, false, false, QByteArray{}, std::move(mnemonic));
+    runBuiltinWalletd(fileName, false, false, false, QByteArray{}, std::move(mnemonic));
 }
 
 void WalletApplication::remoteWallet(QWidget* parent)
@@ -467,7 +481,7 @@ void WalletApplication::importKeys(QWidget* parent)
         return;
 
     QByteArray keys = dlg.getKey();
-    runBuiltinWalletd(fileName, false, true, std::move(keys), QByteArray{});
+    runBuiltinWalletd(fileName, false, true, false, std::move(keys), QByteArray{});
 }
 
 void WalletApplication::requestPassword()

@@ -1,5 +1,10 @@
 ## Release Notes
 
+### v3.4.4 (Amethyst)
+
+- Added a menu item to create hardware wallets.
+- Updated the Bytecoin daemons.
+
 ### v3.4.3 (Amethyst)
 
 - Fixed a falsy update notification.

@@ -393,7 +393,7 @@ void RemoteWalletd::authRequired(QAuthenticator* authenticator)
 }
 
 
-BuiltinWalletd::BuiltinWalletd(const QString& pathToWallet, bool createNew, bool createLegacy, QByteArray&& keys, QByteArray&& mnemonic, QObject* parent)
+BuiltinWalletd::BuiltinWalletd(const QString& pathToWallet, bool createNew, bool createLegacy, bool createHardware, QByteArray&& keys, QByteArray&& mnemonic, QObject* parent)
     : RemoteWalletd(Settings::instance().getBuiltinWalletdEndPoint(), parent)
     , walletd_(new QProcess(this))
     , state_(State::STOPPED)
@@ -401,6 +401,7 @@ BuiltinWalletd::BuiltinWalletd(const QString& pathToWallet, bool createNew, bool
     , createNew_(createNew)
     , createLegacy_(createLegacy)
     , changePassword_(false)
+    , createHardware_(createHardware)
     , keys_(std::move(keys))
     , mnemonic_(std::move(mnemonic))
 {
@@ -462,6 +463,8 @@ void BuiltinWalletd::run()
     args << QString{"--wallet-file=%1"}.arg(pathToWallet_);
     if (createLegacy_)
         args << "--create-wallet" << "--wallet-type=legacy" << "--launch-after-command";
+    else if (createHardware_)
+        args << "--create-wallet" << "--wallet-type=hardware" << "--launch-after-command" << "--import-view-key";
 
     const bool restoreFromMnemonic = !mnemonic_.isEmpty();
     if (createNew_)
@@ -560,7 +563,7 @@ void BuiltinWalletd::daemonStarted()
     setState(State::RUNNING);
 
     const bool restoreFromMnemonic = !createNew_ && !mnemonic_.isEmpty();
-    if (createLegacy_ || createNew_ || restoreFromMnemonic)
+    if (createLegacy_ || createNew_ || restoreFromMnemonic || createHardware_)
         emit requestPasswordWithConfirmationSignal();
     else if (!changePassword_)
         emit requestPasswordSignal();
@@ -598,13 +601,16 @@ void BuiltinWalletd::daemonStarted()
     else
     {
         walletd_->write((password_ + '\n').toUtf8());
-        if (createLegacy_ || createNew_ || restoreFromMnemonic)
+        if (createLegacy_ || createNew_ || restoreFromMnemonic || createHardware_)
             walletd_->write((password_ + '\n').toUtf8()); // write confirmation
         password_.fill('0', 200);
         password_.clear();
     }
 
     walletd_->write((auth_.getConcatenated() + '\n').toUtf8());
+
+    if (walletd_->isReadable() && createHardware_)
+        QMessageBox::information(nullptr, QObject::tr("Information"), QObject::tr("Please confirm the operation on your hardware wallet."));
 
     emit daemonStartedSignal();
 }

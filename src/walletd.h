@@ -149,7 +149,7 @@ public:
     Q_ENUM(ReturnCodes)
 
 
-    BuiltinWalletd(const QString& pathToWallet, bool createNew, bool createLegacy, QByteArray&& keys, QByteArray&& mnemonic, QObject* parent = nullptr);
+    BuiltinWalletd(const QString& pathToWallet, bool createNew, bool createLegacy, bool createHardware, QByteArray&& keys, QByteArray&& mnemonic, QObject* parent = nullptr);
     virtual ~BuiltinWalletd() override;
 
     static QString errorMessage(ReturnCodes err);
@@ -195,6 +195,7 @@ private:
     bool createNew_;
     bool createLegacy_;
     bool changePassword_;
+    bool createHardware_;
     QByteArray keys_;
     QByteArray mnemonic_;
     RandomAuth auth_;

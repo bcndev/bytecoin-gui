@@ -117,6 +117,7 @@ private:
 
     Q_SLOT void createLegacyWallet();
     Q_SLOT void createWallet();
+    Q_SLOT void createHWWallet();
     Q_SLOT void openWallet();
     Q_SLOT void restoreWalletFromMnemonic();
     Q_SLOT void remoteWallet();
@@ -138,6 +139,7 @@ signals:
 
     void createLegacyWalletSignal(QWidget* parent);
     void createWalletSignal(QWidget* parent);
+    void createHWWalletSignal(QWidget* parent);
     void openWalletSignal(QWidget* parent);
     void restoreWalletFromMnemonicSignal(QWidget* parent);
     void remoteWalletSignal(QWidget* parent);

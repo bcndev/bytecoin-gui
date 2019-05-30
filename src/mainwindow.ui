@@ -736,6 +736,7 @@
      <string>&amp;Wallet</string>
     </property>
     <addaction name="m_createNewWalletAction"/>
+    <addaction name="m_createHWWalletAction"/>
     <addaction name="m_restoreWalletFromMnemonicAction"/>
     <addaction name="m_openWalletAction"/>
     <addaction name="separator"/>
@@ -877,6 +878,11 @@
   <action name="m_restoreWalletFromMnemonicAction">
    <property name="text">
     <string>&amp;Restore Amethyst wallet from mnemonic</string>
+   </property>
+  </action>
+  <action name="m_createHWWalletAction">
+   <property name="text">
+    <string>Create &amp;hardware Amethyst wallet file</string>
    </property>
   </action>
  </widget>
@@ -1282,6 +1288,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>m_createHWWalletAction</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>createHWWallet()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>636</x>
+     <y>411</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>aboutQt()</slot>
@@ -1303,6 +1325,7 @@
   <slot>exportKeys()</slot>
   <slot>createWallet()</slot>
   <slot>restoreWalletFromMnemonic()</slot>
+  <slot>createHWWallet()</slot>
  </slots>
  <buttongroups>
   <buttongroup name="m_toolButtonGroup">

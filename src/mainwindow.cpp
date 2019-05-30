@@ -338,6 +338,11 @@ void MainWindow::createWallet()
     emit createWalletSignal(this);
 }
 
+void MainWindow::createHWWallet()
+{
+    emit createHWWalletSignal(this);
+}
+
 void MainWindow::openWallet()
 {
     emit openWalletSignal(this);
