@@ -563,8 +563,10 @@ void BuiltinWalletd::daemonStarted()
     setState(State::RUNNING);
 
     const bool restoreFromMnemonic = !createNew_ && !mnemonic_.isEmpty();
-    if (createLegacy_ || createNew_ || restoreFromMnemonic || createHardware_)
+    if (createLegacy_ || createNew_ || restoreFromMnemonic)
         emit requestPasswordWithConfirmationSignal();
+    else if (createHardware_)
+        setPassword(QString{});
     else if (!changePassword_)
         emit requestPasswordSignal();
 

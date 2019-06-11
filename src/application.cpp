@@ -46,6 +46,7 @@ WalletApplication::WalletApplication(int& argc, char** argv)
     , walletd_(nullptr)
     , walletModel_(new WalletModel(this))
     , downloader_(new FileDownloader(this))
+    , tryToOpenWithEmptyPassword_(false)
     , crashDialog_(new CrashDialog())
     , m_isAboutToQuit(false)
 {
@@ -148,8 +149,11 @@ bool WalletApplication::init()
     if(isFirstRun)
         firstRun();
     else
+    {
 //        createWalletd();
+        tryToOpenWithEmptyPassword_ = true;
         emit createWalletdSignal(QPrivateSignal{});
+    }
 
     checkForUpdate();
     return true;
@@ -344,7 +348,18 @@ void WalletApplication::daemonFinished(int exitCode, QProcess::ExitStatus /*exit
     qDebug("[WalletApplication] Daemon finished. Return code: %s (%d)",
                 metaEnum.valueToKey(static_cast<int>(exitCode)),
                 exitCode);
-    const QString walletdMsg = BuiltinWalletd::errorMessage(static_cast<BuiltinWalletd::ReturnCodes>(exitCode));
+
+    const BuiltinWalletd::ReturnCodes returnCode = static_cast<BuiltinWalletd::ReturnCodes>(exitCode);
+
+    if (returnCode == BuiltinWalletd::ReturnCodes::WALLET_FILE_DECRYPT_ERROR && tryToOpenWithEmptyPassword_)
+    {
+        tryToOpenWithEmptyPassword_ = false;
+        restartDaemon();
+        return;
+    }
+    tryToOpenWithEmptyPassword_ = false;
+
+    const QString walletdMsg = BuiltinWalletd::errorMessage(returnCode);
     const QString msg = !walletdMsg.isEmpty() ?
                             walletdMsg :
                             tr("Walletd just crashed. %1. Return code %2. ").arg(walletd->errorString()).arg(exitCode);
@@ -426,6 +441,7 @@ void WalletApplication::openWallet(QWidget* parent)
     if (fileName.isEmpty())
         return;
 
+    tryToOpenWithEmptyPassword_ = true;
     runBuiltinWalletd(fileName, false, false, false, QByteArray{}, QByteArray{});
 }
 
@@ -486,6 +502,13 @@ void WalletApplication::importKeys(QWidget* parent)
 
 void WalletApplication::requestPassword()
 {
+    if (tryToOpenWithEmptyPassword_)
+    {
+        BuiltinWalletd* walletd = static_cast<BuiltinWalletd*>(walletd_);
+        walletd->setPassword(QString{});
+        return;
+    }
+
     AskPasswordDialog dlg(false, m_mainWindow);
     BuiltinWalletd* walletd = static_cast<BuiltinWalletd*>(walletd_);
     connect(walletd, &BuiltinWalletd::daemonErrorOccurredSignal, &dlg, &AskPasswordDialog::reject);

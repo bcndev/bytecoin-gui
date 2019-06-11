@@ -49,6 +49,7 @@ private:
     WalletModel* walletModel_;
     FileDownloader* downloader_;
     QTimer checkForUpdateTimer_;
+    bool tryToOpenWithEmptyPassword_;
 
     QScopedPointer<CrashDialog> crashDialog_;
     bool m_isAboutToQuit;

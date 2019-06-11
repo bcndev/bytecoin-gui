@@ -1,5 +1,11 @@
 ## Release Notes
 
+### v3.4.5 (Amethyst)
+
+- Disabled asking passwords for wallets with empty passwords.
+- Disabled asking passwords for hardware wallets.
+- Updated the Bytecoin daemons.
+
 ### v3.4.4 (Amethyst)
 
 - Added a menu item to create hardware wallets.
