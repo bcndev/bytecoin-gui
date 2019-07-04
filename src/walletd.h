@@ -45,6 +45,10 @@ public:
     void getTransfers(const RpcApi::GetTransfers::Request& req, RpcApi::Height topHeight);
     void createProof(const RpcApi::CreateSendProof::Request& req);
     void checkSendProof(const RpcApi::CheckSendProof::Request& proof);
+    void getWalletRecords(const RpcApi::GetWalletRecords::Request& req);
+    void setAddressLabel(const RpcApi::SetAddressLabel::Request& req);
+    void createAddresses(const RpcApi::CreateAddresses::Request& req);
+    void createAddress(const QString& label);
 
     State getState() const;
     bool isConnected() const;
@@ -58,6 +62,9 @@ signals:
     void sendTxReceivedSignal(const RpcApi::SentTx& tx);
     void proofsReceivedSignal(const RpcApi::Proofs& proofs);
     void checkProofReceivedSignal(const RpcApi::ProofCheck& proofCheck);
+    void walletRecordsReceivedSignal(const RpcApi::WalletRecords& records);
+    void addressLabelSetReceivedSignal(const QString& address, const QString& label);
+    void addressesCreatedReceivedSignal(const RpcApi::CreatedAddresses& addrs);
 
     void networkErrorSignal(const QString& errorString);
     void jsonParsingErrorSignal(const QString& message);
@@ -77,7 +84,7 @@ private:
     JsonRpc::WalletClient* jsonClient_;
     State state_;
     QTimer rerunTimer_;
-    QTimer statusTimer_;
+    QTimer heartbeatTimer_;
 
     void setState(State state);
     virtual void authRequired(QAuthenticator* authenticator);
@@ -93,6 +100,9 @@ private slots:
     void sendTxReceived(const RpcApi::SentTx& tx);
     void proofsReceived(const RpcApi::Proofs& result);
     void checkProofReceived(const RpcApi::ProofCheck& result);
+    void walletRecordsReceived(const RpcApi::WalletRecords& records);
+    void addressLabelSetReceived(const QString& address, const QString& label);
+    void addressesCreatedReceived(const RpcApi::CreatedAddresses& addrs, const QString& label);
 
     void networkError(const QString& errorString);
     void jsonParsingError(const QString& message);

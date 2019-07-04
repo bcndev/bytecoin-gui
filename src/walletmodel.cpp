@@ -16,6 +16,9 @@
 namespace WalletGUI
 {
 
+static const int SECS_IN_MINUTE = 60;
+static const int SECS_IN_HOUR = 60 * SECS_IN_MINUTE;
+
 class TxList
 {
 public:
@@ -416,6 +419,7 @@ void WalletModel::statusReceived(const RpcApi::Status& status)
     pimpl_->status = status;
     changedRoles << Qt::EditRole << Qt::DisplayRole;
 
+    emit statusUpdatedSignal();
     emit dataChanged(index(0, COLUMN_TOP_BLOCK_HEIGHT), index(0, COLUMN_PEER_COUNT_SUM), changedRoles);
 
     const bool firstRequest = pimpl_->prevTopHeight == 0;
@@ -547,15 +551,15 @@ QVariant WalletModel::getDisplayRoleState(const QModelIndex& index) const
         switch(pimpl_->walletdState)
         {
         case RemoteWalletd::State::STOPPED:
-            return tr("Disconnected");
+            return tr("Disconnected.");
         case RemoteWalletd::State::CONNECTING:
-            return tr("Connecting to %1").arg(Settings::instance().getUserFriendlyWalletdConnectionMethod());
+            return tr("Connecting to %1.").arg(Settings::instance().getUserFriendlyWalletdConnectionMethod());
         case RemoteWalletd::State::CONNECTED:
-            return tr("Connected to %1").arg(Settings::instance().getUserFriendlyWalletdConnectionMethod());
+            return tr("Connected to %1.").arg(Settings::instance().getUserFriendlyWalletdConnectionMethod());
         case RemoteWalletd::State::NETWORK_ERROR:
-            return tr("Network error");
+            return tr("Network error.");
         case RemoteWalletd::State::JSON_ERROR:
-            return tr("RPC API error");
+            return tr("RPC API error.");
         }
     }
     }
@@ -581,7 +585,7 @@ QVariant WalletModel::getDisplayRoleAddresses(const QModelIndex& index) const
     switch(index.column())
     {
     case COLUMN_FIRST_ADDRESS:
-        return "<b>" + pimpl_->addresses[index.row()] + "</b>";
+        return pimpl_->addresses[index.row()];
     case COLUMN_WALLET_TYPE:
         return (pimpl_->walletType == "amethyst") ? QVariant{"<b>"+tr("HD")+"</b>"} : (pimpl_->walletType == "hardware") ? QVariant{"<b>"+tr("HW")+"</b>"} : QVariant{};
     case COLUMN_WALLET_CREATION_TIMESTAMP:
@@ -814,7 +818,7 @@ QVariant WalletModel::getDisplayRoleStatus(const QModelIndex& index) const
     }
     case COLUMN_LOWER_LEVEL_ERROR:
 //        return pimpl_->status.lower_level_error;
-        return pimpl_->status.lower_level_error.isEmpty() || (pimpl_->status.top_block_height < pimpl_->status.top_known_block_height && pimpl_->status.lower_level_error == "SEND_ERROR") ? tr("Connected to bytecoind") : tr("Bytecoind status: %1").arg(pimpl_->status.lower_level_error);
+        return pimpl_->status.lower_level_error.isEmpty() || (pimpl_->status.top_block_height < pimpl_->status.top_known_block_height && pimpl_->status.lower_level_error == "SEND_ERROR") ? tr("Connected to bytecoind.") : tr("Bytecoind status: %1.").arg(pimpl_->status.lower_level_error);
     case COLUMN_RECOMMENDED_MAX_TRANSACTION_SIZE:
         return pimpl_->status.recommended_max_transaction_size;
     case COLUMN_TXPOOL_VERSION:
@@ -828,7 +832,7 @@ QVariant WalletModel::getDisplayRoleStatus(const QModelIndex& index) const
     case COLUMN_KNOWN_TOP_BLOCK_HEIGHT:
         return pimpl_->status.top_known_block_height;
     case COLUMN_PEER_COUNT_SUM:
-        return tr("%1 peer(s)").arg(pimpl_->status.outgoing_peer_count + pimpl_->status.incoming_peer_count);
+        return tr("%1 peer(s).").arg(pimpl_->status.outgoing_peer_count + pimpl_->status.incoming_peer_count);
     }
 
     return QVariant();
@@ -1016,11 +1020,51 @@ QString WalletModel::getLowerLevelError() const
     return pimpl_->status.lower_level_error;
 }
 
+quint64 WalletModel::getSecsSinceLastBlock() const
+{
+    const QDateTime currentDateTime = QDateTime::currentDateTimeUtc();
+    const QDateTime lastBlockTimestamp = qMin(getLastBlockTimestamp(), currentDateTime);
+    return lastBlockTimestamp.secsTo(currentDateTime);
+}
+
+QString WalletModel::getFormattedTimeSinceLastBlock() const
+{
+    return isThereAnyBlock() ? formatTimeDiff(getSecsSinceLastBlock()) : tr("unknown");
+}
+
+bool WalletModel::isThereAnyBlock() const
+{
+    return getLastBlockTimestamp().toMSecsSinceEpoch() > 0;
+}
+
+bool WalletModel::isSyncronized() const
+{
+    return getLowerLevelError().isEmpty() && isThereAnyBlock() && (getLastBlockHeight() == getKnownBlockHeight());
+}
+
+quint32 WalletModel::getBlocksLeftToSync() const
+{
+    return getKnownBlockHeight() >= getLastBlockHeight() ? (getKnownBlockHeight() - getLastBlockHeight()) : 0;
+}
+
+WalletModel::SyncStatus WalletModel::getSyncStatus() const
+{
+    const WalletModel::SyncStatus result = !isSyncronized() ? WalletModel::SyncStatus::NOT_SYNCED
+                                                            : getSecsSinceLastBlock() > SECS_IN_HOUR ? WalletModel::SyncStatus::LAGGED
+                                                                                                     : WalletModel::SyncStatus::SYNCED;
+    return result;
+}
+
 QString WalletModel::getAddress() const
 {
     if (pimpl_->addresses.isEmpty())
         return QString();
     return pimpl_->addresses.first();
+}
+
+bool WalletModel::isConnected() const
+{
+    return pimpl_->walletdState == RemoteWalletd::State::CONNECTED;
 }
 
 bool WalletModel::isAmethyst() const

@@ -60,7 +60,10 @@ enum class ErrorCodes
 
 
 struct EmptyStruct
-{};
+{
+    static EmptyStruct fromJson(const QVariantMap&)
+    { return EmptyStruct{}; }
+};
 
 struct Output
 {
@@ -250,7 +253,7 @@ struct WalletRecord
     QString secret_spend_key;
     QString public_spend_key;
 
-    static Block fromJson(const QVariantMap& json);
+    static WalletRecord fromJson(const QVariantMap& json);
 
     auto tie() const
     {
@@ -419,8 +422,8 @@ struct GetWalletRecords
     {
         bool need_secrets = false;
         bool create = false;
-        quint64 index = 0;
-        quint64 count  = 1;
+        quint32 index = 0;
+        quint32 count  = std::numeric_limits<quint32>::max();
 
         QVariantMap toJson() const;
     };
@@ -442,9 +445,32 @@ struct SetAddressLabel
     {
         QString address;
         QString label;
+
+        QVariantMap toJson() const;
     };
 
     using Response = EmptyStruct;
+};
+
+struct CreateAddresses
+{
+    static constexpr char METHOD[] = "create_addresses";
+
+    struct Request
+    {
+        QStringList secret_spend_keys;
+        QDateTime creation_timestamp;
+
+        QVariantMap toJson() const;
+    };
+
+    struct Response
+    {
+        QStringList addresses;
+        QStringList secret_spend_keys;
+
+        static Response fromJson(const QVariantMap& json);
+    };
 };
 
 struct GetBalance
@@ -654,6 +680,8 @@ using CreatedTx = CreateTransaction::Response;
 using SentTx = SendTransaction::Response;
 using Proofs = CreateSendProof::Response;
 using ProofCheck = CheckSendProof::Response;
+using WalletRecords = GetWalletRecords::Response;
+using CreatedAddresses = CreateAddresses::Response;
 
 inline bool operator == (const Status& lhs, const Status& rhs)
 { return lhs.tie() == rhs.tie(); }

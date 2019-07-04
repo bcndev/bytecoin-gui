@@ -1,5 +1,13 @@
 ## Release Notes
 
+### v3.5.0 (Beryl)
+
+- Made many visual improvements to the graphical elements of the app.
+- Added a full-value support for multiple addresses.
+- Implemented an integration with the official Bytecoin explorer (it's opened when clicking either transaction/block hashes or block heights).
+- Fixed bugs.
+- Updated the Bytecoin daemons.
+
 ### v3.4.5 (Amethyst)
 
 - Disabled asking passwords for wallets with empty passwords.

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>358</width>
-    <height>123</height>
+    <height>194</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -26,8 +26,27 @@
    <enum>QFrame::Raised</enum>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="3">
-    <spacer name="verticalSpacer_2">
+   <property name="leftMargin">
+    <number>24</number>
+   </property>
+   <property name="topMargin">
+    <number>20</number>
+   </property>
+   <property name="verticalSpacing">
+    <number>12</number>
+   </property>
+   <item row="4" column="1">
+    <widget class="QLabel" name="m_overviewTotalBalanceTextLabel">
+     <property name="text">
+      <string>Total balance</string>
+     </property>
+     <property name="indent">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="4">
+    <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
@@ -42,88 +61,7 @@
      </property>
     </spacer>
    </item>
-   <item row="1" column="3">
-    <spacer name="verticalSpacer_8">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>0</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="2" column="3">
-    <widget class="QLabel" name="m_overviewSpendableBalanceTextLabel">
-     <property name="text">
-      <string>Spendable</string>
-     </property>
-     <property name="indent">
-      <number>0</number>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="4">
-    <widget class="QLabel" name="m_overviewSpendableBalanceLabel">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="cursor">
-      <cursorShape>PointingHandCursor</cursorShape>
-     </property>
-     <property name="toolTip">
-      <string>Click to copy</string>
-     </property>
-     <property name="text">
-      <string>TextLabel</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="5">
-    <widget class="QLabel" name="m_overviewSpendableBalanceTickerLabel">
-     <property name="text">
-      <string>BCN</string>
-     </property>
-     <property name="indent">
-      <number>0</number>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <spacer name="horizontalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="3" column="3">
-    <widget class="QLabel" name="m_overviewLockedOrUnconfirmedBalanceTextLabel">
-     <property name="text">
-      <string>Locked or unconfirmed</string>
-     </property>
-     <property name="indent">
-      <number>0</number>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="4">
+   <item row="3" column="2">
     <widget class="QLabel" name="m_overviewLockedOrUnconfirmedBalanceLabel">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
@@ -145,27 +83,76 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="5">
-    <widget class="QLabel" name="m_overviewLockedOrUnconfirmedBalanceTickerLabel">
-     <property name="text">
-      <string>BCN</string>
+   <item row="3" column="4">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
-     <property name="indent">
-      <number>0</number>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="2">
+    <widget class="QLabel" name="m_overviewSpendableBalanceLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="toolTip">
+      <string>Click to copy</string>
+     </property>
+     <property name="text">
+      <string>TextLabel</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>
-   <item row="4" column="3">
-    <widget class="QLabel" name="m_overviewTotalBalanceTextLabel">
-     <property name="text">
-      <string>Total balance</string>
+   <item row="1" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>16</number>
      </property>
-     <property name="indent">
-      <number>0</number>
-     </property>
-    </widget>
+     <item>
+      <widget class="QLabel" name="m_balancePixmapLabel">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="resources.qrc">:/icons/balance</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="m_titleLabel">
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+         <kerning>false</kerning>
+        </font>
+       </property>
+       <property name="text">
+        <string>BALANCE DETAILS</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
-   <item row="4" column="4">
+   <item row="4" column="2">
     <widget class="QLabel" name="m_overviewTotalBalanceLabel">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
@@ -187,20 +174,33 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="5">
-    <widget class="QLabel" name="m_overviewTotalBalanceTickerLabel">
+   <item row="2" column="1">
+    <widget class="QLabel" name="m_overviewSpendableBalanceTextLabel">
      <property name="text">
-      <string>BCN</string>
+      <string>Spendable</string>
+     </property>
+     <property name="indent">
+      <number>0</number>
      </property>
     </widget>
    </item>
-   <item row="5" column="2" colspan="4">
-    <spacer name="verticalSpacer">
+   <item row="3" column="1">
+    <widget class="QLabel" name="m_overviewLockedOrUnconfirmedBalanceTextLabel">
+     <property name="text">
+      <string>Locked or unconfirmed</string>
+     </property>
+     <property name="indent">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <spacer name="verticalSpacer_8">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
      <property name="sizeType">
-      <enum>QSizePolicy::Expanding</enum>
+      <enum>QSizePolicy::Fixed</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
@@ -209,45 +209,6 @@
       </size>
      </property>
     </spacer>
-   </item>
-   <item row="3" column="2">
-    <spacer name="horizontalSpacer_4">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>10</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="3" column="6">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="0" column="1" rowspan="6">
-    <widget class="QLabel" name="m_overviewBalanceIconLabel">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="pixmap">
-      <pixmap resource="resources.qrc">:/icons/total_balance</pixmap>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>

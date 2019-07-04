@@ -20,6 +20,9 @@
    <string>Check proof</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="sizeConstraint">
+    <enum>QLayout::SetMaximumSize</enum>
+   </property>
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
@@ -116,7 +119,13 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QLabel" name="addressLabel">
+      <widget class="WalletGUI::ElidedLabel" name="addressLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>TextLabel</string>
        </property>
@@ -130,7 +139,7 @@
       </widget>
      </item>
      <item row="3" column="1">
-      <widget class="QLabel" name="txHashLabel">
+      <widget class="WalletGUI::ElidedLabel" name="txHashLabel">
        <property name="text">
         <string>TextLabel</string>
        </property>
@@ -187,6 +196,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>WalletGUI::ElidedLabel</class>
+   <extends>QLabel</extends>
+   <header>elidedlabel.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

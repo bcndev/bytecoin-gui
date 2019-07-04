@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>288</width>
-    <height>163</height>
+    <width>354</width>
+    <height>236</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,37 +20,26 @@
    <enum>QFrame::Raised</enum>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="5" column="4">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Your hashrate</string>
-     </property>
-     <property name="indent">
-      <number>0</number>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2" colspan="6">
-    <spacer name="verticalSpacer_3">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>0</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="5" column="6">
-    <widget class="QLabel" name="m_overviewHashRateLabel">
+   <property name="leftMargin">
+    <number>24</number>
+   </property>
+   <property name="topMargin">
+    <number>20</number>
+   </property>
+   <property name="bottomMargin">
+    <number>24</number>
+   </property>
+   <property name="verticalSpacing">
+    <number>12</number>
+   </property>
+   <item row="4" column="3">
+    <widget class="QLabel" name="m_overviewNetworkHashrateLabel">
      <property name="text">
       <string>TextLabel</string>
      </property>
     </widget>
    </item>
-   <item row="8" column="2" colspan="6">
+   <item row="6" column="1" colspan="4">
     <spacer name="verticalSpacer_4">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -63,37 +52,75 @@
      </property>
     </spacer>
    </item>
-   <item row="5" column="0">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="6" column="6">
-    <widget class="QLabel" name="m_overviewNetworkHashrateLabel">
+   <item row="2" column="3">
+    <widget class="QLabel" name="m_miningStateLabel">
      <property name="text">
-      <string>TextLabel</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="4">
-    <widget class="QLabel" name="label_5">
-     <property name="text">
-      <string>Network hashrate</string>
+      <string>OFF</string>
      </property>
      <property name="indent">
       <number>0</number>
      </property>
     </widget>
    </item>
-   <item row="4" column="7" rowspan="3">
+   <item row="2" column="2">
+    <widget class="QLabel" name="m_miningStatusTextLabel">
+     <property name="text">
+      <string>Mining status</string>
+     </property>
+     <property name="indent">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>16</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="resources.qrc">:/icons/mining</pixmap>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="m_titleLabel">
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+         <kerning>false</kerning>
+        </font>
+       </property>
+       <property name="text">
+        <string>MINING DETAILS</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="5" column="3">
+    <widget class="QLabel" name="m_overviewNetworkDifficultyLabel">
+     <property name="text">
+      <string>TextLabel</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2">
+    <widget class="QLabel" name="m_overviewHashrateTextLabel">
+     <property name="text">
+      <string>Your hashrate</string>
+     </property>
+     <property name="indent">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="4" rowspan="3">
     <spacer name="horizontalSpacer_2">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -106,18 +133,8 @@
      </property>
     </spacer>
    </item>
-   <item row="4" column="6">
-    <widget class="QLabel" name="m_miningStateLabel">
-     <property name="text">
-      <string>OFF</string>
-     </property>
-     <property name="indent">
-      <number>0</number>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="4">
-    <widget class="QLabel" name="label_7">
+   <item row="5" column="2">
+    <widget class="QLabel" name="m_overviewNetworkDifficultyTextLabel">
      <property name="text">
       <string>Difficulty</string>
      </property>
@@ -126,46 +143,20 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="3">
-    <spacer name="horizontalSpacer_5">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>10</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="7" column="6">
-    <widget class="QLabel" name="m_overviewNetworkDifficultyLabel">
+   <item row="3" column="3">
+    <widget class="QLabel" name="m_overviewHashrateLabel">
      <property name="text">
       <string>TextLabel</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="4">
-    <widget class="QLabel" name="m_miningStatusTextLabel_4">
+   <item row="4" column="2">
+    <widget class="QLabel" name="m_overviewNetworkHashrateTextLabel">
      <property name="text">
-      <string>Mining status</string>
+      <string>Network hashrate</string>
      </property>
      <property name="indent">
       <number>0</number>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="2" rowspan="6">
-    <widget class="QLabel" name="m_overviewMiningIconLabel">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="pixmap">
-      <pixmap resource="resources.qrc">:/icons/miner-big</pixmap>
      </property>
     </widget>
    </item>

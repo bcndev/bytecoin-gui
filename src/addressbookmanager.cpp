@@ -21,7 +21,7 @@ constexpr const char ADDRESS_ITEM_ADDRESS_TAG_NAME[] = "address";
 }
 
 AddressBookManager::AddressBookManager(QObject* _parent)
-    : QObject(_parent)
+    : IAddressBookManager(_parent)
 {
     const QString jsonFile = Settings::instance().getDefaultWorkDir().absoluteFilePath("address_book.json");
 
@@ -156,5 +156,125 @@ void AddressBookManager::buildIndexes() {
       labelIndexes_[label] = i;
   }
 }
+
+MyAddressesManager::MyAddressesManager(QObject* parent)
+    : IAddressBookManager(parent)
+    , firstTime_(true)
+{}
+
+MyAddressesManager::~MyAddressesManager()
+{}
+
+void MyAddressesManager::connectedToWalletd()
+{
+    WalletLogger::debug(tr("[WalletAddressBook] Connected to walletd."));
+    firstTime_ = true;
+    addressBook_.clear();
+    requestAddresses();
+}
+
+void MyAddressesManager::disconnectedFromWalletd()
+{
+    emit addressBookClosedSignal();
+}
+
+void MyAddressesManager::requestAddresses(quint32 index, quint32 count)
+{
+    emit getWalletRecordsSignal(RpcApi::GetWalletRecords::Request{false, false, index, count});
+}
+
+void MyAddressesManager::createAddress(const QString& label)
+{
+    emit createAddressSignal(label);
+}
+
+void MyAddressesManager::setAddressLabel(const QString& address, const QString& label)
+{
+    emit setAddressLabelSignal(RpcApi::SetAddressLabel::Request{address, label});
+}
+
+void MyAddressesManager::walletRecordsReceived(const RpcApi::WalletRecords& records)
+{
+    WalletLogger::debug(tr("[WalletAddressBook] Wallet records received."));
+    for (const RpcApi::WalletRecord& rec: records.records)
+    {
+        addressBook_ << AddressItem{rec.label, rec.address};
+        const AddressIndex index = addressBook_.size() - 1;
+        addressIndexes_[rec.address] = index;
+        WalletLogger::debug(tr("[WalletAddressBook] Wallet record indexed."));
+        if (!firstTime_)
+            emit addressAddedSignal(index);
+    }
+
+    if (firstTime_)
+    {
+        firstTime_ = false;
+        emit addressBookOpenedSignal();
+    }
+}
+
+void MyAddressesManager::addressLabelSetReceived(const QString& address, const QString& label)
+{
+    const AddressIndex index = findAddressByAddress(address);
+    if (index == INVALID_ADDRESS_INDEX)
+    {
+        WalletLogger::warning(tr("[WalletAddressBook] Failed to find address %1.").arg(address));
+        return;
+    }
+    addressBook_[index].label = label;
+    WalletLogger::debug(tr("[WalletAddressBook] Label changed."));
+    emit addressEditedSignal(index);
+}
+
+AddressIndex MyAddressesManager::getAddressCount() const
+{
+    return addressBook_.size();
+}
+
+AddressItem MyAddressesManager::getAddress(AddressIndex addressIndex) const
+{
+    Q_ASSERT(addressIndex < getAddressCount());
+    return addressBook_[addressIndex];
+}
+
+void MyAddressesManager::addAddress(const QString& label, const QString& address)
+{
+    Q_ASSERT(address.isEmpty());
+    createAddress(label);
+}
+
+void MyAddressesManager::addressCreatedReceived(const RpcApi::CreatedAddresses& addrs)
+{
+    Q_ASSERT(addrs.addresses.size() == 1);
+    WalletLogger::debug(tr("[WalletAddressBook] New address created."));
+    requestAddresses(addressBook_.size(), 1);
+}
+
+void MyAddressesManager::editAddress(AddressIndex addressIndex, const QString& label, const QString& address)
+{
+    Q_ASSERT(addressIndex < getAddressCount());
+    Q_ASSERT(address.isEmpty());
+    setAddressLabel(addressBook_[addressIndex].address, label);
+}
+
+void MyAddressesManager::removeAddress(AddressIndex /*addressIndex*/)
+{
+    Q_ASSERT(false); // addresses cannot be removed from wallet
+}
+
+//void MyAddressesManager::buildIndexes()
+//{
+//    for (int i = 0, size = addressBook_.size(); i < size; ++i)
+//    {
+//        const AddressItem& item = addressBook_[i];
+//        addressIndexes_[item.address] = i;
+//    }
+//}
+
+AddressIndex MyAddressesManager::findAddressByAddress(const QString& address) const
+{
+  return addressIndexes_.value(address, INVALID_ADDRESS_INDEX);
+}
+
 
 }

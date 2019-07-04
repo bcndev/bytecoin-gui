@@ -9,6 +9,8 @@
 #include <QTextStream>
 #include <QMessageBox>
 #include <QProgressDialog>
+#include <QDesktopServices>
+
 
 #include "overviewframe.h"
 #include "walletmodel.h"
@@ -19,6 +21,11 @@
 namespace WalletGUI {
 
 namespace {
+
+const char TX_HASH_URL[] = "https://explorer.bytecoin.org/tx?hash=%1";
+const char BLOCK_HASH_URL[] = "https://explorer.bytecoin.org/block?hash=%1";
+const char BLOCK_HEIGHT_URL[] = "https://explorer.bytecoin.org/block?height=%1";
+
 
 //const char OVERVIEW_STYLE_SHEET_TEMPLATE[] =
 //  "* {"
@@ -163,25 +170,35 @@ bool OverviewFrame::eventFilter(QObject* object, QEvent* event)
 
         if (!modelIndex.isValid())
             return false;
-        const bool copyableColumns =
-                modelIndex.column() == WalletModel::COLUMN_HASH ||
-                (modelIndex.column() == WalletModel::COLUMN_BLOCK_HASH && !m_transactionsModel->data(modelIndex, WalletModel::ROLE_BLOCK_HASH).toString().isEmpty());
+        const bool explorableColumns =
+                (modelIndex.column() == WalletModel::COLUMN_HASH && !m_transactionsModel->data(modelIndex, WalletModel::ROLE_HASH).toString().isEmpty()) ||
+                (modelIndex.column() == WalletModel::COLUMN_BLOCK_HASH && !m_transactionsModel->data(modelIndex, WalletModel::ROLE_BLOCK_HASH).toString().isEmpty()) ||
+                (modelIndex.column() == WalletModel::COLUMN_BLOCK_HEIGHT && !m_transactionsModel->data(modelIndex, WalletModel::ROLE_BLOCK_HEIGHT).toString().isEmpty());
         const bool proof = m_transactionsModel->data(modelIndex, WalletModel::ROLE_PROOF).toBool();
-        const bool proofColumn = (modelIndex.column() == WalletModel::COLUMN_PROOF/* && proof*/);
-        const bool valid = copyableColumns || proofColumn;
+        const bool proofColumn = (modelIndex.column() == WalletModel::COLUMN_PROOF && proof);
+        const bool valid = explorableColumns || proofColumn;
         if(!valid)
             return false;
 
-        if (copyableColumns)
+        if (explorableColumns)
         {
-            QApplication::clipboard()->setText(m_transactionsModel->data(modelIndex).toString());
-            emit copiedToClipboardSignal();
+            switch(modelIndex.column())
+            {
+            case WalletModel::COLUMN_HASH:
+                QDesktopServices::openUrl(QUrl::fromUserInput(QString{TX_HASH_URL}.arg(m_transactionsModel->data(modelIndex, WalletModel::ROLE_HASH).toString())));
+                break;
+            case WalletModel::COLUMN_BLOCK_HASH:
+                QDesktopServices::openUrl(QUrl::fromUserInput(QString{BLOCK_HASH_URL}.arg(m_transactionsModel->data(modelIndex, WalletModel::ROLE_BLOCK_HASH).toString())));
+                break;
+            case WalletModel::COLUMN_BLOCK_HEIGHT:
+                QDesktopServices::openUrl(QUrl::fromUserInput(QString{BLOCK_HEIGHT_URL}.arg(m_transactionsModel->data(modelIndex, WalletModel::ROLE_BLOCK_HEIGHT).toString())));
+                break;
+            }
         }
         if (proofColumn)
         {
             const QString txHash = m_transactionsModel->data(modelIndex, WalletModel::ROLE_HASH).toString();
             const QStringList addresses = m_transactionsModel->data(modelIndex, WalletModel::ROLE_RECIPIENTS).toStringList();
-//            emit createProofSignal(txHash, !proof);
             emit createProofSignal(txHash, addresses, !proof);
         }
     }
@@ -190,10 +207,14 @@ bool OverviewFrame::eventFilter(QObject* object, QEvent* event)
         QMouseEvent* e = (QMouseEvent*)event;
         QModelIndex modelIndex = view->indexAt(e->pos());
 
-        const bool showHandCursor =
-                modelIndex.column() == WalletModel::COLUMN_HASH ||
+        const bool explorableColumns =
+                (modelIndex.column() == WalletModel::COLUMN_HASH && !m_transactionsModel->data(modelIndex, WalletModel::ROLE_HASH).toString().isEmpty()) ||
                 (modelIndex.column() == WalletModel::COLUMN_BLOCK_HASH && !m_transactionsModel->data(modelIndex, WalletModel::ROLE_BLOCK_HASH).toString().isEmpty()) ||
-                (modelIndex.column() == WalletModel::COLUMN_PROOF/* && m_transactionsModel->data(modelIndex, WalletModel::ROLE_PROOF).toBool()*/);
+                (modelIndex.column() == WalletModel::COLUMN_BLOCK_HEIGHT && !m_transactionsModel->data(modelIndex, WalletModel::ROLE_BLOCK_HEIGHT).toString().isEmpty());
+        const bool proof = m_transactionsModel->data(modelIndex, WalletModel::ROLE_PROOF).toBool();
+        const bool proofColumn = (modelIndex.column() == WalletModel::COLUMN_PROOF && proof);
+
+        const bool showHandCursor = explorableColumns || proofColumn;
 
         setCursor(showHandCursor ? Qt::PointingHandCursor : Qt::ArrowCursor);
     }

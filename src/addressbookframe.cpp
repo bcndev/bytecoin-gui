@@ -5,9 +5,9 @@
 #include <QClipboard>
 #include <QMenu>
 #include <QMessageBox>
+#include <QLabel>
 
 #include "addressbookframe.h"
-#include "addressbookdelegate.h"
 #include "addressbookmanager.h"
 #include "questiondialog.h"
 #include "addressbookmodel.h"
@@ -25,17 +25,12 @@ AddressBookFrame::AddressBookFrame(QWidget* parent)
     , mainWindow_(nullptr)
     , m_sortedAddressBookModel(nullptr)
     , m_helperLabel(new QLabel(this))
-    , m_addressBookDelegate(new AddressBookDelegate(this))
 {
     m_ui->setupUi(this);
     QPixmap helperPixmap(":images/add_address_helper");
     m_helperLabel->setGeometry(helperPixmap.rect());
     m_helperLabel->setPixmap(helperPixmap);
 //    m_ui->m_addressBookView->setHoverIsVisible(true);
-    m_ui->m_addressBookView->setItemDelegateForColumn(AddressBookModel::COLUMN_ACTION, m_addressBookDelegate);
-    connect(m_addressBookDelegate, &AddressBookDelegate::sendToSignal, this, &AddressBookFrame::sendToSignal);
-    connect(m_addressBookDelegate, &AddressBookDelegate::editSignal, this, &AddressBookFrame::editClicked);
-    connect(m_addressBookDelegate, &AddressBookDelegate::deleteSignal, this, &AddressBookFrame::deleteClicked);
 //    connect(this, &AddressBookFrame::sendToSignal, this, &AddressBookFrame::sendToClicked);
 }
 
@@ -59,19 +54,10 @@ void AddressBookFrame::setSortedAddressBookModel(QAbstractItemModel* _model) {
 //  m_ui->m_addressBookView->setItemDelegateForColumn(AddressBookModel::COLUMN_ADDRESS, new RightAlignmentColumnDelegate(false, this));
   m_ui->m_addressBookView->header()->setSectionResizeMode(AddressBookModel::COLUMN_LABEL, QHeaderView::Fixed);
   m_ui->m_addressBookView->header()->setSectionResizeMode(AddressBookModel::COLUMN_ADDRESS, QHeaderView::Stretch);
-//  m_ui->m_addressBookView->header()->setSectionResizeMode(AddressBookModel::COLUMN_DONATION, QHeaderView::Fixed);
-  m_ui->m_addressBookView->header()->setSectionResizeMode(AddressBookModel::COLUMN_ACTION, QHeaderView::Fixed);
   m_ui->m_addressBookView->header()->setResizeContentsPrecision(-1);
   m_ui->m_addressBookView->header()->resizeSection(AddressBookModel::COLUMN_LABEL, 250);
-//  m_ui->m_addressBookView->header()->resizeSection(AddressBookModel::COLUMN_DONATION, 90);
-  m_ui->m_addressBookView->header()->resizeSection(AddressBookModel::COLUMN_ACTION, 40);
   connect(m_sortedAddressBookModel, &QAbstractItemModel::rowsInserted, this, &AddressBookFrame::rowsInserted);
   connect(m_sortedAddressBookModel, &QAbstractItemModel::rowsRemoved, this, &AddressBookFrame::rowsRemoved);
-
-  for (int i = 0; i < m_sortedAddressBookModel->rowCount(); ++i) {
-    QPersistentModelIndex index = m_sortedAddressBookModel->index(i, AddressBookModel::COLUMN_ACTION);
-    m_ui->m_addressBookView->openPersistentEditor(index);
-  }
 
   if (m_sortedAddressBookModel->rowCount() > 0) {
     m_helperLabel->hide();
@@ -89,12 +75,7 @@ void AddressBookFrame::resizeEvent(QResizeEvent* /*_event*/) {
   m_helperLabel->raise();
 }
 
-void AddressBookFrame::rowsInserted(const QModelIndex& /*_parent*/, int _first, int _last) {
-  for (int i = _first; i <= _last; ++i) {
-    QPersistentModelIndex index = m_sortedAddressBookModel->index(i, AddressBookModel::COLUMN_ACTION);
-    m_ui->m_addressBookView->openPersistentEditor(index);
-  }
-
+void AddressBookFrame::rowsInserted(const QModelIndex& /*_parent*/, int /*_first*/, int /*_last*/) {
   m_helperLabel->hide();
 }
 

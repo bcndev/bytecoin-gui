@@ -12,7 +12,7 @@ build-bytecoin-gui*
 
 *~
 CMakeLists.txt.user*
-*.pro.user
+*.pro.user*
 
 # Mac specific
 .DS_Store

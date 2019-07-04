@@ -8,7 +8,7 @@
 
 namespace WalletGUI {
 
-class AddressBookManager;
+class IAddressBookManager;
 
 class AddressBookModel : public QAbstractItemModel
 {
@@ -19,14 +19,14 @@ class AddressBookModel : public QAbstractItemModel
 
 public:
   enum Columns {
-    COLUMN_LABEL = 0, COLUMN_ADDRESS, /*COLUMN_DONATION,*/ COLUMN_ACTION
+    COLUMN_LABEL = 0, COLUMN_ADDRESS, /*COLUMN_DONATION,*/ /*COLUMN_ACTION*/
   };
 
   enum Roles {
     ROLE_LABEL = Qt::UserRole, ROLE_ADDRESS, /*ROLE_IS_DONATION_ADDRESS,*/ ROLE_COLUMN, ROLE_ROW
   };
 
-  explicit AddressBookModel(AddressBookManager* _addressBookManager, QObject* _parent);
+  explicit AddressBookModel(IAddressBookManager* _addressBookManager, QObject* _parent);
   ~AddressBookModel();
 
   int columnCount(const QModelIndex& _parent = QModelIndex()) const override;
@@ -47,7 +47,7 @@ public:
   Q_SLOT void endRemoveAddress();
 
 private:
-  AddressBookManager* m_addressBookManager;
+  IAddressBookManager* m_addressBookManager;
   const int m_columnCount;
   quintptr m_rowCount;
 

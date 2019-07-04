@@ -37,6 +37,12 @@
    </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <property name="spacing">
+      <number>20</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
      <item>
       <widget class="WalletGUI::BalanceOverviewFrame" name="m_balanceOverviewFrame">
        <property name="sizePolicy">
@@ -50,12 +56,6 @@
          <width>200</width>
          <height>20</height>
         </size>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
        </property>
       </widget>
      </item>
@@ -72,12 +72,6 @@
          <width>200</width>
          <height>20</height>
         </size>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
        </property>
       </widget>
      </item>

@@ -47,23 +47,14 @@
    <property name="verticalSpacing">
     <number>5</number>
    </property>
-   <item row="2" column="0" colspan="4">
-    <spacer name="verticalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+   <item row="12" column="1">
+    <widget class="QPushButton" name="m_cancelButton">
+     <property name="text">
+      <string>Cancel</string>
      </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>10</height>
-      </size>
-     </property>
-    </spacer>
+    </widget>
    </item>
-   <item row="6" column="0" colspan="4">
+   <item row="11" column="0" colspan="4">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -79,15 +70,8 @@
      </property>
     </spacer>
    </item>
-   <item row="7" column="1">
-    <widget class="QPushButton" name="m_cancelButton">
-     <property name="text">
-      <string>Cancel</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0" colspan="4">
-    <spacer name="verticalSpacer_3">
+   <item row="7" column="0" colspan="4">
+    <spacer name="verticalSpacer_2">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
@@ -102,7 +86,7 @@
      </property>
     </spacer>
    </item>
-   <item row="7" column="0">
+   <item row="12" column="0">
     <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -115,45 +99,7 @@
      </property>
     </spacer>
    </item>
-   <item row="4" column="0" colspan="4">
-    <widget class="QLineEdit" name="m_addressEdit">
-     <property name="styleSheet">
-      <string notr="true">[errorState=&quot;true&quot;] {
-  border-color: #ef3131;
-}</string>
-     </property>
-     <property name="echoMode">
-      <enum>QLineEdit::Normal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0" colspan="4">
-    <widget class="QLabel" name="m_labelTextLabel">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>LABEL</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="2" colspan="2">
-    <widget class="QPushButton" name="m_okButton">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="text">
-      <string>OK</string>
-     </property>
-     <property name="default">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0" colspan="4">
+   <item row="6" column="0" colspan="4">
     <widget class="QLineEdit" name="m_labelEdit">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -171,7 +117,33 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="4">
+   <item row="5" column="0" colspan="4">
+    <widget class="QLabel" name="m_labelTextLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>LABEL</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="2" colspan="2">
+    <widget class="QPushButton" name="m_okButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>OK</string>
+     </property>
+     <property name="default">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
     <widget class="QLabel" name="m_addressTextLabel">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
@@ -184,11 +156,38 @@
      </property>
     </widget>
    </item>
+   <item row="1" column="0" colspan="4">
+    <widget class="QLineEdit" name="m_addressEdit">
+     <property name="styleSheet">
+      <string notr="true">[errorState=&quot;true&quot;] {
+  border-color: #ef3131;
+}</string>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::Normal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="4">
+    <spacer name="verticalSpacer_3">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>10</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
   </layout>
  </widget>
  <tabstops>
   <tabstop>m_labelEdit</tabstop>
-  <tabstop>m_addressEdit</tabstop>
   <tabstop>m_okButton</tabstop>
  </tabstops>
  <resources/>

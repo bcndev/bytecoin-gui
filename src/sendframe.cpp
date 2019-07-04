@@ -362,10 +362,11 @@ void SendFrame::amountStringChanged(const QString& /*amountString*/)
     for (TransferFrame* transfer : m_transfers)
         amount += transfer->getAmount();
 
-    m_ui->m_totalAmountLabel->setText(QString("%1 %2")
-            .arg(formatUnsignedAmount(amount, false /*trim*/))
-            .arg(QString(CURRENCY_TICKER).toUpper()));
+//    m_ui->m_totalAmountLabel->setText(QString("%1 %2")
+//            .arg(formatUnsignedAmount(amount, false /*trim*/))
+//            .arg(QString(CURRENCY_TICKER).toUpper()));
 
+    m_ui->m_totalAmountLabel->setText(formatUnsignedAmount(amount, false /*trim*/));
     m_ui->m_sendButton->setEnabled(readyToSend());
 }
 

@@ -116,6 +116,7 @@ namespace WalletGUI
 
 constexpr int RERUN_TIMER_MSEC = 3000;
 constexpr int STATUS_TIMER_MSEC = 15000;
+constexpr int STATUS_DELAY_TIMER_MSEC = 500;
 constexpr int WAITING_TIMEOUT_MSEC = 10000;
 
 using namespace std::placeholders;
@@ -149,10 +150,10 @@ RemoteWalletd::RemoteWalletd(const QString& endPoint, QObject* parent)
 
     rerunTimer_.setSingleShot(true);
     rerunTimer_.setInterval(RERUN_TIMER_MSEC);
-    statusTimer_.setSingleShot(false);
-    statusTimer_.setInterval(STATUS_TIMER_MSEC);
+    heartbeatTimer_.setSingleShot(false);
+    heartbeatTimer_.setInterval(STATUS_TIMER_MSEC);
     connect(&rerunTimer_, &QTimer::timeout, this, &RemoteWalletd::rerun);
-    connect(&statusTimer_, &QTimer::timeout, [this] { this->sendGetStatus(RpcApi::GetStatus::Request{}, /* sendAgain = */ false); });
+    connect(&heartbeatTimer_, &QTimer::timeout, [this] { this->sendGetStatus(RpcApi::GetStatus::Request{}, /* sendAgain = */ false); });
 }
 
 /*virtual*/
@@ -181,7 +182,7 @@ void RemoteWalletd::sendGetStatus(const RpcApi::GetStatus::Request& req, bool se
                     std::bind(&RemoteWalletd::balanceReceived, this, _2),
                     std::bind(&RemoteWalletd::jsonErrorResponse, this, _1, _2));
 
-        statusTimer_.start();
+        heartbeatTimer_.start();
     }
 }
 
@@ -198,7 +199,7 @@ void RemoteWalletd::run()
 //            this, &RemoteWalletd::errorOccurred,
 //            [this]()
 //            {
-////                statusTimer_.start();
+////                heartbeatTimer_.start();
 //                jsonClient_->sendGetStatus(RpcApi::GetStatus::Request{});
 //            });
 
@@ -219,7 +220,7 @@ void RemoteWalletd::run()
 void RemoteWalletd::stop()
 {
     rerunTimer_.stop();
-//    statusTimer_.stop();
+//    heartbeatTimer_.stop();
     setState(State::STOPPED);
 }
 
@@ -230,13 +231,16 @@ void RemoteWalletd::statusReceived(const RpcApi::Status& status, bool sendAgain)
     emit statusReceivedSignal(status);
 
     if (sendAgain)
-        sendGetStatus(RpcApi::GetStatus::Request{
-                        status.top_block_hash,
-                        status.transaction_pool_version,
-                        status.outgoing_peer_count,
-                        status.incoming_peer_count,
-                        status.lower_level_error},
-                      sendAgain);
+        QTimer::singleShot(STATUS_DELAY_TIMER_MSEC,
+                           std::bind(&RemoteWalletd::sendGetStatus,
+                                          this,
+                                          RpcApi::GetStatus::Request{
+                                              status.top_block_hash,
+                                              status.transaction_pool_version,
+                                              status.outgoing_peer_count,
+                                              status.incoming_peer_count,
+                                              status.lower_level_error},
+                                          sendAgain));
 }
 
 void RemoteWalletd::transfersReceived(const RpcApi::Transfers& history, RpcApi::Height topHeight, RpcApi::Height from_height, RpcApi::Height to_height)
@@ -275,6 +279,32 @@ void RemoteWalletd::proofsReceived(const RpcApi::Proofs& proofs)
 void RemoteWalletd::checkProofReceived(const RpcApi::ProofCheck& proofCheck)
 {
     emit checkProofReceivedSignal(proofCheck);
+}
+
+void RemoteWalletd::walletRecordsReceived(const RpcApi::WalletRecords& records)
+{
+    emit walletRecordsReceivedSignal(records);
+}
+
+void RemoteWalletd::addressLabelSetReceived(const QString& address, const QString& label)
+{
+    emit addressLabelSetReceivedSignal(address, label);
+}
+
+void RemoteWalletd::addressesCreatedReceived(const RpcApi::CreatedAddresses& addrs, const QString& label)
+{
+    if (label.isEmpty())
+    {
+        emit addressesCreatedReceivedSignal(addrs);
+        return;
+    }
+
+    Q_ASSERT(addrs.addresses.size() == 1);
+
+    jsonClient_->sendRequest<RpcApi::SetAddressLabel>(
+                RpcApi::SetAddressLabel::Request{addrs.addresses.first(), label},
+                [this, addrs](const QString&, const RpcApi::EmptyStruct&) { emit this->addressesCreatedReceivedSignal(addrs);},
+                std::bind(&RemoteWalletd::jsonErrorResponse, this, _1, _2));
 }
 
 void RemoteWalletd::networkError(const QString& errorString)
@@ -385,6 +415,38 @@ void RemoteWalletd::checkSendProof(const RpcApi::CheckSendProof::Request& proof)
                 });
 
 //                std::bind(&RemoteWalletd::jsonErrorResponse, this, _1, _2));
+}
+
+void RemoteWalletd::getWalletRecords(const RpcApi::GetWalletRecords::Request& req)
+{
+    jsonClient_->sendRequest<RpcApi::GetWalletRecords>(
+                req,
+                std::bind(&RemoteWalletd::walletRecordsReceived, this, _2),
+                std::bind(&RemoteWalletd::jsonErrorResponse, this, _1, _2));
+}
+
+void RemoteWalletd::setAddressLabel(const RpcApi::SetAddressLabel::Request& req)
+{
+    jsonClient_->sendRequest<RpcApi::SetAddressLabel>(
+                req,
+                std::bind(&RemoteWalletd::addressLabelSetReceived, this, req.address, req.label),
+                std::bind(&RemoteWalletd::jsonErrorResponse, this, _1, _2));
+}
+
+void RemoteWalletd::createAddresses(const RpcApi::CreateAddresses::Request &req)
+{
+    jsonClient_->sendRequest<RpcApi::CreateAddresses>(
+                req,
+                std::bind(&RemoteWalletd::addressesCreatedReceived, this, _2, QString{}),
+                std::bind(&RemoteWalletd::jsonErrorResponse, this, _1, _2));
+}
+
+void RemoteWalletd::createAddress(const QString &label)
+{
+    jsonClient_->sendRequest<RpcApi::CreateAddresses>(
+                RpcApi::CreateAddresses::Request{QStringList{} << "", QDateTime{}},
+                std::bind(&RemoteWalletd::addressesCreatedReceived, this, _2, label),
+                std::bind(&RemoteWalletd::jsonErrorResponse, this, _1, _2));
 }
 
 void RemoteWalletd::authRequired(QAuthenticator* authenticator)

@@ -8,8 +8,21 @@
 #include "MiningManager.h"
 #include "MinerModel.h"
 #include "walletmodel.h"
+#include "common.h"
 
 namespace WalletGUI {
+
+const char MINING_OVERVIEW_STYLE_SHEET_TEMPLATE[] =
+    "WalletGUI--MiningOverviewFrame {"
+    "border: 1px solid #c4c4c4"
+    "}";
+
+const char TEXT_LABEL_STYLE_SHEET_TEMPLATE[] =
+    "QLabel {"
+    "color: rgba(0,0,0,0.5);"
+    "}";
+
+constexpr int UI_SCALE = 90;
 
 MiningOverviewFrame::MiningOverviewFrame(QWidget *parent)
     : QFrame(parent)
@@ -20,12 +33,21 @@ MiningOverviewFrame::MiningOverviewFrame(QWidget *parent)
 {
     ui->setupUi(this);
 
-    QFont font = ui->m_overviewHashRateLabel->font();
+    scaleWidgetText(ui->m_titleLabel, UI_SCALE);
+
+    QFont font = ui->m_overviewHashrateLabel->font();
     font.setBold(true);
-    ui->m_overviewHashRateLabel->setFont(font);
+    ui->m_overviewHashrateLabel->setFont(font);
     ui->m_miningStateLabel->setFont(font);
     ui->m_overviewNetworkHashrateLabel->setFont(font);
     ui->m_overviewNetworkDifficultyLabel->setFont(font);
+
+    ui->m_miningStatusTextLabel->setStyleSheet(TEXT_LABEL_STYLE_SHEET_TEMPLATE);
+    ui->m_overviewHashrateTextLabel->setStyleSheet(TEXT_LABEL_STYLE_SHEET_TEMPLATE);
+    ui->m_overviewNetworkHashrateTextLabel->setStyleSheet(TEXT_LABEL_STYLE_SHEET_TEMPLATE);
+    ui->m_overviewNetworkDifficultyTextLabel->setStyleSheet(TEXT_LABEL_STYLE_SHEET_TEMPLATE);
+
+    setStyleSheet(MINING_OVERVIEW_STYLE_SHEET_TEMPLATE);
 }
 
 MiningOverviewFrame::~MiningOverviewFrame()
@@ -45,11 +67,11 @@ void MiningOverviewFrame::setMiningManager(MiningManager* miningManager)
 void MiningOverviewFrame::setMinerModel(QAbstractItemModel* model)
 {
     miningMapper_->setModel(model);
-    miningMapper_->addMapping(ui->m_overviewHashRateLabel, MinerModel::COLUMN_HASHRATE, "text");
+    miningMapper_->addMapping(ui->m_overviewHashrateLabel, MinerModel::COLUMN_HASHRATE, "text");
     if (model->rowCount() > 0)
         miningMapper_->setCurrentIndex(0);
     else
-        ui->m_overviewHashRateLabel->setText("0 H/s");
+        ui->m_overviewHashrateLabel->setText("0 H/s");
 }
 
 void MiningOverviewFrame::setWalletModel(QAbstractItemModel* model)

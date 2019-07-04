@@ -15,12 +15,13 @@ TEMPLATE = app
 macx: QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.11
 macx: ICON = images/bytecoin.icns
 win32: RC_ICONS = images/bytecoin.ico
-win32: VERSION = 3.19.6.11
+win32: VERSION = 3.19.7.4
 
 #QMAKE_CXXFLAGS += -fno-omit-frame-pointer -fsanitize=address,undefined
 #LIBS += -lasan -lubsan
 
 CONFIG += c++14 strict_c++ no-opengl
+DEFINES += QT_FORCE_ASSERTS
 
 DESTDIR = $$PWD/../bin
 
@@ -93,7 +94,6 @@ SOURCES += main.cpp\
     addressbookmodel.cpp \
     addressbooksortedmodel.cpp \
     newaddressdialog.cpp \
-    addressbookdelegate.cpp \
     addressbookmanager.cpp \
     balanceoverviewframe.cpp \
     miningoverviewframe.cpp \
@@ -113,7 +113,10 @@ SOURCES += main.cpp\
     exportkeydialog.cpp \
     filedownloader.cpp \
     version.cpp \
-    mnemonicdialog.cpp
+    mnemonicdialog.cpp \
+    elidedlabel.cpp \
+    myaddressesframe.cpp \
+    newmyaddressdialog.cpp
 
 HEADERS  += mainwindow.h \
     signalhandler.h \
@@ -156,7 +159,6 @@ HEADERS  += mainwindow.h \
     addressbookmodel.h \
     addressbooksortedmodel.h \
     newaddressdialog.h \
-    addressbookdelegate.h \
     addressbookmanager.h \
     balanceoverviewframe.h \
     miningoverviewframe.h \
@@ -176,7 +178,10 @@ HEADERS  += mainwindow.h \
     exportkeydialog.h \
     version.h \
     filedownloader.h \
-    mnemonicdialog.h
+    mnemonicdialog.h \
+    elidedlabel.h \
+    myaddressesframe.h \
+    newmyaddressdialog.h
 
 FORMS    += mainwindow.ui \
     overviewframe.ui \
@@ -202,7 +207,9 @@ FORMS    += mainwindow.ui \
     checkproofdialog.ui \
     walletdparamsdialog.ui \
     exportkeydialog.ui \
-    mnemonicdialog.ui
+    mnemonicdialog.ui \
+    myaddressesframe.ui \
+    newmyaddressdialog.ui
 
 RESOURCES += \
     resources.qrc \

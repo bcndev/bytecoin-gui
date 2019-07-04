@@ -19,6 +19,9 @@ constexpr char CreateTransaction::METHOD[];
 constexpr char SendTransaction::METHOD[];
 constexpr char CreateSendProof::METHOD[];
 constexpr char CheckSendProof::METHOD[];
+constexpr char GetWalletRecords::METHOD[];
+constexpr char SetAddressLabel::METHOD[];
+constexpr char CreateAddresses::METHOD[];
 
 #define RPCAPI_SERIALIZE_FIELD(obj, json, fieldName) \
     do \
@@ -446,6 +449,21 @@ Block::fromJson(const QVariantMap& json)
 }
 
 /*static*/
+WalletRecord
+WalletRecord::fromJson(const QVariantMap& json)
+{
+    WalletRecord value;
+
+    RPCAPI_DESERIALIZE_FIELD(value, json, address);
+    RPCAPI_DESERIALIZE_FIELD(value, json, label);
+    RPCAPI_DESERIALIZE_FIELD(value, json, index);
+    RPCAPI_DESERIALIZE_FIELD(value, json, secret_spend_key);
+    RPCAPI_DESERIALIZE_FIELD(value, json, public_spend_key);
+
+    return value;
+}
+
+/*static*/
 Transaction
 Transaction::fromJson(const QVariantMap& json)
 {
@@ -564,6 +582,68 @@ CheckSendProof::Request::toJson() const
     RPCAPI_SERIALIZE_FIELD(value, json, sendproof);
 
     return json;
+}
+
+QVariantMap
+SetAddressLabel::Request::toJson() const
+{
+    const SetAddressLabel::Request& value = *this;
+    QVariantMap json;
+
+    RPCAPI_SERIALIZE_FIELD(value, json, address);
+    RPCAPI_SERIALIZE_FIELD(value, json, label);
+
+    return json;
+}
+
+QVariantMap
+GetWalletRecords::Request::toJson() const
+{
+    const GetWalletRecords::Request& value = *this;
+    QVariantMap json;
+
+    RPCAPI_SERIALIZE_FIELD(value, json, need_secrets);
+    RPCAPI_SERIALIZE_FIELD(value, json, create);
+    RPCAPI_SERIALIZE_FIELD(value, json, index);
+    RPCAPI_SERIALIZE_FIELD(value, json, count);
+
+    return json;
+}
+
+/*static*/
+GetWalletRecords::Response
+GetWalletRecords::Response::fromJson(const QVariantMap& json)
+{
+    GetWalletRecords::Response value;
+
+    RPCAPI_DESERIALIZE_LIST(value, json, records);
+    RPCAPI_DESERIALIZE_FIELD(value, json, total_count);
+
+    return value;
+}
+
+QVariantMap
+CreateAddresses::Request::toJson() const
+{
+    const CreateAddresses::Request& value = *this;
+    QVariantMap json;
+
+    RPCAPI_SERIALIZE_FIELD(value, json, secret_spend_keys);
+    RPCAPI_SERIALIZE_TIMESTAMP(value, json, creation_timestamp);
+
+    return json;
+}
+
+/*static*/
+CreateAddresses::Response
+CreateAddresses::Response::fromJson(const QVariantMap& json)
+{
+    CreateAddresses::Response value;
+
+    RPCAPI_DESERIALIZE_FIELD(value, json, addresses);
+    RPCAPI_DESERIALIZE_FIELD(value, json, secret_spend_keys);
+
+    return value;
 }
 
 #undef RPCAPI_SERIALIZE_FIELD

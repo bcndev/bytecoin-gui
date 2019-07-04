@@ -2,7 +2,10 @@
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include <QRegExp>
+#include <QDateTime>
 #include <QUrl>
+#include <QObject>
+#include <QWidget>
 
 #include "common.h"
 
@@ -45,7 +48,7 @@ QString formatUnsignedAmount(quint64 amount, bool trim /*= true*/)
             result.insert(pos, ',');
     }
 
-    return result;
+    return result + ' ' + CURRENCY_TICKER;
 }
 
 QString formatAmount(qint64 amount)
@@ -129,6 +132,61 @@ bool parseAmount(const QString& str, qint64& amount)
     const qint64 value = integer * COIN + frac;
     amount = negative ? -value : value;
     return true;
+}
+
+QString formatTimeDiff(quint64 timeDiff)
+{
+    static const QDateTime EPOCH_DATE_TIME = QDateTime::fromTime_t(0).toUTC();
+    QDateTime dateTime = QDateTime::fromTime_t(timeDiff).toUTC();
+    QString firstPart;
+    QString secondPart;
+    quint64 year = dateTime.date().year() - EPOCH_DATE_TIME.date().year();
+    quint64 month = dateTime.date().month() - EPOCH_DATE_TIME.date().month();
+    quint64 day = dateTime.date().day() - EPOCH_DATE_TIME.date().day();
+    if (year > 0)
+    {
+        firstPart = QStringLiteral("%1 %2").arg(year).arg(year == 1 ? QObject::tr("year") : QObject::tr("years"));
+        secondPart = QStringLiteral("%1 %2").arg(month).arg(month == 1 ? QObject::tr("month") : QObject::tr("months"));
+    }
+    else if (month > 0)
+    {
+        firstPart = QStringLiteral("%1 %2").arg(month).arg(month == 1 ? QObject::tr("month") : QObject::tr("months"));
+        secondPart = QStringLiteral("%1 %2").arg(day).arg(day == 1 ? QObject::tr("day") : QObject::tr("days"));
+    }
+    else if (day > 0)
+    {
+        quint64 hour = dateTime.time().hour();
+        firstPart = QStringLiteral("%1 %2").arg(day).arg(day == 1 ? QObject::tr("day") : QObject::tr("days"));
+        secondPart = QStringLiteral("%1 %2").arg(hour).arg(hour == 1 ? QObject::tr("hour") : QObject::tr("hours"));
+    }
+    else if (dateTime.time().hour() > 0)
+    {
+        quint64 hour = dateTime.time().hour();
+        quint64 minute = dateTime.time().minute();
+        firstPart = QStringLiteral("%1 %2").arg(hour).arg(hour == 1 ? QObject::tr("hour") : QObject::tr("hours"));
+        secondPart = QStringLiteral("%1 %2").arg(minute).arg(minute == 1 ? QObject::tr("minute") : QObject::tr("minutes"));
+    }
+    else if (dateTime.time().minute() > 0)
+    {
+        quint64 minute = dateTime.time().minute();
+        firstPart = QStringLiteral("%1 %2").arg(minute).arg(minute == 1 ? QObject::tr("minute") : QObject::tr("minutes"));
+    }
+    else
+    {
+        firstPart = QStringLiteral("Less than 1 minute");
+    }
+
+    if (secondPart.isNull())
+        return firstPart;
+
+    return QStringLiteral("%1 %2").arg(firstPart).arg(secondPart);
+}
+
+void scaleWidgetText(QWidget* w, int scale)
+{
+    QFont f = w->font();
+    f.setPointSize(f.pointSize() * scale / 100);
+    w->setFont(f);
 }
 
 }

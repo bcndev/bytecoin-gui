@@ -137,6 +137,13 @@ public:
         ROLE_TOTAL,
     };
 
+    enum class SyncStatus
+    {
+        SYNCED,
+        NOT_SYNCED,
+        LAGGED,
+    };
+
     WalletModel(QObject* parent);
     virtual ~WalletModel();
 
@@ -153,6 +160,7 @@ public:
     void reset();
 
     QString getAddress() const;
+    bool isConnected() const;
     bool isAmethyst() const;
 
     quint32 getLastBlockHeight() const;
@@ -165,6 +173,13 @@ public:
     quint32 getPeerCountSum() const;
     QString getLowerLevelError() const;
 
+    quint64 getSecsSinceLastBlock() const;
+    QString getFormattedTimeSinceLastBlock() const;
+    bool isThereAnyBlock() const;
+    bool isSyncronized() const;
+    quint32 getBlocksLeftToSync() const;
+    SyncStatus getSyncStatus() const;
+
     int getTopFetchedHeight() const;
     int getBottomFetchedHeight() const;
 
@@ -173,6 +188,7 @@ signals:
     void fetchedSignal();
     void nothingToFetchSignal();
     void netChangedSignal(const QString& net);
+    void statusUpdatedSignal();
 
 public slots:
     void statusReceived(const RpcApi::Status& status);

@@ -10,8 +10,21 @@
 #include "ui_balanceoverviewframe.h"
 #include "walletmodel.h"
 #include "popup.h"
+#include "common.h"
 
 namespace WalletGUI {
+
+const char BALANCE_OVERVIEW_STYLE_SHEET_TEMPLATE[] =
+    "WalletGUI--BalanceOverviewFrame {"
+    "border: 1px solid #c4c4c4"
+    "}";
+
+const char TEXT_LABEL_STYLE_SHEET_TEMPLATE[] =
+    "QLabel {"
+    "color: rgba(0,0,0,0.5);"
+    "}";
+
+constexpr int UI_SCALE = 90;
 
 BalanceOverviewFrame::BalanceOverviewFrame(QWidget *parent)
     : QFrame(parent)
@@ -25,6 +38,8 @@ BalanceOverviewFrame::BalanceOverviewFrame(QWidget *parent)
 {
     ui->setupUi(this);
 
+    scaleWidgetText(ui->m_titleLabel, UI_SCALE);
+
     ui->m_overviewSpendableBalanceLabel->installEventFilter(this);
     ui->m_overviewLockedOrUnconfirmedBalanceLabel->installEventFilter(this);
 //    ui->m_overviewSpendableDustBalanceLabel->installEventFilter(this);
@@ -36,6 +51,11 @@ BalanceOverviewFrame::BalanceOverviewFrame(QWidget *parent)
     ui->m_overviewLockedOrUnconfirmedBalanceLabel->setFont(font);
 //    ui->m_overviewSpendableDustBalanceLabel->setFont(font);
     ui->m_overviewTotalBalanceLabel->setFont(font);
+
+    ui->m_overviewSpendableBalanceTextLabel->setStyleSheet(TEXT_LABEL_STYLE_SHEET_TEMPLATE);
+    ui->m_overviewLockedOrUnconfirmedBalanceTextLabel->setStyleSheet(TEXT_LABEL_STYLE_SHEET_TEMPLATE);
+    ui->m_overviewTotalBalanceTextLabel->setStyleSheet(TEXT_LABEL_STYLE_SHEET_TEMPLATE);
+    setStyleSheet(BALANCE_OVERVIEW_STYLE_SHEET_TEMPLATE);
 }
 
 BalanceOverviewFrame::~BalanceOverviewFrame()

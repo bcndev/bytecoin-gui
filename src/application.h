@@ -22,6 +22,7 @@ class SignalHandler;
 class MiningManager;
 class WalletModel;
 class AddressBookManager;
+class MyAddressesManager;
 
 class CrashDialog;
 
@@ -45,6 +46,7 @@ private:
     MainWindow* m_mainWindow;
     MiningManager* m_miningManager;
     AddressBookManager* addressBookManager_;
+    MyAddressesManager* myAddressesManager_;
     RemoteWalletd* walletd_;
     WalletModel* walletModel_;
     FileDownloader* downloader_;

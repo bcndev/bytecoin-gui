@@ -17,10 +17,6 @@ namespace WalletGUI {
 
 namespace {
 
-const QDateTime EPOCH_DATE_TIME = QDateTime::fromTime_t(0).toUTC();
-const int MSECS_IN_MINUTE = 60 * 1000;
-const int MSECS_IN_HOUR = 60 * MSECS_IN_MINUTE;
-
 //const char STATUS_BAR_STYLE_SHEET_TEMPLATE[] =
 //  "WalletGui--WalletStatusBar, "
 //  "WalletGui--WalletStatusBar QLabel {"
@@ -30,57 +26,12 @@ const int MSECS_IN_HOUR = 60 * MSECS_IN_MINUTE;
 //  "}";
 
 const char STATUS_BAR_STYLE_SHEET_TEMPLATE[] =
+    "WalletGUI--WalletStatusBar QLabel {"
+    "color: rgba(0,0,0,0.5);"
+    "}"
     "WalletGUI--WalletStatusBar::item {"
     "border: none;"
     "}";
-
-QString formatTimeDiff(quint64 timeDiff)
-{
-    QDateTime dateTime = QDateTime::fromTime_t(timeDiff).toUTC();
-    QString firstPart;
-    QString secondPart;
-    quint64 year = dateTime.date().year() - EPOCH_DATE_TIME.date().year();
-    quint64 month = dateTime.date().month() - EPOCH_DATE_TIME.date().month();
-    quint64 day = dateTime.date().day() - EPOCH_DATE_TIME.date().day();
-    if (year > 0)
-    {
-        firstPart = QStringLiteral("%1 %2").arg(year).arg(year == 1 ? QObject::tr("year") : QObject::tr("years"));
-        secondPart = QStringLiteral("%1 %2").arg(month).arg(month == 1 ? QObject::tr("month") : QObject::tr("months"));
-    }
-    else if (month > 0)
-    {
-        firstPart = QStringLiteral("%1 %2").arg(month).arg(month == 1 ? QObject::tr("month") : QObject::tr("months"));
-        secondPart = QStringLiteral("%1 %2").arg(day).arg(day == 1 ? QObject::tr("day") : QObject::tr("days"));
-    }
-    else if (day > 0)
-    {
-        quint64 hour = dateTime.time().hour();
-        firstPart = QStringLiteral("%1 %2").arg(day).arg(day == 1 ? QObject::tr("day") : QObject::tr("days"));
-        secondPart = QStringLiteral("%1 %2").arg(hour).arg(hour == 1 ? QObject::tr("hour") : QObject::tr("hours"));
-    }
-    else if (dateTime.time().hour() > 0)
-    {
-        quint64 hour = dateTime.time().hour();
-        quint64 minute = dateTime.time().minute();
-        firstPart = QStringLiteral("%1 %2").arg(hour).arg(hour == 1 ? QObject::tr("hour") : QObject::tr("hours"));
-        secondPart = QStringLiteral("%1 %2").arg(minute).arg(minute == 1 ? QObject::tr("minute") : QObject::tr("minutes"));
-    }
-    else if (dateTime.time().minute() > 0)
-    {
-        quint64 minute = dateTime.time().minute();
-        firstPart = QStringLiteral("%1 %2").arg(minute).arg(minute == 1 ? QObject::tr("minute") : QObject::tr("minutes"));
-    }
-    else
-    {
-        firstPart = QStringLiteral("Less than 1 minute");
-    }
-
-    if (secondPart.isNull())
-        return firstPart;
-
-    return QStringLiteral("%1 %2").arg(firstPart).arg(secondPart);
-}
-
 }
 
 WalletStatusBar::WalletStatusBar(QWidget* parent)
@@ -154,31 +105,33 @@ void WalletStatusBar::updateStatusDescription()
 {
     Q_ASSERT(walletModel_ != nullptr);
     const quint32 knownBlockHeight = walletModel_->getKnownBlockHeight();
-    const quint32 lastBlockHeight = walletModel_->getLastBlockHeight();
-    const QDateTime lastBlockTimestampReceived = walletModel_->getLastBlockTimestamp();
+//    const quint32 lastBlockHeight = walletModel_->getLastBlockHeight();
+//    const QDateTime lastBlockTimestampReceived = walletModel_->getLastBlockTimestamp();
+//    const quint32 peerCount = walletModel_->getPeerCountSum();
+//    const QString lowerLevelError = walletModel_->getLowerLevelError();
+
+//    const QDateTime currentDateTime = QDateTime::currentDateTimeUtc();
+
+//    const QDateTime lastBlockTimestamp = qMin(lastBlockTimestampReceived, currentDateTime);
+//    const quint64 msecsSinceLastBlock = lastBlockTimestamp.msecsTo(currentDateTime);
+//    const quint64 secsSinceLastBlock = lastBlockTimestamp.secsTo(currentDateTime);
+
+    const bool isThereAnyBlock = walletModel_->isThereAnyBlock();
     const quint32 peerCount = walletModel_->getPeerCountSum();
-    const QString lowerLevelError = walletModel_->getLowerLevelError();
-
-    const QDateTime currentDateTime = QDateTime::currentDateTimeUtc();
-    const QDateTime lastBlockTimestamp = qMin(lastBlockTimestampReceived, currentDateTime);
-    const quint64 msecsSinceLastBlock = lastBlockTimestamp.msecsTo(currentDateTime);
-    const quint64 secsSinceLastBlock = lastBlockTimestamp.secsTo(currentDateTime);
-
-    const bool isThereAnyBlock = lastBlockTimestamp.toMSecsSinceEpoch() > 0;
-    const QString formattedTimeDiff = isThereAnyBlock ? formatTimeDiff(secsSinceLastBlock) : tr("unknown");
+    const QString formattedTimeDiff = isThereAnyBlock ? walletModel_->getFormattedTimeSinceLastBlock() : tr("unknown");
     const QString blockchainAge = isThereAnyBlock ? tr("%1 ago").arg(formattedTimeDiff) : tr("%1").arg(formattedTimeDiff);
 
-    isSynchronized_ = lowerLevelError.isEmpty() && isThereAnyBlock && lastBlockHeight == knownBlockHeight;
+    const quint32 blocksLeft = walletModel_->getBlocksLeftToSync();
+    isSynchronized_ = walletModel_->isSyncronized();
     updateSyncState();
 
     QString warningString;
-    if (msecsSinceLastBlock > MSECS_IN_HOUR)
+    if (walletModel_->getSyncStatus() == WalletModel::SyncStatus::LAGGED)
         warningString.append(tr(" Warning: the wallet is lagged."));
 
     if (peerCount == 0)
         warningString.append(tr(" No network connection."));
 
-    const quint32 blocksLeft = knownBlockHeight >= lastBlockHeight ? knownBlockHeight - lastBlockHeight : 0;
     const QString statusText = isSynchronized_ ?
                 tr("Wallet synchronized. Top block height: %1  /  Received: %2 ago.%3")
                     .arg(knownBlockHeight)
@@ -196,12 +149,14 @@ void WalletStatusBar::updateSyncState()
     if (isSynchronized_)
     {
         m_syncMovie->stop();
-        m_syncStatusIconLabel->setPixmap(QPixmap(QString(":icons/light/synced")));
+//        m_syncStatusIconLabel->setPixmap(QPixmap(QString(":icons/light/synced")));
+        m_syncStatusIconLabel->setVisible(false);
     }
     else
     {
         if (m_syncMovie->state() == QMovie::NotRunning)
         {
+            m_syncStatusIconLabel->setVisible(true);
             m_syncStatusIconLabel->setMovie(m_syncMovie);
             m_syncMovie->start();
         }

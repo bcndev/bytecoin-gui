@@ -29,6 +29,7 @@ namespace WalletGUI {
 
 class WalletModel;
 class MiningManager;
+class IAddressBookManager;
 class AddressBookManager;
 class CopiedToolTip;
 
@@ -43,6 +44,7 @@ public:
             const QString& styleSheetTemplate,
             MiningManager* miningManager,
             AddressBookManager* addressBookManager,
+            IAddressBookManager* myAddressesManager,
             QWidget* parent);
     virtual ~MainWindow();
 
@@ -78,6 +80,7 @@ public:
     Q_SLOT void exportKeys();
     Q_SLOT void updateIsReady(const QString& newVersion);
     Q_SLOT void netChanged(const QString& net);
+    Q_SLOT void statusChanged();
 
 protected:
     void changeEvent(QEvent* event) override;
@@ -87,6 +90,7 @@ private:
     QScopedPointer<Ui::MainWindow> m_ui;
     QAbstractItemModel* m_addressBookModel;
     QAbstractItemModel* m_sortedAddressBookModel;
+    QAbstractItemModel* m_myAddressesModel;
     QAbstractItemModel* m_minerModel;
     QString m_styleSheetTemplate;
     QDataWidgetMapper* m_addressesMapper;
@@ -94,6 +98,7 @@ private:
     QMovie* m_syncMovie;
     MiningManager* m_miningManager;
     AddressBookManager* addressBookManager_;
+    IAddressBookManager* myAddressesManager_;
     CopiedToolTip* copiedToolTip_;
 
     WalletModel* walletModel_;

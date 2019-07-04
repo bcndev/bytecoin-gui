@@ -80,7 +80,7 @@
         <number>0</number>
        </property>
        <property name="rightMargin">
-        <number>25</number>
+        <number>0</number>
        </property>
        <property name="bottomMargin">
         <number>0</number>
@@ -95,7 +95,7 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>20</width>
+           <width>24</width>
            <height>20</height>
           </size>
          </property>
@@ -103,6 +103,12 @@
        </item>
        <item>
         <widget class="QLabel" name="m_logoLabel">
+         <property name="minimumSize">
+          <size>
+           <width>64</width>
+           <height>64</height>
+          </size>
+         </property>
          <property name="text">
           <string/>
          </property>
@@ -121,7 +127,7 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>20</width>
+           <width>60</width>
            <height>20</height>
           </size>
          </property>
@@ -137,7 +143,7 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <property name="spacing">
-           <number>5</number>
+           <number>0</number>
           </property>
           <property name="leftMargin">
            <number>0</number>
@@ -146,15 +152,21 @@
            <number>0</number>
           </property>
           <property name="rightMargin">
-           <number>0</number>
+           <number>24</number>
           </property>
           <property name="bottomMargin">
            <number>0</number>
           </property>
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_5">
+            <property name="spacing">
+             <number>0</number>
+            </property>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <property name="spacing">
+               <number>0</number>
+              </property>
               <item>
                <spacer name="horizontalSpacer_4">
                 <property name="orientation">
@@ -163,7 +175,7 @@
                 <property name="sizeHint" stdset="0">
                  <size>
                   <width>40</width>
-                  <height>20</height>
+                  <height>5</height>
                  </size>
                 </property>
                </spacer>
@@ -186,7 +198,7 @@
                 <property name="sizeHint" stdset="0">
                  <size>
                   <width>40</width>
-                  <height>20</height>
+                  <height>5</height>
                  </size>
                 </property>
                </spacer>
@@ -199,74 +211,52 @@
                <enum>Qt::Vertical</enum>
               </property>
               <property name="sizeType">
-               <enum>QSizePolicy::Maximum</enum>
+               <enum>QSizePolicy::Expanding</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
                 <width>20</width>
-                <height>40</height>
+                <height>20</height>
                </size>
               </property>
              </spacer>
             </item>
             <item>
-             <widget class="QLabel" name="m_addressLabel">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="cursor">
-               <cursorShape>PointingHandCursor</cursorShape>
-              </property>
-              <property name="text">
-               <string>address</string>
-              </property>
-              <property name="indent">
-               <number>0</number>
-              </property>
-             </widget>
-            </item>
-            <item>
              <layout class="QHBoxLayout" name="horizontalLayout_4">
               <item>
-               <widget class="QLabel" name="m_creationTimestampLabel">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
+               <layout class="QVBoxLayout" name="verticalLayout_7">
+                <property name="spacing">
+                 <number>4</number>
                 </property>
-                <property name="text">
-                 <string>Wallet created: 01/01/1970</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="m_addressesCountLabel">
-                <property name="text">
-                 <string>Total addresses in the wallet: 5</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="m_viewOnlyLabel">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>(view-only)</string>
-                </property>
-               </widget>
+                <item>
+                 <widget class="QLabel" name="m_balanceLabelText">
+                  <property name="text">
+                   <string>Available balance</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="m_balanceLabel">
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>1 BCN</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
                <spacer name="horizontalSpacer_6">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Fixed</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -276,6 +266,173 @@
                 </property>
                </spacer>
               </item>
+              <item>
+               <layout class="QVBoxLayout" name="verticalLayout_6">
+                <property name="spacing">
+                 <number>4</number>
+                </property>
+                <property name="sizeConstraint">
+                 <enum>QLayout::SetDefaultConstraint</enum>
+                </property>
+                <item>
+                 <widget class="QLabel" name="m_addressLabelText">
+                  <property name="text">
+                   <string>My wallet address</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_6">
+                  <property name="spacing">
+                   <number>5</number>
+                  </property>
+                  <item>
+                   <widget class="WalletGUI::ElidedLabel" name="m_addressLabel">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <weight>75</weight>
+                      <bold>true</bold>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>address</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="m_copyWalletAddressLabel">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="cursor">
+                     <cursorShape>PointingHandCursor</cursorShape>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="pixmap">
+                     <pixmap resource="resources.qrc">:/icons/copy</pixmap>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_8">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::MinimumExpanding</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>200</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <layout class="QVBoxLayout" name="verticalLayout_4">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_5">
+                  <property name="spacing">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <spacer name="horizontalSpacer_9">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                     <enum>QSizePolicy::Expanding</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>0</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="m_walletStatusPicLabel">
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="pixmap">
+                     <pixmap resource="resources.qrc">:/icons/synced</pixmap>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_7">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                     <enum>QSizePolicy::Fixed</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>12</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="m_walletStatusLabel">
+                    <property name="text">
+                     <string>Wallet syncronized</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <widget class="QLabel" name="m_topBlockLabel">
+                  <property name="text">
+                   <string>Top block: %1</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
              </layout>
             </item>
             <item>
@@ -283,13 +440,10 @@
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Maximum</enum>
-              </property>
               <property name="sizeHint" stdset="0">
                <size>
                 <width>20</width>
-                <height>65</height>
+                <height>20</height>
                </size>
               </property>
              </spacer>
@@ -299,121 +453,16 @@
          </layout>
         </widget>
        </item>
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout_7"/>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_8">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Fixed</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>34</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QLabel" name="m_balanceIconLabel">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="pixmap">
-          <pixmap resource="resources.qrc">:/icons/total_balance</pixmap>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Fixed</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>5</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout_6">
-         <property name="spacing">
-          <number>5</number>
-         </property>
-         <item>
-          <spacer name="verticalSpacer_4">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Maximum</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
-           <item>
-            <widget class="QLabel" name="m_balanceTextLabel">
-             <property name="text">
-              <string>Total balance</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="m_balanceLabel">
-             <property name="cursor">
-              <cursorShape>PointingHandCursor</cursorShape>
-             </property>
-             <property name="toolTip">
-              <string>Click to copy</string>
-             </property>
-             <property name="text">
-              <string>0.00</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <spacer name="verticalSpacer_5">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Maximum</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
       </layout>
      </widget>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0,0">
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0,0,0">
       <property name="spacing">
        <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>24</number>
       </property>
       <item>
        <widget class="QFrame" name="m_toolFrame">
@@ -427,33 +476,21 @@
          <number>0</number>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout">
-         <property name="spacing">
-          <number>0</number>
-         </property>
          <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
           <number>0</number>
          </property>
          <item>
           <widget class="QPushButton" name="m_overviewButton">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
            <property name="minimumSize">
             <size>
-             <width>90</width>
-             <height>50</height>
+             <width>0</width>
+             <height>32</height>
             </size>
            </property>
            <property name="maximumSize">
@@ -466,7 +503,44 @@
             <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
-            <string>OVERVIEW</string>
+            <string>Overview</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">m_toolButtonGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="m_myAddressesButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>50</height>
+            </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>My addresses</string>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -482,15 +556,15 @@
          <item>
           <widget class="QPushButton" name="m_sendButton">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
            <property name="minimumSize">
             <size>
-             <width>90</width>
-             <height>50</height>
+             <width>0</width>
+             <height>32</height>
             </size>
            </property>
            <property name="maximumSize">
@@ -503,7 +577,7 @@
             <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
-            <string>SEND</string>
+            <string>Send coins</string>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -522,15 +596,15 @@
             <bool>true</bool>
            </property>
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
            <property name="minimumSize">
             <size>
-             <width>90</width>
-             <height>50</height>
+             <width>0</width>
+             <height>32</height>
             </size>
            </property>
            <property name="maximumSize">
@@ -543,7 +617,7 @@
             <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
-            <string>CONTACTS</string>
+            <string>Contacts</string>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -562,15 +636,15 @@
             <bool>true</bool>
            </property>
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
            <property name="minimumSize">
             <size>
-             <width>90</width>
-             <height>50</height>
+             <width>0</width>
+             <height>32</height>
             </size>
            </property>
            <property name="maximumSize">
@@ -583,7 +657,7 @@
             <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
-            <string>MINING</string>
+            <string>Mining</string>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -602,15 +676,15 @@
             <bool>true</bool>
            </property>
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
            <property name="minimumSize">
             <size>
-             <width>90</width>
-             <height>50</height>
+             <width>0</width>
+             <height>32</height>
             </size>
            </property>
            <property name="maximumSize">
@@ -623,7 +697,7 @@
             <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
-            <string>CONSOLE</string>
+            <string>Console</string>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -705,6 +779,16 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="WalletGUI::MyAddressesFrame" name="m_myAddressesFrame">
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
     <item>
@@ -728,7 +812,7 @@
      <x>0</x>
      <y>0</y>
      <width>1273</width>
-     <height>23</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -837,7 +921,7 @@
   </action>
   <action name="m_changePasswordAction">
    <property name="text">
-    <string>C&amp;hange password</string>
+    <string>Cha&amp;nge password</string>
    </property>
   </action>
   <action name="m_openDataFolderAction">
@@ -929,6 +1013,17 @@
    <class>WalletGUI::LogFrame</class>
    <extends>QFrame</extends>
    <header>logframe.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>WalletGUI::ElidedLabel</class>
+   <extends>QLabel</extends>
+   <header>elidedlabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WalletGUI::MyAddressesFrame</class>
+   <extends>QFrame</extends>
+   <header>myaddressesframe.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
@@ -1304,6 +1399,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>m_myAddressesButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>m_myAddressesFrame</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>89</x>
+     <y>215</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1159</x>
+     <y>460</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>aboutQt()</slot>
@@ -1328,10 +1439,6 @@
   <slot>createHWWallet()</slot>
  </slots>
  <buttongroups>
-  <buttongroup name="m_toolButtonGroup">
-   <property name="exclusive">
-    <bool>true</bool>
-   </property>
-  </buttongroup>
+  <buttongroup name="m_toolButtonGroup"/>
  </buttongroups>
 </ui>

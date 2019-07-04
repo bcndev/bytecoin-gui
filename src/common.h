@@ -8,6 +8,7 @@
 #include <QString>
 
 class QUrl;
+class QWidget;
 
 constexpr const char CURRENCY_TICKER[] = "BCN";
 //constexpr const uint64_t MAXIMUM_UNSYNCED_BLOCKS_WHEN_SEND_AVAILABLE = 5;
@@ -42,6 +43,10 @@ bool parseAmount(const QString& str, qint64& amount);
 bool isIpOrHostName(const QString& string);
 
 QString rpcUrlToString(const QUrl& url);
+
+QString formatTimeDiff(quint64 timeDiff);
+
+void scaleWidgetText(QWidget* w, int scale);
 
 }
 

@@ -17,17 +17,19 @@
 namespace WalletGUI
 {
 
-AddressBookModel::AddressBookModel(AddressBookManager* _addressBookManager, QObject* _parent)
+AddressBookModel::AddressBookModel(IAddressBookManager* _addressBookManager, QObject* _parent)
     : QAbstractItemModel(_parent)
     , m_addressBookManager(_addressBookManager)
     , m_columnCount(AddressBookModel::staticMetaObject.enumerator(AddressBookModel::staticMetaObject.indexOfEnumerator("Columns")).keyCount())
     , m_rowCount(0)
 {
-    connect(m_addressBookManager, &AddressBookManager::addressAddedSignal, this, &AddressBookModel::addressAdded);
-    connect(m_addressBookManager, &AddressBookManager::addressEditedSignal, this, &AddressBookModel::addressEdited);
-//    connect(m_addressBookManager, &AddressBookManager::addressRemovedSignal, this, &AddressBookModel::addressRemoved);
-    connect(m_addressBookManager, &AddressBookManager::beginRemoveAddressSignal, this, &AddressBookModel::beginRemoveAddress);
-    connect(m_addressBookManager, &AddressBookManager::endRemoveAddressSignal, this, &AddressBookModel::endRemoveAddress);
+    connect(m_addressBookManager, &IAddressBookManager::addressBookOpenedSignal, this, &AddressBookModel::addressBookOpened);
+    connect(m_addressBookManager, &IAddressBookManager::addressBookClosedSignal, this, &AddressBookModel::addressBookClosed);
+    connect(m_addressBookManager, &IAddressBookManager::addressAddedSignal, this, &AddressBookModel::addressAdded);
+    connect(m_addressBookManager, &IAddressBookManager::addressEditedSignal, this, &AddressBookModel::addressEdited);
+//    connect(m_addressBookManager, &IAddressBookManager::addressRemovedSignal, this, &AddressBookModel::addressRemoved);
+    connect(m_addressBookManager, &IAddressBookManager::beginRemoveAddressSignal, this, &AddressBookModel::beginRemoveAddress);
+    connect(m_addressBookManager, &IAddressBookManager::endRemoveAddressSignal, this, &AddressBookModel::endRemoveAddress);
 
     addressBookOpened();
 }
@@ -87,7 +89,7 @@ QVariant AddressBookModel::headerData(int _section, Qt::Orientation _orientation
     case COLUMN_LABEL:
       return static_cast<int>(Qt::AlignLeft | Qt::AlignVCenter);
     case COLUMN_ADDRESS:
-      return static_cast<int>(Qt::AlignRight | Qt::AlignVCenter);
+      return static_cast<int>(Qt::AlignLeft | Qt::AlignVCenter);
     }
 
     break;

@@ -10,7 +10,7 @@
         <file alias="light/disconnected">icons/disconnected_bl.png</file>
         <file alias="dark/sync">icons/sync_sprite.png</file>
         <file alias="light/sync">icons/sync_sprite_bl.png</file>
-        <file alias="dark/synced">icons/synced.png</file>
+        <file alias="synced">icons/synced.png</file>
         <file alias="light/synced">icons/synced_bl.png</file>
         <file alias="dark/overview">icons/overview.png</file>
         <file alias="dark/send">icons/send.png</file>
@@ -97,6 +97,11 @@
         <file alias="stop-mining">icons/stop.png</file>
         <file alias="logo_test">icons/logo_test.png</file>
         <file alias="logo_stage">icons/logo_stage.png</file>
+        <file alias="balance">icons/balance_new.png</file>
+        <file alias="mining">icons/mining.png</file>
+        <file alias="sync_lag">icons/sync_lag.png</file>
+        <file alias="not_synced">icons/not_synced.png</file>
+        <file alias="copy">icons/copy.png</file>
     </qresource>
     <qresource prefix="/images">
         <file alias="splash">images/splash.png</file>
@@ -111,16 +116,24 @@
         <file alias="qss">bytecoinwallet.qss</file>
     </qresource>
     <qresource prefix="/font">
-        <file alias="Bold">font/OpenSans-Bold.ttf</file>
-        <file alias="BoldItalic">font/OpenSans-BoldItalic.ttf</file>
-        <file alias="ExtraBold">font/OpenSans-ExtraBold.ttf</file>
-        <file alias="ExtraBoldItalic">font/OpenSans-ExtraBoldItalic.ttf</file>
-        <file alias="Italic">font/OpenSans-Italic.ttf</file>
-        <file alias="Light">font/OpenSans-Light.ttf</file>
-        <file alias="LightItalic">font/OpenSans-LightItalic.ttf</file>
-        <file alias="Regular">font/OpenSans-Regular.ttf</file>
-        <file alias="Semibold">font/OpenSans-Semibold.ttf</file>
-        <file alias="SemiboldItalic">font/OpenSans-SemiboldItalic.ttf</file>
+        <file alias="Black">font/WorkSans-Black.ttf</file>
+        <file alias="BlackItalic">font/WorkSans-BlackItalic.ttf</file>
+        <file alias="Bold">font/WorkSans-Bold.ttf</file>
+        <file alias="BoldItalic">font/WorkSans-BoldItalic.ttf</file>
+        <file alias="ExtraBold">font/WorkSans-ExtraBold.ttf</file>
+        <file alias="ExtraBoldItalic">font/WorkSans-ExtraBoldItalic.ttf</file>
+        <file alias="ExtraLight">font/WorkSans-ExtraLight.ttf</file>
+        <file alias="ExtraLightItalic">font/WorkSans-ExtraLightItalic.ttf</file>
+        <file alias="Italic">font/WorkSans-Italic.ttf</file>
+        <file alias="Light">font/WorkSans-Light.ttf</file>
+        <file alias="LightItalic">font/WorkSans-LightItalic.ttf</file>
+        <file alias="Medium">font/WorkSans-Medium.ttf</file>
+        <file alias="MediumItalic">font/WorkSans-MediumItalic.ttf</file>
+        <file alias="Regular">font/WorkSans-Regular.ttf</file>
+        <file alias="SemiBold">font/WorkSans-SemiBold.ttf</file>
+        <file alias="SemiBoldItalic">font/WorkSans-SemiBoldItalic.ttf</file>
+        <file alias="Thin">font/WorkSans-Thin.ttf</file>
+        <file alias="ThinItalic">font/WorkSans-ThinItalic.ttf</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

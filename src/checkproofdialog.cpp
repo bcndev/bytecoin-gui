@@ -82,7 +82,7 @@ void CheckProofDialog::showCheckResult(const RpcApi::ProofCheck& result)
     {
         ui->resultLabel->setText(QString("<b><font color='green'>%1</font></b>").arg(tr("The proof is correct!")));
         ui->messageLabel->setText(result.message);
-        ui->amountLabel->setText(formatAmount(result.amount) + " BCN");
+        ui->amountLabel->setText(formatAmount(result.amount));
         ui->addressLabel->setText(result.address);
         ui->txHashLabel->setText(result.transaction_hash);
     }

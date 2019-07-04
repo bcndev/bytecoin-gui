@@ -82,7 +82,7 @@ void WalletApplication::loadFonts()
     QFontDatabase::addApplicationFont(":font/Semibold");
     QFontDatabase::addApplicationFont(":font/SemiboldItalic");
     QFont font;
-    font.setFamily("Open Sans");
+    font.setFamily("Work Sans");
     font.setStyleStrategy(QFont::PreferAntialias);
     QApplication::setFont(font);
 }
@@ -114,6 +114,7 @@ bool WalletApplication::init()
         WalletLogger::info(tr("[Application] First run detected"));
 
     addressBookManager_ =  new AddressBookManager(this);
+    myAddressesManager_ = new MyAddressesManager(this);
     m_miningManager = new MiningManager(this);
 
     QFile styleSheetFile(":style/qss");
@@ -121,7 +122,7 @@ bool WalletApplication::init()
     const QByteArray styleSheet = styleSheetFile.readAll();
     styleSheetFile.close();
     WalletLogger::info(tr("[Application] Initialized successfully"));
-    m_mainWindow = new MainWindow(walletModel_, styleSheet, m_miningManager, addressBookManager_, nullptr);
+    m_mainWindow = new MainWindow(walletModel_, styleSheet, m_miningManager, addressBookManager_, myAddressesManager_, nullptr);
     m_mainWindow->show();
     connect(m_mainWindow, &MainWindow::createTxSignal, this, &WalletApplication::createTx);
     connect(m_mainWindow, &MainWindow::sendTxSignal, this, &WalletApplication::sendTx);
@@ -163,6 +164,18 @@ void WalletApplication::subscribeToWalletd()
 {
     connect(walletModel_, &WalletModel::getTransfersSignal, walletd_, &RemoteWalletd::getTransfers);
     connect(walletModel_, &WalletModel::netChangedSignal, m_mainWindow, &MainWindow::netChanged);
+    connect(walletModel_, &WalletModel::statusUpdatedSignal, m_mainWindow, &MainWindow::statusChanged);
+
+    connect(myAddressesManager_, &MyAddressesManager::getWalletRecordsSignal, walletd_, &RemoteWalletd::getWalletRecords);
+    connect(myAddressesManager_, &MyAddressesManager::createAddressSignal, walletd_, &RemoteWalletd::createAddress);
+    connect(myAddressesManager_, &MyAddressesManager::setAddressLabelSignal, walletd_, &RemoteWalletd::setAddressLabel);
+
+    connect(walletd_, &RemoteWalletd::walletRecordsReceivedSignal, myAddressesManager_, &MyAddressesManager::walletRecordsReceived);
+    connect(walletd_, &RemoteWalletd::addressLabelSetReceivedSignal, myAddressesManager_, &MyAddressesManager::addressLabelSetReceived);
+    connect(walletd_, &RemoteWalletd::addressesCreatedReceivedSignal, myAddressesManager_, &MyAddressesManager::addressCreatedReceived);
+    connect(walletd_, &RemoteWalletd::networkErrorSignal, myAddressesManager_, &MyAddressesManager::disconnectedFromWalletd);
+    connect(walletd_, &RemoteWalletd::connectedSignal, myAddressesManager_, &MyAddressesManager::connectedToWalletd);
+
     connect(walletd_, &RemoteWalletd::statusReceivedSignal, walletModel_, &WalletModel::statusReceived);
     connect(walletd_, &RemoteWalletd::transfersReceivedSignal, walletModel_, &WalletModel::transfersReceived);
     connect(walletd_, &RemoteWalletd::walletInfoReceivedSignal, walletModel_, &WalletModel::walletInfoReceived);

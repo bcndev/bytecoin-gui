@@ -41,7 +41,6 @@ private:
   MainWindow* mainWindow_;
   QAbstractItemModel* m_sortedAddressBookModel;
   QLabel* m_helperLabel;
-  AddressBookDelegate* m_addressBookDelegate;
 
   void rowsInserted(const QModelIndex& _parent, int _first, int _last);
   void rowsRemoved(const QModelIndex& _parent, int _first, int _last);
