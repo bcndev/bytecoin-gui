@@ -107,7 +107,8 @@ struct Transfer
     SignedAmount amount = 0;
     bool ours = true;
     bool locked = false;
-    QList<Output> outputs;
+    // we do not request outputs
+//    QList<Output> outputs;
     QString transaction_hash;
 
     static Transfer fromJson(const QVariantMap& json);
@@ -120,7 +121,7 @@ struct Transfer
             amount,
             ours,
             locked,
-            outputs,
+//            outputs,
             transaction_hash);
     }
 };
@@ -250,8 +251,9 @@ struct WalletRecord
     QString address;
     QString label;
     quint64 index = 0;
-    QString secret_spend_key;
-    QString public_spend_key;
+    // we do not ask keys
+//    QString secret_spend_key;
+//    QString public_spend_key;
 
     static WalletRecord fromJson(const QVariantMap& json);
 
@@ -260,32 +262,11 @@ struct WalletRecord
         return std::tie(
             address,
             label,
-            index,
+            index/*,
             secret_spend_key,
-            public_spend_key);
+            public_spend_key*/);
     }
 };
-
-//struct Proof
-//{
-//    QString message;
-//    QString address;
-//    Amount amount = 0;
-//    QString transaction_hash;
-//    QString proof;
-
-//    static Proof fromJson(const QVariantMap& json);
-
-//    auto tie() const
-//    {
-//        return std::tie(
-//            message,
-//            address,
-//            amount,
-//            transaction_hash,
-//            proof);
-//    }
-//};
 
 struct GetStatus
 {
@@ -541,6 +522,7 @@ struct GetTransfers
         Height to_height = std::numeric_limits<Height>::max();
         bool forward = false;
         quint64 desired_transactions_count = 300;
+        bool need_outputs = false;
 
         QVariantMap toJson() const;
     };

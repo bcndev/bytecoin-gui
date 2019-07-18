@@ -15,7 +15,7 @@ TEMPLATE = app
 macx: QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.11
 macx: ICON = images/bytecoin.icns
 win32: RC_ICONS = images/bytecoin.ico
-win32: VERSION = 3.19.7.4
+win32: VERSION = 3.19.7.18
 
 #QMAKE_CXXFLAGS += -fno-omit-frame-pointer -fsanitize=address,undefined
 #LIBS += -lasan -lubsan

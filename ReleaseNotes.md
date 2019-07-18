@@ -1,5 +1,10 @@
 ## Release Notes
 
+### v3.5.1 (Beryl)
+- Brought back El Capitan support.
+- Fixed minor UI bugs.
+- Updated the Bytecoin daemons.
+
 ### v3.5.0 (Beryl)
 
 - Made many visual improvements to the graphical elements of the app.

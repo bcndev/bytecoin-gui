@@ -137,6 +137,7 @@ MainWindow::MainWindow(
 //    m_ui->m_miningButton->setStyleSheet(QString{BUTTON_STYLE_SHEET}.arg(MAIN_NET_COLOR));
 //    m_ui->m_logButton->setStyleSheet(QString{BUTTON_STYLE_SHEET}.arg(MAIN_NET_COLOR));
 
+    m_ui->m_walletViewOnlyLabel->hide();
     m_addressBookModel = new AddressBookModel(addressBookManager_, this);
     m_sortedAddressBookModel = new SortedAddressBookModel(m_addressBookModel, this);
     m_myAddressesModel = new AddressBookModel(myAddressesManager_, this);
@@ -300,6 +301,8 @@ QString MainWindow::getAddress() const
 
 void MainWindow::addRecipient(const QString& address, const QString& label)
 {
+    if (walletModel_->isViewOnly())
+        return;
     m_ui->m_sendFrame->addRecipient(address, label);
     m_ui->m_sendButton->click();
 }
@@ -528,7 +531,11 @@ void MainWindow::clearTitle()
 
 void MainWindow::setConnectedState()
 {
-    m_ui->m_sendButton->setEnabled(true);
+    const bool viewOnly = walletModel_->isViewOnly();
+    m_ui->m_walletViewOnlyLabel->setVisible(viewOnly);
+
+    if (!viewOnly)
+        m_ui->m_sendButton->setEnabled(true);
     m_ui->m_miningButton->setEnabled(true);
     m_ui->m_overviewButton->setEnabled(true);
     m_ui->m_addressBookButton->setEnabled(true);

@@ -1,6 +1,6 @@
 # bytecoin-gui
 
-[![Build Status](https://dev.azure.com/bcndev/bytecoin/_apis/build/status/bytecoin-desktop?branchName=releases/3.5.0)](https://dev.azure.com/bcndev/bytecoin/_build/latest?definitionId=2&branchName=releases/3.5.0)
+[![Build Status](https://dev.azure.com/bcndev/bytecoin/_apis/build/status/bytecoin-desktop?branchName=releases/3.5.1)](https://dev.azure.com/bcndev/bytecoin/_build/latest?definitionId=2&branchName=releases/3.5.1)
 
 ## How to build binaries from source code
 

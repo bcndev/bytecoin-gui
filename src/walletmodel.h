@@ -162,6 +162,7 @@ public:
     QString getAddress() const;
     bool isConnected() const;
     bool isAmethyst() const;
+    bool isViewOnly() const;
 
     quint32 getLastBlockHeight() const;
     QString getLastBlockHash() const;

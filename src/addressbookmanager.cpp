@@ -201,7 +201,7 @@ void MyAddressesManager::walletRecordsReceived(const RpcApi::WalletRecords& reco
         addressBook_ << AddressItem{rec.label, rec.address};
         const AddressIndex index = addressBook_.size() - 1;
         addressIndexes_[rec.address] = index;
-        WalletLogger::debug(tr("[WalletAddressBook] Wallet record indexed."));
+//        WalletLogger::debug(tr("[WalletAddressBook] Wallet record indexed."));
         if (!firstTime_)
             emit addressAddedSignal(index);
     }

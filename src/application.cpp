@@ -370,7 +370,6 @@ void WalletApplication::daemonFinished(int exitCode, QProcess::ExitStatus /*exit
         restartDaemon();
         return;
     }
-    tryToOpenWithEmptyPassword_ = false;
 
     const QString walletdMsg = BuiltinWalletd::errorMessage(returnCode);
     const QString msg = !walletdMsg.isEmpty() ?
@@ -632,7 +631,7 @@ void WalletApplication::checkProof()
 void WalletApplication::showWalletdParams()
 {
     WalletdParamsDialog dlg(Settings::instance().getWalletdConnectionMethod() == ConnectionMethod::BUILTIN && !Settings::instance().getWalletFile().isEmpty(), m_mainWindow);
-    connect(&dlg, &WalletdParamsDialog::restartWalletd, this, &WalletApplication::restartDaemon);
+    connect(&dlg, &WalletdParamsDialog::restartWalletd, [this](){ this->tryToOpenWithEmptyPassword_ = true; this->restartDaemon();} );
     BuiltinWalletd* walletd = static_cast<BuiltinWalletd*>(walletd_);
     if (walletd)
         connect(walletd, &BuiltinWalletd::daemonErrorOccurredSignal, &dlg, &WalletdParamsDialog::reject);

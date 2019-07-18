@@ -199,7 +199,7 @@ QString Settings::getBytecoindHost() const
 
 quint16 Settings::getBytecoindPort() const
 {
-    return static_cast<quint16>(settings_->value(OPTION_BYTECOIND_PORT).toUInt());
+    return static_cast<quint16>(settings_->value(OPTION_BYTECOIND_PORT, getDefaultBytecoindPort()).toUInt());
 }
 
 NetworkType Settings::getNetworkType() const

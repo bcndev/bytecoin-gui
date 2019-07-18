@@ -33,8 +33,9 @@ WalletdParamsDialog::WalletdParamsDialog(bool allowToRestart, QWidget *parent)
     default: ui->radioBuiltinBytecoind->setChecked(true);  break;
     }
 
-    ui->editHost->setText(Settings::instance().getBytecoindHost());
-    ui->spinPort->setValue(Settings::instance().getBytecoindPort());
+    QUrl url{Settings::instance().getBytecoindHost()};
+    url.setPort(Settings::instance().getBytecoindPort());
+    ui->editHost->setText(url.toString());
 }
 
 WalletdParamsDialog::~WalletdParamsDialog()
@@ -59,7 +60,9 @@ void WalletdParamsDialog::saveParams()
                     ui->radioExternalBytecoind->isChecked() ?
                         ConnectionMethod::REMOTE :
                         ConnectionMethod::BUILTIN);
-    Settings::instance().setBytecoindEndPoint(ui->editHost->text(), static_cast<uint16_t>(ui->spinPort->value()));
+
+    const QUrl url{ui->editHost->text()};
+    Settings::instance().setBytecoindEndPoint(url.toString(QUrl::RemovePort), url.port(Settings::instance().getDefaultBytecoindPort()));
 }
 
 void WalletdParamsDialog::applyParams()

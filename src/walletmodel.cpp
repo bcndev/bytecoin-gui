@@ -1072,6 +1072,11 @@ bool WalletModel::isAmethyst() const
     return pimpl_->walletType == "amethyst" || pimpl_->walletType == "hardware";
 }
 
+bool WalletModel::isViewOnly() const
+{
+    return pimpl_->viewOnly;
+}
+
 void WalletModel::reset()
 {
     beginResetModel();

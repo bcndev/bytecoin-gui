@@ -22,9 +22,12 @@ namespace WalletGUI {
 
 namespace {
 
-const char TX_HASH_URL[] = "https://explorer.bytecoin.org/tx?hash=%1";
-const char BLOCK_HASH_URL[] = "https://explorer.bytecoin.org/block?hash=%1";
-const char BLOCK_HEIGHT_URL[] = "https://explorer.bytecoin.org/block?height=%1";
+const char MAIN_TX_HASH_URL[] = "https://explorer.bytecoin.org/tx?hash=%1";
+const char MAIN_BLOCK_HASH_URL[] = "https://explorer.bytecoin.org/block?hash=%1";
+const char MAIN_BLOCK_HEIGHT_URL[] = "https://explorer.bytecoin.org/block?height=%1";
+const char STAGE_TX_HASH_URL[] = "https://stage.explorer.bytecoin.org/tx?hash=%1";
+const char STAGE_BLOCK_HASH_URL[] = "https://stage.explorer.bytecoin.org/block?hash=%1";
+const char STAGE_BLOCK_HEIGHT_URL[] = "https://stage.explorer.bytecoin.org/block?height=%1";
 
 
 //const char OVERVIEW_STYLE_SHEET_TEMPLATE[] =
@@ -167,13 +170,15 @@ bool OverviewFrame::eventFilter(QObject* object, QEvent* event)
     {
         QMouseEvent* e = (QMouseEvent*)event;
         QModelIndex modelIndex = view->indexAt(e->pos());
-
         if (!modelIndex.isValid())
             return false;
+        const QString net = m_transactionsModel->data(modelIndex, WalletModel::ROLE_NET).toString();
+        const bool isTestnet = (net == RpcApi::TEST_NET_NAME);
         const bool explorableColumns =
-                (modelIndex.column() == WalletModel::COLUMN_HASH && !m_transactionsModel->data(modelIndex, WalletModel::ROLE_HASH).toString().isEmpty()) ||
+                !isTestnet &&
+                ((modelIndex.column() == WalletModel::COLUMN_HASH && !m_transactionsModel->data(modelIndex, WalletModel::ROLE_HASH).toString().isEmpty()) ||
                 (modelIndex.column() == WalletModel::COLUMN_BLOCK_HASH && !m_transactionsModel->data(modelIndex, WalletModel::ROLE_BLOCK_HASH).toString().isEmpty()) ||
-                (modelIndex.column() == WalletModel::COLUMN_BLOCK_HEIGHT && !m_transactionsModel->data(modelIndex, WalletModel::ROLE_BLOCK_HEIGHT).toString().isEmpty());
+                (modelIndex.column() == WalletModel::COLUMN_BLOCK_HEIGHT && !m_transactionsModel->data(modelIndex, WalletModel::ROLE_BLOCK_HEIGHT).toString().isEmpty()));
         const bool proof = m_transactionsModel->data(modelIndex, WalletModel::ROLE_PROOF).toBool();
         const bool proofColumn = (modelIndex.column() == WalletModel::COLUMN_PROOF && proof);
         const bool valid = explorableColumns || proofColumn;
@@ -182,16 +187,17 @@ bool OverviewFrame::eventFilter(QObject* object, QEvent* event)
 
         if (explorableColumns)
         {
+            const bool mainnet = (net == RpcApi::MAIN_NET_NAME);
             switch(modelIndex.column())
             {
             case WalletModel::COLUMN_HASH:
-                QDesktopServices::openUrl(QUrl::fromUserInput(QString{TX_HASH_URL}.arg(m_transactionsModel->data(modelIndex, WalletModel::ROLE_HASH).toString())));
+                QDesktopServices::openUrl(QUrl::fromUserInput(QString{mainnet ? MAIN_TX_HASH_URL : STAGE_TX_HASH_URL}.arg(m_transactionsModel->data(modelIndex, WalletModel::ROLE_HASH).toString())));
                 break;
             case WalletModel::COLUMN_BLOCK_HASH:
-                QDesktopServices::openUrl(QUrl::fromUserInput(QString{BLOCK_HASH_URL}.arg(m_transactionsModel->data(modelIndex, WalletModel::ROLE_BLOCK_HASH).toString())));
+                QDesktopServices::openUrl(QUrl::fromUserInput(QString{mainnet ? MAIN_BLOCK_HASH_URL : STAGE_BLOCK_HASH_URL}.arg(m_transactionsModel->data(modelIndex, WalletModel::ROLE_BLOCK_HASH).toString())));
                 break;
             case WalletModel::COLUMN_BLOCK_HEIGHT:
-                QDesktopServices::openUrl(QUrl::fromUserInput(QString{BLOCK_HEIGHT_URL}.arg(m_transactionsModel->data(modelIndex, WalletModel::ROLE_BLOCK_HEIGHT).toString())));
+                QDesktopServices::openUrl(QUrl::fromUserInput(QString{mainnet ? MAIN_BLOCK_HEIGHT_URL : STAGE_BLOCK_HEIGHT_URL}.arg(m_transactionsModel->data(modelIndex, WalletModel::ROLE_BLOCK_HEIGHT).toString())));
                 break;
             }
         }
@@ -207,10 +213,13 @@ bool OverviewFrame::eventFilter(QObject* object, QEvent* event)
         QMouseEvent* e = (QMouseEvent*)event;
         QModelIndex modelIndex = view->indexAt(e->pos());
 
+        const QString net = m_transactionsModel->data(modelIndex, WalletModel::ROLE_NET).toString();
+        const bool isTestnet = (net == RpcApi::TEST_NET_NAME);
         const bool explorableColumns =
-                (modelIndex.column() == WalletModel::COLUMN_HASH && !m_transactionsModel->data(modelIndex, WalletModel::ROLE_HASH).toString().isEmpty()) ||
+                !isTestnet &&
+                ((modelIndex.column() == WalletModel::COLUMN_HASH && !m_transactionsModel->data(modelIndex, WalletModel::ROLE_HASH).toString().isEmpty()) ||
                 (modelIndex.column() == WalletModel::COLUMN_BLOCK_HASH && !m_transactionsModel->data(modelIndex, WalletModel::ROLE_BLOCK_HASH).toString().isEmpty()) ||
-                (modelIndex.column() == WalletModel::COLUMN_BLOCK_HEIGHT && !m_transactionsModel->data(modelIndex, WalletModel::ROLE_BLOCK_HEIGHT).toString().isEmpty());
+                (modelIndex.column() == WalletModel::COLUMN_BLOCK_HEIGHT && !m_transactionsModel->data(modelIndex, WalletModel::ROLE_BLOCK_HEIGHT).toString().isEmpty()));
         const bool proof = m_transactionsModel->data(modelIndex, WalletModel::ROLE_PROOF).toBool();
         const bool proofColumn = (modelIndex.column() == WalletModel::COLUMN_PROOF && proof);
 

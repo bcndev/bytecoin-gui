@@ -264,6 +264,7 @@ GetTransfers::Request::toJson() const
     RPCAPI_SERIALIZE_FIELD(value, json, to_height);
     RPCAPI_SERIALIZE_FIELD(value, json, forward);
     RPCAPI_SERIALIZE_FIELD(value, json, desired_transactions_count);
+    RPCAPI_SERIALIZE_FIELD(value, json, need_outputs);
 
     return json;
 }
@@ -380,7 +381,7 @@ Transfer::fromJson(const QVariantMap& json)
     RPCAPI_DESERIALIZE_FIELD(value, json, locked);
     RPCAPI_DESERIALIZE_FIELD(value, json, transaction_hash);
 
-    RPCAPI_DESERIALIZE_LIST(value, json, outputs);
+//    RPCAPI_DESERIALIZE_LIST(value, json, outputs);
 
     return value;
 }
@@ -397,7 +398,7 @@ Transfer::toJson() const
     RPCAPI_SERIALIZE_FIELD(value, json, locked);
     RPCAPI_SERIALIZE_FIELD(value, json, transaction_hash);
 
-    RPCAPI_SERIALIZE_LIST(value, json, outputs);
+//    RPCAPI_SERIALIZE_LIST(value, json, outputs);
 
     return json;
 }
@@ -457,8 +458,8 @@ WalletRecord::fromJson(const QVariantMap& json)
     RPCAPI_DESERIALIZE_FIELD(value, json, address);
     RPCAPI_DESERIALIZE_FIELD(value, json, label);
     RPCAPI_DESERIALIZE_FIELD(value, json, index);
-    RPCAPI_DESERIALIZE_FIELD(value, json, secret_spend_key);
-    RPCAPI_DESERIALIZE_FIELD(value, json, public_spend_key);
+//    RPCAPI_DESERIALIZE_FIELD(value, json, secret_spend_key);
+//    RPCAPI_DESERIALIZE_FIELD(value, json, public_spend_key);
 
     return value;
 }

@@ -156,8 +156,11 @@ jobs:
     displayName: Clone desktop code
 
   - script: |
-      brew install qt
-    displayName: Install qt
+      curl -L -O https://raw.githubusercontent.com/Homebrew/homebrew-core/8d4d48f0bb552b7b107119aeef59f141ce1f72c3/Formula/qt.rb
+      depends_on :macos => :mountain_lion
+      sed -i '' 's/depends_on :macos => :mountain_lion/#depends_on :macos => :mountain_lion/g' qt.rb
+      brew install qt.rb
+    displayName: Install qt 5.10.1
 
   - script: |
       mkdir bytecoin-gui/build && cd bytecoin-gui/build
