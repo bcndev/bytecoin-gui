@@ -12,6 +12,7 @@ public:
     using QLabel::QLabel;
     void setElideMode(Qt::TextElideMode elideMode);
     Qt::TextElideMode elideMode() const { return m_elideMode; }
+    virtual ~ElidedLabel() { };
 
 protected:
     void paintEvent(QPaintEvent *e) override;
