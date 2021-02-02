@@ -287,7 +287,7 @@
       <item row="1" column="2">
        <widget class="QCheckBox" name="m_subtractFeeFromAmountCheckBox">
         <property name="toolTip">
-         <string>The fee will be deducted from the amount being sent. The recipient will receive less bytecoins than you enter in the amount field. If multiple recipients are selected, the fee will be subtracted from transfers in their respective order.</string>
+         <string>The fee will be deducted from the amount being sent. The recipient will receive less armors than you enter in the amount field. If multiple recipients are selected, the fee will be subtracted from transfers in their respective order.</string>
         </property>
         <property name="text">
          <string>Subtract fee from amount</string>

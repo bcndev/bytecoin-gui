@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018, The Bytecoin developers.
+// Copyright (c) 2015-2018, The Armor developers.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include <QClipboard>
@@ -22,12 +22,12 @@ namespace WalletGUI {
 
 namespace {
 
-const char MAIN_TX_HASH_URL[] = "https://explorer.bytecoin.org/tx?hash=%1";
-const char MAIN_BLOCK_HASH_URL[] = "https://explorer.bytecoin.org/block?hash=%1";
-const char MAIN_BLOCK_HEIGHT_URL[] = "https://explorer.bytecoin.org/block?height=%1";
-const char STAGE_TX_HASH_URL[] = "https://stage.explorer.bytecoin.org/tx?hash=%1";
-const char STAGE_BLOCK_HASH_URL[] = "https://stage.explorer.bytecoin.org/block?hash=%1";
-const char STAGE_BLOCK_HEIGHT_URL[] = "https://stage.explorer.bytecoin.org/block?height=%1";
+const char MAIN_TX_HASH_URL[] = "https://explorer.armornetwork.org/tx?hash=%1";
+const char MAIN_BLOCK_HASH_URL[] = "https://explorer.armornetwork.org/block?hash=%1";
+const char MAIN_BLOCK_HEIGHT_URL[] = "https://explorer.armornetwork.org/block?height=%1";
+const char STAGE_TX_HASH_URL[] = "https://stage.explorer.armornetwork.org/tx?hash=%1";
+const char STAGE_BLOCK_HASH_URL[] = "https://stage.explorer.armornetwork.org/block?hash=%1";
+const char STAGE_BLOCK_HEIGHT_URL[] = "https://stage.explorer.armornetwork.org/block?height=%1";
 
 
 //const char OVERVIEW_STYLE_SHEET_TEMPLATE[] =

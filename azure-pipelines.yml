@@ -65,8 +65,8 @@ jobs:
     displayName: Download daemons build artifacts
     inputs:
       buildType: specific
-      project: bytecoin
-      pipeline: bytecoin-daemons
+      project: armor
+      pipeline: armor-daemons
       buildVersionToDownload: 'latest'
       downloadType: single
       artifactName: linux64
@@ -74,13 +74,13 @@ jobs:
 
   - script: |
       unzip $(Build.ArtifactStagingDirectory)/linux64/\*.zip
-      mkdir bytecoin/bin
-      mv -v *d bytecoin/bin/
-      ./bytecoin/bin/bytecoind --version
+      mkdir armor/bin
+      mv -v *d armor/bin/
+      ./armor/bin/armord --version
     displayName: Unzip daemons build artifact
 
   - script: |
-      mkdir bytecoin-gui && cd bytecoin-gui
+      mkdir armor-gui && cd armor-gui
       git init
       git remote add origin https://user:$(GithubPAT)@github.com/$(desktopRepo)
       git fetch --depth 1 origin $(Build.SourceBranch)
@@ -93,16 +93,16 @@ jobs:
     displayName: Install qt
 
   - script: |
-      mkdir bytecoin-gui/build && cd bytecoin-gui/build
-      qmake ../src/bytecoin-gui.pro && make -j$(nproc)
+      mkdir armor-gui/build && cd armor-gui/build
+      qmake ../src/armor-gui.pro && make -j$(nproc)
     displayName: Build desktop
 
   - script: |
       zip -j -r $(Build.ArtifactStagingDirectory)/$(System.TeamProject)-desktop-$(Build.SourceBranchName)-linux64.zip \
-        bytecoin-gui/bin/bytecoind \
-        bytecoin-gui/bin/walletd \
-        bytecoin/bin/minerd \
-        bytecoin-gui/bin/bytecoin-gui
+        armor-gui/bin/armord \
+        armor-gui/bin/walletd \
+        armor/bin/minerd \
+        armor-gui/bin/armor-gui
     displayName: Zip desktop
 
   - task: PublishBuildArtifacts@1
@@ -133,8 +133,8 @@ jobs:
     displayName: Download daemons build artifacts
     inputs:
       buildType: specific
-      project: bytecoin
-      pipeline: bytecoin-daemons
+      project: armor
+      pipeline: armor-daemons
       buildVersionToDownload: 'latest'
       downloadType: single
       artifactName: macos
@@ -142,13 +142,13 @@ jobs:
 
   - script: |
       unzip $(Build.ArtifactStagingDirectory)/macos/\*.zip
-      mkdir bytecoin/bin
-      mv -v *d bytecoin/bin/
-      ./bytecoin/bin/bytecoind --version
+      mkdir armor/bin
+      mv -v *d armor/bin/
+      ./armor/bin/armord --version
     displayName: Unzip daemons build artifact
 
   - script: |
-      mkdir bytecoin-gui && cd bytecoin-gui
+      mkdir armor-gui && cd armor-gui
       git init
       git remote add origin https://user:$(GithubPAT)@github.com/$(desktopRepo)
       git fetch --depth 1 origin $(Build.SourceBranch)
@@ -163,17 +163,17 @@ jobs:
     displayName: Install qt 5.10.1
 
   - script: |
-      mkdir bytecoin-gui/build && cd bytecoin-gui/build
-      /usr/local/opt/qt/bin/qmake ../src/bytecoin-gui.pro && make -j
+      mkdir armor-gui/build && cd armor-gui/build
+      /usr/local/opt/qt/bin/qmake ../src/armor-gui.pro && make -j
     displayName: Build desktop code
 
   - script: |
-      /usr/local/opt/qt/bin/macdeployqt bytecoin-gui/bin/bytecoin-gui.app
+      /usr/local/opt/qt/bin/macdeployqt armor-gui/bin/armor-gui.app
     displayName: Call macdeployqt
 
   - script: |
-      cd bytecoin-gui/bin
-      zip -y -r $(Build.ArtifactStagingDirectory)/$(System.TeamProject)-desktop-$(Build.SourceBranchName)-macos.zip bytecoin-gui.app
+      cd armor-gui/bin
+      zip -y -r $(Build.ArtifactStagingDirectory)/$(System.TeamProject)-desktop-$(Build.SourceBranchName)-macos.zip armor-gui.app
     displayName: Zip app folder
 
   - task: PublishBuildArtifacts@1
@@ -230,8 +230,8 @@ jobs:
     displayName: Download daemons build artifacts
     inputs:
       buildType: specific
-      project: bytecoin
-      pipeline: bytecoin-daemons
+      project: armor
+      pipeline: armor-daemons
       buildVersionToDownload: 'latest'
       downloadType: single
       artifactName: win$(arch)
@@ -240,11 +240,11 @@ jobs:
   - bash: |
       set -o xtrace
       7z x "$(Build.ArtifactStagingDirectory)"/win$(arch)/\*.zip
-      mkdir bytecoin/bin
-      mv -v *d.exe bytecoin/bin
-      mv -v *d.pdb bytecoin/bin
-      mv -v *.dll bytecoin/bin/
-      ./bytecoin/bin/bytecoind --version
+      mkdir armor/bin
+      mv -v *d.exe armor/bin
+      mv -v *d.pdb armor/bin
+      mv -v *.dll armor/bin/
+      ./armor/bin/armord --version
     displayName: Unzip daemons build artifact
 
   - bash: |
@@ -272,7 +272,7 @@ jobs:
     displayName: Install Jom
 
   - bash: |
-      mkdir bytecoin-gui && cd bytecoin-gui
+      mkdir armor-gui && cd armor-gui
       git init
       git remote add origin https://user:$(GithubPAT)@github.com/$(desktopRepo)
       git fetch --depth 1 origin $(Build.SourceBranch)
@@ -280,15 +280,15 @@ jobs:
     displayName: Clone desktop code
 
   - bash: |
-      mkdir bytecoin-gui/build && cd bytecoin-gui/build
+      mkdir armor-gui/build && cd armor-gui/build
       echo "call \"$VCINSTALLDIR\Auxiliary\Build\vcvars$(arch).bat\"" > compile.bat
-      echo "\"$QTDIR\bin\qmake.exe\" ..\src\bytecoin-gui.pro" >> compile.bat
+      echo "\"$QTDIR\bin\qmake.exe\" ..\src\armor-gui.pro" >> compile.bat
       echo "..\..\jom\jom -j %NUMBER_OF_PROCESSORS%" >> compile.bat
       ./compile.bat
     displayName: Build desktop
 
   - bash: |
-      cd bytecoin-gui/bin
+      cd armor-gui/bin
       echo "call \"$VCINSTALLDIR\Auxiliary\Build\vcvars$(arch).bat\"" > deploy.bat
       echo "\"$QTDIR/bin/windeployqt.exe\" ." >> deploy.bat
       ./deploy.bat
@@ -297,19 +297,19 @@ jobs:
   - bash: |
       VCRedistVersion=`cat "$VCINSTALLDIR\Auxiliary\Build\Microsoft.VCRedistVersion.default.txt"`
       VCMergeModulesDir="$VCINSTALLDIR\Redist\MSVC\\$VCRedistVersion\MergeModules"
-      cd bytecoin-gui/Windows\ Installer
+      cd armor-gui/Windows\ Installer
       "$(wixInstallPath)"/candle.exe -arch $(installerArch) \
         -dVersion=$(Build.SourceBranchName) \
         -dProductVersion=`date +%y.%m.%d` \
         -dDate=`date +%Y/%m/%d` \
         -dVC_MERGE_MODULES_PATH="$VCMergeModulesDir\Microsoft_VC141_CRT_$(installerArch).msm" \
         Installer.wxs
-      "$(wixInstallPath)"/light.exe -sw1076 -ext WixUIExtension -spdb -out "$(Build.ArtifactStagingDirectory)"/bytecoin-desktop-$(Build.SourceBranchName)-win$(arch).msi Installer.wixobj
+      "$(wixInstallPath)"/light.exe -sw1076 -ext WixUIExtension -spdb -out "$(Build.ArtifactStagingDirectory)"/armor-desktop-$(Build.SourceBranchName)-win$(arch).msi Installer.wixobj
     displayName: Build Wix installer
 
   - bash: |
-      cd bytecoin-gui/bin
-      7z a "$(Build.ArtifactStagingDirectory)"/bytecoin-desktop-$(Build.SourceBranchName)-win$(arch)-portable.zip .
+      cd armor-gui/bin
+      7z a "$(Build.ArtifactStagingDirectory)"/armor-desktop-$(Build.SourceBranchName)-win$(arch)-portable.zip .
     displayName: Zip desktop
 
   - task: PublishBuildArtifacts@1
@@ -369,23 +369,23 @@ jobs:
       curl \
         -H "Authorization: token $(GithubPAT)" \
         -H "Content-Type: application/zip" -X POST \
-        --data-binary "@$(Build.ArtifactStagingDirectory)/win64/bytecoin-desktop-$(Build.SourceBranchName)-win64.msi" \
-        https://uploads.github.com/repos/$(desktopRepo)/releases/$release_id/assets?name="bytecoin-desktop-$(Build.SourceBranchName)-win64.msi"
+        --data-binary "@$(Build.ArtifactStagingDirectory)/win64/armor-desktop-$(Build.SourceBranchName)-win64.msi" \
+        https://uploads.github.com/repos/$(desktopRepo)/releases/$release_id/assets?name="armor-desktop-$(Build.SourceBranchName)-win64.msi"
       curl \
         -H "Authorization: token $(GithubPAT)" \
         -H "Content-Type: application/zip" -X POST \
-        --data-binary "@$(Build.ArtifactStagingDirectory)/win32/bytecoin-desktop-$(Build.SourceBranchName)-win32.msi" \
-        https://uploads.github.com/repos/$(desktopRepo)/releases/$release_id/assets?name="bytecoin-desktop-$(Build.SourceBranchName)-win32.msi"
+        --data-binary "@$(Build.ArtifactStagingDirectory)/win32/armor-desktop-$(Build.SourceBranchName)-win32.msi" \
+        https://uploads.github.com/repos/$(desktopRepo)/releases/$release_id/assets?name="armor-desktop-$(Build.SourceBranchName)-win32.msi"
       curl \
         -H "Authorization: token $(GithubPAT)" \
         -H "Content-Type: application/zip" -X POST \
-        --data-binary "@$(Build.ArtifactStagingDirectory)/win64/bytecoin-desktop-$(Build.SourceBranchName)-win64-portable.zip" \
-        https://uploads.github.com/repos/$(desktopRepo)/releases/$release_id/assets?name="bytecoin-desktop-$(Build.SourceBranchName)-win64-portable.zip"
+        --data-binary "@$(Build.ArtifactStagingDirectory)/win64/armor-desktop-$(Build.SourceBranchName)-win64-portable.zip" \
+        https://uploads.github.com/repos/$(desktopRepo)/releases/$release_id/assets?name="armor-desktop-$(Build.SourceBranchName)-win64-portable.zip"
       curl \
         -H "Authorization: token $(GithubPAT)" \
         -H "Content-Type: application/zip" -X POST \
-        --data-binary "@$(Build.ArtifactStagingDirectory)/win32/bytecoin-desktop-$(Build.SourceBranchName)-win32-portable.zip" \
-        https://uploads.github.com/repos/$(desktopRepo)/releases/$release_id/assets?name="bytecoin-desktop-$(Build.SourceBranchName)-win32-portable.zip"
+        --data-binary "@$(Build.ArtifactStagingDirectory)/win32/armor-desktop-$(Build.SourceBranchName)-win32-portable.zip" \
+        https://uploads.github.com/repos/$(desktopRepo)/releases/$release_id/assets?name="armor-desktop-$(Build.SourceBranchName)-win32-portable.zip"
     displayName: Create github release in desktop repo
 
   - script: |

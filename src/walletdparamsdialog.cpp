@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018, The Bytecoin developers.
+// Copyright (c) 2015-2018, The Armor developers.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include "walletdparamsdialog.h"
@@ -26,15 +26,15 @@ WalletdParamsDialog::WalletdParamsDialog(bool allowToRestart, QWidget *parent)
     default: ui->radioMainNet->setChecked(true);  break;
     }
 
-    const ConnectionMethod bytecoindConnection = Settings::instance().getBytecoindConnectionMethod();
-    switch (bytecoindConnection) {
-    case ConnectionMethod::BUILTIN:  ui->radioBuiltinBytecoind->setChecked(true);  break;
-    case ConnectionMethod::REMOTE: ui->radioExternalBytecoind->setChecked(true); break;
-    default: ui->radioBuiltinBytecoind->setChecked(true);  break;
+    const ConnectionMethod armordConnection = Settings::instance().getArmordConnectionMethod();
+    switch (armordConnection) {
+    case ConnectionMethod::BUILTIN:  ui->radioBuiltinArmord->setChecked(true);  break;
+    case ConnectionMethod::REMOTE: ui->radioExternalArmord->setChecked(true); break;
+    default: ui->radioBuiltinArmord->setChecked(true);  break;
     }
 
-    QUrl url{Settings::instance().getBytecoindHost()};
-    url.setPort(Settings::instance().getBytecoindPort());
+    QUrl url{Settings::instance().getArmordHost()};
+    url.setPort(Settings::instance().getArmordPort());
     ui->editHost->setText(url.toString());
 }
 
@@ -54,15 +54,15 @@ void WalletdParamsDialog::saveParams()
                         ui->radioTestNet->isChecked() ?
                             NetworkType::TEST :
                             NetworkType::MAIN);
-    Settings::instance().setBytecoindConnectionMethod(
-                ui->radioBuiltinBytecoind->isChecked() ?
+    Settings::instance().setArmordConnectionMethod(
+                ui->radioBuiltinArmord->isChecked() ?
                     ConnectionMethod::BUILTIN :
-                    ui->radioExternalBytecoind->isChecked() ?
+                    ui->radioExternalArmord->isChecked() ?
                         ConnectionMethod::REMOTE :
                         ConnectionMethod::BUILTIN);
 
     const QUrl url{ui->editHost->text()};
-    Settings::instance().setBytecoindEndPoint(url.toString(QUrl::RemovePort), url.port(Settings::instance().getDefaultBytecoindPort()));
+    Settings::instance().setArmordEndPoint(url.toString(QUrl::RemovePort), url.port(Settings::instance().getDefaultArmordPort()));
 }
 
 void WalletdParamsDialog::applyParams()
@@ -77,7 +77,7 @@ void WalletdParamsDialog::hostChanged()
     ui->applyButton->setEnabled(!ui->editHost->text().isEmpty());
 }
 
-void WalletdParamsDialog::externalBytecoindToggled(bool checked)
+void WalletdParamsDialog::externalArmordToggled(bool checked)
 {
     if (checked)
         ui->applyButton->setEnabled(!ui->editHost->text().isEmpty());

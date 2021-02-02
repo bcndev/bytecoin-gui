@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018, The Bytecoin developers.
+// Copyright (c) 2015-2018, The Armor developers.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #pragma once
@@ -33,7 +33,7 @@ private:
 //    QLabel* m_hdStatusLabel;
     QLabel* m_peerCountLabel;
     QLabel* m_walletConnectionLabel;
-    QLabel* m_bytecoindConnectionLabel;
+    QLabel* m_armordConnectionLabel;
     QMovie* m_syncMovie;
     QDataWidgetMapper* stateMapper_;
     QTimer* updateTimer_;

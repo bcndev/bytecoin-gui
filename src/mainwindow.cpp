@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018, The Bytecoin developers.
+// Copyright (c) 2015-2018, The Armor developers.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include <cstring>
@@ -42,10 +42,10 @@ namespace WalletGUI {
 namespace {
 
 //const int MAX_RECENT_WALLET_COUNT = 10;
-//const char COMMUNITY_FORUM_URL[] = "https://bytecointalk.org";
-const char COMMUNITY_FORUM_URL[] = "https://bytecoin.org";
-const char REPORT_ISSUE_URL[] = "https://bytecoin.org/contact";
-const char DOWNLOAD_URL[] = "https://github.com/bcndev/bytecoin-gui/releases";
+//const char COMMUNITY_FORUM_URL[] = "https://armortalk.org";
+const char COMMUNITY_FORUM_URL[] = "https://armornetwork.org";
+const char REPORT_ISSUE_URL[] = "https://armornetwork.org";
+const char DOWNLOAD_URL[] = "https://github.com/noritte/armor-gui/releases";
 
 const char BUTTON_STYLE_SHEET[] =
         "QPushButton {"
@@ -75,9 +75,9 @@ constexpr int UI_SCALE = 110; // pct
 //        "QPushButton {border: none;}"
 //        "QPushButton:checked {background-color: %1; color: #FFFFFF}";
 
-const char WINDOW_MAIN_ICON_PATH[] = ":images/bytecoin";
-const char WINDOW_STAGE_ICON_PATH[] = ":images/bytecoin_stage";
-const char WINDOW_TEST_ICON_PATH[] = ":images/bytecoin_test";
+const char WINDOW_MAIN_ICON_PATH[] = ":images/armor";
+const char WINDOW_STAGE_ICON_PATH[] = ":images/armor_stage";
+const char WINDOW_TEST_ICON_PATH[] = ":images/armor_test";
 
 const char LOGO_LABEL_MAIN_ICON_PATH[] = ":icons/light/logo";
 const char LOGO_LABEL_STAGE_ICON_PATH[] = ":icons/logo_stage";
@@ -649,7 +649,7 @@ void MainWindow::updateIsReady(const QString& newVersion)
 {
     m_ui->m_updateLabel->setTextInteractionFlags(Qt::LinksAccessibleByMouse);
     m_ui->m_updateLabel->setOpenExternalLinks(true);
-    m_ui->m_updateLabel->setText(QString("New version %1 of Bytecoin wallet is available.").arg(QString(QString("<a href=\"") + DOWNLOAD_URL + "\">%1</a>").arg(newVersion)));
+    m_ui->m_updateLabel->setText(QString("New version %1 of Armor wallet is available.").arg(QString(QString("<a href=\"") + DOWNLOAD_URL + "\">%1</a>").arg(newVersion)));
     m_ui->m_updateLabel->show();
 }
 

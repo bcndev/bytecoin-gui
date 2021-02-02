@@ -169,7 +169,7 @@
      <item row="0" column="0">
       <widget class="QLabel" name="m_amountTextLabel">
        <property name="text">
-        <string>Amount (BCN)</string>
+        <string>Amount (AMX)</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>

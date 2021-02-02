@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018, The Bytecoin developers.
+// Copyright (c) 2015-2018, The Armor developers.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #ifndef WALLETDPARAMSDIALOG_H
@@ -25,7 +25,7 @@ public slots:
     void saveParams();
     void applyParams();
     void hostChanged();
-    void externalBytecoindToggled(bool checked);
+    void externalArmordToggled(bool checked);
 
 signals:
     void restartWalletd();

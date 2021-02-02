@@ -8,53 +8,53 @@ QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = bytecoin-gui
+TARGET = armor-gui
 TEMPLATE = app
 
 !win32: QMAKE_CXXFLAGS += -std=c++14 -Wall -Wextra -pedantic
-macx: QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.11
-macx: ICON = images/bytecoin.icns
-win32: RC_ICONS = images/bytecoin.ico
-win32: VERSION = 3.19.7.18
+macx: QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
+macx: ICON = images/armor.icns
+win32: RC_ICONS = images/armor.ico
+win32: VERSION = 0.0.0.2
 
 #QMAKE_CXXFLAGS += -fno-omit-frame-pointer -fsanitize=address,undefined
 #LIBS += -lasan -lubsan
 
-CONFIG += c++14 strict_c++ no-opengl
+CONFIG += c++14 strict_c++ no-opengl sdk_no_version_check
 DEFINES += QT_FORCE_ASSERTS
 
 DESTDIR = $$PWD/../bin
 
-# copy walletd adjacent to bytecoin-gui binary on all 3 platforms
+# copy walletd adjacent to armor-gui binary on all 3 platforms
 win32 {
-WALLETD_BY_SRC_PATH = $$shell_path($$clean_path("$$PWD/../../bytecoin/bin/walletd.exe"))
-WALLETD2_BY_SRC_PATH = $$shell_path($$clean_path("$$PWD/../../bytecoin/bin/walletd.pdb"))
-BYTECOIND_BY_SRC_PATH = $$shell_path($$clean_path("$$PWD/../../bytecoin/bin/bytecoind.exe"))
-BYTECOIND2_BY_SRC_PATH = $$shell_path($$clean_path("$$PWD/../../bytecoin/bin/bytecoind.pdb"))
+WALLETD_BY_SRC_PATH = $$shell_path($$clean_path("$$PWD/../../armor/bin/walletd.exe"))
+WALLETD2_BY_SRC_PATH = $$shell_path($$clean_path("$$PWD/../../armor/bin/walletd.pdb"))
+ARMORD_BY_SRC_PATH = $$shell_path($$clean_path("$$PWD/../../armor/bin/armord.exe"))
+ARMORD2_BY_SRC_PATH = $$shell_path($$clean_path("$$PWD/../../armor/bin/armord.pdb"))
 Debug:BY_DST_PATH = $$shell_path($$clean_path("$$DESTDIR"))
 Release:BY_DST_PATH = $$shell_path($$clean_path("$$DESTDIR"))
 copywalletd.commands = $(COPY_FILE) $${WALLETD_BY_SRC_PATH} $${BY_DST_PATH}
 copywalletd2.commands = $(COPY_FILE) $${WALLETD2_BY_SRC_PATH} $${BY_DST_PATH}
-copybytecoind.commands = $(COPY_FILE) $${BYTECOIND_BY_SRC_PATH} $${BY_DST_PATH}
-copybytecoind2.commands = $(COPY_FILE) $${BYTECOIND2_BY_SRC_PATH} $${BY_DST_PATH}
-first.depends = $(first) copywalletd copywalletd2 copybytecoind copybytecoind2
-QMAKE_EXTRA_TARGETS += first copywalletd copywalletd2 copybytecoind copybytecoind2
+copyarmord.commands = $(COPY_FILE) $${ARMORD_BY_SRC_PATH} $${BY_DST_PATH}
+copyarmord2.commands = $(COPY_FILE) $${ARMORD2_BY_SRC_PATH} $${BY_DST_PATH}
+first.depends = $(first) copywalletd copywalletd2 copyarmord copyarmord2
+QMAKE_EXTRA_TARGETS += first copywalletd copywalletd2 copyarmord copyarmord2
 }else:macx {
-copywalletd.commands += $(COPY_FILE) $$PWD/../../bytecoin/bin/walletd $$DESTDIR/bytecoin-gui.app/Contents/MacOS
-copybytecoind.commands += $(COPY_FILE) $$PWD/../../bytecoin/bin/bytecoind $$DESTDIR/bytecoin-gui.app/Contents/MacOS
-first.depends = copywalletd copybytecoind
+copywalletd.commands += $(COPY_FILE) $$PWD/../../armor/bin/walletd $$DESTDIR/armor-gui.app/Contents/MacOS
+copyarmord.commands += $(COPY_FILE) $$PWD/../../armor/bin/armord $$DESTDIR/armor-gui.app/Contents/MacOS
+first.depends = copywalletd copyarmord
 copywalletd.depends = $(TARGET)
-copybytecoind.depends = $(TARGET)
-QMAKE_EXTRA_TARGETS += first copywalletd copybytecoind
+copyarmord.depends = $(TARGET)
+QMAKE_EXTRA_TARGETS += first copywalletd copyarmord
 }else {
-copywalletd.commands += $(COPY_FILE) $$PWD/../../bytecoin/bin/walletd $$DESTDIR
-copybytecoind.commands += $(COPY_FILE) $$PWD/../../bytecoin/bin/bytecoind $$DESTDIR
-first.depends = $(first) copywalletd copybytecoind
-QMAKE_EXTRA_TARGETS += first copywalletd copybytecoind
+copywalletd.commands += $(COPY_FILE) $$PWD/../../armor/bin/walletd $$DESTDIR
+copyarmord.commands += $(COPY_FILE) $$PWD/../../armor/bin/armord $$DESTDIR
+first.depends = $(first) copywalletd copyarmord
+QMAKE_EXTRA_TARGETS += first copywalletd copyarmord
 }
 #export(first.depends)
 #export(copywalletd.commands)
-#export(copybytecoind.commands)
+#export(copyarmord.commands)
 
 SOURCES += main.cpp\
     mainwindow.cpp \
@@ -215,16 +215,16 @@ RESOURCES += \
     resources.qrc \
 
 
-unix|win32: LIBS += -L$$PWD/../../bytecoin/libs/ -lbytecoin-crypto
+unix|win32: LIBS += -L$$PWD/../../armor/libs/ -larmor-crypto
 
-INCLUDEPATH += $$PWD/../../bytecoin/src
-DEPENDPATH += $$PWD/../../bytecoin/src
+INCLUDEPATH += $$PWD/../../armor/src
+DEPENDPATH += $$PWD/../../armor/src
 
-win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../../bytecoin/libs/bytecoin-crypto.lib
-else:unix|win32-g++: PRE_TARGETDEPS += $$PWD/../../bytecoin/libs/libbytecoin-crypto.a
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../../armor/libs/armor-crypto.lib
+else:unix|win32-g++: PRE_TARGETDEPS += $$PWD/../../armor/libs/libarmor-crypto.a
 
 # to add necessary dependencies,
-# 1. delete built bytecoin-gui.app to delete old dependencies (dylibs and frameworks)
+# 1. delete built armor-gui.app to delete old dependencies (dylibs and frameworks)
 # 2. build
-# 3. run /Users/user/Qt/5.9.2/clang_64/bin/macdeployqt bytecoin-gui.app
+# 3. run /Users/user/Qt/5.9.2/clang_64/bin/macdeployqt armor-gui.app
 # P.S. in 3, change path accroding to your Qt installation location

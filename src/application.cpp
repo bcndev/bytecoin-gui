@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018, The Bytecoin developers.
+// Copyright (c) 2015-2018, The Armor developers.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include <QFontDatabase>
@@ -36,7 +36,7 @@
 
 namespace WalletGUI {
 
-const char VERSION_DATA_URL[] = "https://raw.githubusercontent.com/bcndev/bytecoin-gui/master/LatestStableVersion.txt?1"; // use ?1 trick to force reload and bypass cache
+const char VERSION_DATA_URL[] = "https://raw.githubusercontent.com/noritte/armor-gui/master/LatestStableVersion.txt?1"; // use ?1 trick to force reload and bypass cache
 
 WalletApplication::WalletApplication(int& argc, char** argv)
     : QApplication(argc, argv)
@@ -50,8 +50,8 @@ WalletApplication::WalletApplication(int& argc, char** argv)
     , crashDialog_(new CrashDialog())
     , m_isAboutToQuit(false)
 {
-    setApplicationName("bytecoin"); // do not change because it also changes data directory under Mac and Win
-    setApplicationDisplayName(tr("Bytecoin Wallet") + ' ' + Settings::getFullVersion());
+    setApplicationName("armor"); // do not change because it also changes data directory under Mac and Win
+    setApplicationDisplayName(tr("Armor Wallet") + ' ' + Settings::getFullVersion());
     setApplicationVersion(VERSION);
     setQuitOnLastWindowClosed(false);
     QLocale::setDefault(QLocale::c());
@@ -95,13 +95,13 @@ bool WalletApplication::init()
     makeDataDir(logsDir);
     WalletLogger::init(logsDir, true, this);
     WalletLogger::info(tr("[Application] Initializing..."));
-    QString path = dataDir.absoluteFilePath("bytecoin-gui.lock");
+    QString path = dataDir.absoluteFilePath("armor-gui.lock");
     m_lockFile.reset(new QLockFile(path));
 
     if (!m_lockFile->tryLock())
     {
-        WalletLogger::warning(tr("[Application] Bytecoin wallet GUI already running"));
-        QMessageBox::warning(nullptr, QObject::tr("Error"), tr("Bytecoin wallet GUI already running"));
+        WalletLogger::warning(tr("[Application] Armor wallet GUI already running"));
+        QMessageBox::warning(nullptr, QObject::tr("Error"), tr("Armor wallet GUI already running"));
         return false;
     }
 
@@ -328,14 +328,14 @@ void WalletApplication::disconnectedFromWalletd()
 
 void WalletApplication::detached()
 {
-    splashMsg(tr("Bytecoin GUI is in detached state.\nYou can open a wallet file, create a new one, or connect to remote walletd daemon."));
+    splashMsg(tr("Armor GUI is in detached state.\nYou can open a wallet file, create a new one, or connect to remote walletd daemon."));
     if (m_mainWindow)
         m_mainWindow->setDisconnectedState();
 }
 
 void WalletApplication::firstRun()
 {
-    splashMsg(tr("Looks like this is your first run of the new Bytecoin Wallet GUI. It is in detached state now.\nYou can open a wallet file, create a new one, or connect to remote walletd daemon."));
+    splashMsg(tr("Looks like this is your first run of the new Armor Wallet GUI. It is in detached state now.\nYou can open a wallet file, create a new one, or connect to remote walletd daemon."));
 }
 
 void WalletApplication::daemonErrorOccurred(QProcess::ProcessError error, QString errorString)

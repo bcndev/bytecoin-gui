@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018, The Bytecoin developers.
+// Copyright (c) 2015-2018, The Armor developers.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include <QLocale>
@@ -818,7 +818,7 @@ QVariant WalletModel::getDisplayRoleStatus(const QModelIndex& index) const
     }
     case COLUMN_LOWER_LEVEL_ERROR:
 //        return pimpl_->status.lower_level_error;
-        return pimpl_->status.lower_level_error.isEmpty() || (pimpl_->status.top_block_height < pimpl_->status.top_known_block_height && pimpl_->status.lower_level_error == "SEND_ERROR") ? tr("Connected to bytecoind.") : tr("Bytecoind status: %1.").arg(pimpl_->status.lower_level_error);
+        return pimpl_->status.lower_level_error.isEmpty() || (pimpl_->status.top_block_height < pimpl_->status.top_known_block_height && pimpl_->status.lower_level_error == "SEND_ERROR") ? tr("Connected to armord.") : tr("Armord status: %1.").arg(pimpl_->status.lower_level_error);
     case COLUMN_RECOMMENDED_MAX_TRANSACTION_SIZE:
         return pimpl_->status.recommended_max_transaction_size;
     case COLUMN_TXPOOL_VERSION:

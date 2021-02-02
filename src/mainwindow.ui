@@ -30,7 +30,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
-    <normaloff>:/images/bytecoin</normaloff>:/images/bytecoin</iconset>
+    <normaloff>:/images/armor</normaloff>:/images/armor</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -199,7 +199,7 @@
                  <cursorShape>ArrowCursor</cursorShape>
                 </property>
                 <property name="text">
-                 <string>New version %1 of Bytecoin wallet is available!</string>
+                 <string>New version %1 of Armor wallet is available!</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -914,7 +914,7 @@
      <string>&amp;Help</string>
     </property>
     <addaction name="m_communityForumAction"/>
-    <addaction name="m_aboutBytecoinAction"/>
+    <addaction name="m_aboutArmorAction"/>
     <addaction name="m_aboutQtAction"/>
    </widget>
    <widget class="QMenu" name="menuTools">
@@ -960,12 +960,12 @@
     <string>&amp;Open wallet file</string>
    </property>
   </action>
-  <action name="m_aboutBytecoinAction">
+  <action name="m_aboutArmorAction">
    <property name="enabled">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>&amp;About Bytecoin</string>
+    <string>&amp;About Armor</string>
    </property>
   </action>
   <action name="m_aboutQtAction">
@@ -1139,7 +1139,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>m_aboutBytecoinAction</sender>
+   <sender>m_aboutArmorAction</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>about()</slot>

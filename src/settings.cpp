@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018, The Bytecoin developers.
+// Copyright (c) 2015-2018, The Armor developers.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include <QSettings>
@@ -26,9 +26,9 @@ constexpr char OPTION_LOCAL_WALLETD_PORT[] = "localWalletdPort";
 constexpr char OPTION_REMOTE_WALLETD_END_POINT[] = "remoteWalletdEndPoint";
 constexpr char OPTION_CONNECTION_METHOD[] = "connectionMethod"; // obsolete
 constexpr char OPTION_WALLETD_CONNECTION_METHOD[] = "walletdConnectionMethod";
-constexpr char OPTION_BYTECOIND_CONNECTION_METHOD[] = "bytecoindConnectionMethod";
-constexpr char OPTION_BYTECOIND_HOST[] = "bytecoindHost";
-constexpr char OPTION_BYTECOIND_PORT[] = "bytecoindPort";
+constexpr char OPTION_ARMORD_CONNECTION_METHOD[] = "armordConnectionMethod";
+constexpr char OPTION_ARMORD_HOST[] = "armordHost";
+constexpr char OPTION_ARMORD_PORT[] = "armordPort";
 constexpr char OPTION_NETWORK_TYPE[] = "networkType";
 constexpr char OPTION_MINING_POOL_SWITCH_STRATEGY[] = "miningPoolSwitchStrategy";
 constexpr char OPTION_MINING_CPU_CORE_COUNT[] = "miningCpuCoreCount";
@@ -36,21 +36,21 @@ constexpr char OPTION_MINING_POOL_LIST[] = "miningPoolList";
 constexpr char OPTION_RECENT_WALLETS[] = "recentWallets";
 constexpr char OPTION_WALLETD_PARAMS[] = "walletdParams";
 
-constexpr quint16 DEFAULT_MAIN_WALLETD_RPC_PORT = 8070;
+constexpr quint16 DEFAULT_MAIN_WALLETD_RPC_PORT = 58082;
 constexpr quint16 DEFAULT_TEST_WALLETD_RPC_PORT = DEFAULT_MAIN_WALLETD_RPC_PORT + 1000;
 constexpr quint16 DEFAULT_STAGE_WALLETD_RPC_PORT = DEFAULT_MAIN_WALLETD_RPC_PORT + 2000;
 
-constexpr quint16 DEFAULT_MAIN_BYTECOIND_RPC_PORT = 8081;
-constexpr quint16 DEFAULT_TEST_BYTECOIND_RPC_PORT = DEFAULT_MAIN_BYTECOIND_RPC_PORT + 1000;
-constexpr quint16 DEFAULT_STAGE_BYTECOIND_RPC_PORT = DEFAULT_MAIN_BYTECOIND_RPC_PORT + 2000;
+constexpr quint16 DEFAULT_MAIN_ARMORD_RPC_PORT = 58081;
+constexpr quint16 DEFAULT_TEST_ARMORD_RPC_PORT = DEFAULT_MAIN_ARMORD_RPC_PORT + 1000;
+constexpr quint16 DEFAULT_STAGE_ARMORD_RPC_PORT = DEFAULT_MAIN_ARMORD_RPC_PORT + 2000;
 
 constexpr char LOCAL_HOST[] = "127.0.0.1";
 
 #if defined(Q_OS_LINUX)
-constexpr char DEFAULT_WORK_DIR[] = ".bytecoin";
+constexpr char DEFAULT_WORK_DIR[] = ".armor";
 #endif
 
-const constexpr char* DEFAULT_MINING_POOLS[] = { "pool.bytecoin.party:3333", "bytecoin.uk:3333", "bytecoin-pool.org:3333", "bcn.pool.minergate.com:45550" };
+const constexpr char* DEFAULT_MINING_POOLS[] = { "pool.armornetwork.org:4000" };
 
 static
 bool readJsonFile(QIODevice& device, QSettings::SettingsMap& map)
@@ -81,7 +81,7 @@ Settings::Settings()
     const QSettings::Format jsonFormat = QSettings::registerFormat("json", readJsonFile, writeJsonFile);
     QSettings::setDefaultFormat(jsonFormat);
     makeDataDir(getDefaultWorkDir());
-    const QString jsonFile = getDefaultWorkDir().absoluteFilePath("bytecoin-gui.config");
+    const QString jsonFile = getDefaultWorkDir().absoluteFilePath("armor-gui.config");
 
     settings_.reset(new QSettings(jsonFile, jsonFormat));
 
@@ -180,26 +180,26 @@ QString Settings::getUserFriendlyWalletdConnectionMethod() const
     return QString();
 }
 
-ConnectionMethod Settings::getBytecoindConnectionMethod() const
+ConnectionMethod Settings::getArmordConnectionMethod() const
 {
-//    return static_cast<ConnectionMethod>(settings_->value(OPTION_BYTECOIND_CONNECTION_METHOD, static_cast<int>(getBytecoindDefaultConnectionMethod())).toInt());
-    return getEnumValue<ConnectionMethod>(OPTION_BYTECOIND_CONNECTION_METHOD, getBytecoindDefaultConnectionMethod());
+//    return static_cast<ConnectionMethod>(settings_->value(OPTION_ARMORD_CONNECTION_METHOD, static_cast<int>(getArmordDefaultConnectionMethod())).toInt());
+    return getEnumValue<ConnectionMethod>(OPTION_ARMORD_CONNECTION_METHOD, getArmordDefaultConnectionMethod());
 }
 
-QString Settings::getBytecoindEndPoint() const
+QString Settings::getArmordEndPoint() const
 {
-    const quint16 port = getBytecoindPort();
-    return QString{"%1:%2"}.arg(getBytecoindHost()).arg(port ? port : getDefaultBytecoindPort());
+    const quint16 port = getArmordPort();
+    return QString{"%1:%2"}.arg(getArmordHost()).arg(port ? port : getDefaultArmordPort());
 }
 
-QString Settings::getBytecoindHost() const
+QString Settings::getArmordHost() const
 {
-    return settings_->value(OPTION_BYTECOIND_HOST).toString();
+    return settings_->value(OPTION_ARMORD_HOST).toString();
 }
 
-quint16 Settings::getBytecoindPort() const
+quint16 Settings::getArmordPort() const
 {
-    return static_cast<quint16>(settings_->value(OPTION_BYTECOIND_PORT, getDefaultBytecoindPort()).toUInt());
+    return static_cast<quint16>(settings_->value(OPTION_ARMORD_PORT, getDefaultArmordPort()).toUInt());
 }
 
 NetworkType Settings::getNetworkType() const
@@ -263,15 +263,15 @@ quint16 Settings::getDefaultWalletdPort() const
     return DEFAULT_MAIN_WALLETD_RPC_PORT;
 }
 
-quint16 Settings::getDefaultBytecoindPort() const
+quint16 Settings::getDefaultArmordPort() const
 {
     switch(getNetworkType())
     {
-    case NetworkType::MAIN:  return DEFAULT_MAIN_BYTECOIND_RPC_PORT;
-    case NetworkType::STAGE: return DEFAULT_STAGE_BYTECOIND_RPC_PORT;
-    case NetworkType::TEST:  return DEFAULT_TEST_BYTECOIND_RPC_PORT;
+    case NetworkType::MAIN:  return DEFAULT_MAIN_ARMORD_RPC_PORT;
+    case NetworkType::STAGE: return DEFAULT_STAGE_ARMORD_RPC_PORT;
+    case NetworkType::TEST:  return DEFAULT_TEST_ARMORD_RPC_PORT;
     }
-    return DEFAULT_MAIN_BYTECOIND_RPC_PORT;
+    return DEFAULT_MAIN_ARMORD_RPC_PORT;
 }
 
 
@@ -300,11 +300,11 @@ void Settings::setRemoteWalletdEndPoint(const QString& host, quint16 port)
     settings_->setValue(OPTION_REMOTE_WALLETD_END_POINT, QString("%1:%2").arg(host).arg(port));
 }
 
-void Settings::setBytecoindEndPoint(const QString& host, quint16 port)
+void Settings::setArmordEndPoint(const QString& host, quint16 port)
 {
-    settings_->setValue(OPTION_BYTECOIND_HOST, host);
-    settings_->setValue(OPTION_BYTECOIND_PORT, port);
-//    settings_->setValue(OPTION_BYTECOIND_END_POINT, QString("%1:%2").arg(host).arg(port));
+    settings_->setValue(OPTION_ARMORD_HOST, host);
+    settings_->setValue(OPTION_ARMORD_PORT, port);
+//    settings_->setValue(OPTION_ARMORD_END_POINT, QString("%1:%2").arg(host).arg(port));
 }
 
 void Settings::setWalletdConnectionMethod(ConnectionMethod method)
@@ -312,9 +312,9 @@ void Settings::setWalletdConnectionMethod(ConnectionMethod method)
     settings_->setValue(OPTION_WALLETD_CONNECTION_METHOD, static_cast<int>(method));
 }
 
-void Settings::setBytecoindConnectionMethod(ConnectionMethod method)
+void Settings::setArmordConnectionMethod(ConnectionMethod method)
 {
-    settings_->setValue(OPTION_BYTECOIND_CONNECTION_METHOD, static_cast<int>(method));
+    settings_->setValue(OPTION_ARMORD_CONNECTION_METHOD, static_cast<int>(method));
 }
 
 void Settings::setNetworkType(NetworkType type)
@@ -398,7 +398,7 @@ ConnectionMethod Settings::getWalletdDefaultConnectionMethod()
 }
 
 /*static*/
-ConnectionMethod Settings::getBytecoindDefaultConnectionMethod()
+ConnectionMethod Settings::getArmordDefaultConnectionMethod()
 {
     return ConnectionMethod::BUILTIN;
 }

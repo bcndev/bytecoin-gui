@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018, The Bytecoin developers.
+// Copyright (c) 2015-2018, The Armor developers.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #ifndef SETTINGS_H
@@ -37,7 +37,7 @@ public:
     static QString getDefaultWalletdPath();
 //    static QString getDefaultRpcPath();
     static ConnectionMethod getWalletdDefaultConnectionMethod();
-    static ConnectionMethod getBytecoindDefaultConnectionMethod();
+    static ConnectionMethod getArmordDefaultConnectionMethod();
     static NetworkType getDefaultNetworkType();
     static MiningPoolSwitchStrategy getDefaultMiningPoolSwitchStrategy();
     static quint32 getDefaultMiningCpuCoreCount();
@@ -57,15 +57,15 @@ public:
     QString getBuiltinWalletdEndPoint() const;
     ConnectionMethod getWalletdConnectionMethod() const;
     QString getUserFriendlyWalletdConnectionMethod() const;
-    ConnectionMethod getBytecoindConnectionMethod() const;
-    QString getBytecoindEndPoint() const;
-    QString getBytecoindHost() const;
-    quint16 getBytecoindPort() const;
+    ConnectionMethod getArmordConnectionMethod() const;
+    QString getArmordEndPoint() const;
+    QString getArmordHost() const;
+    quint16 getArmordPort() const;
 //    QString getLocalRpcEndPoint() const;
 //    QString getRpcEndPoint() const;
     QString getLocalWalletdEndPoint() const;
     QString getWalletdEndPoint() const;
-    quint16 getDefaultBytecoindPort() const;
+    quint16 getDefaultArmordPort() const;
     quint16 getDefaultWalletdPort() const;
     QString getWalletFile() const;
     QString getNetworkTypeString() const;
@@ -85,8 +85,8 @@ public:
     void setLocalWalletdPort(quint16 port);
     void setRemoteWalletdEndPoint(const QString& host, quint16 port);
     void setWalletdConnectionMethod(ConnectionMethod method);
-    void setBytecoindConnectionMethod(ConnectionMethod method);
-    void setBytecoindEndPoint(const QString& host, quint16 port);
+    void setArmordConnectionMethod(ConnectionMethod method);
+    void setArmordEndPoint(const QString& host, quint16 port);
     void setNetworkType(NetworkType type);
 
     void setMiningPoolSwitchStrategy(MiningPoolSwitchStrategy strategy);

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018, The Bytecoin developers.
+// Copyright (c) 2015-2018, The Armor developers.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #ifndef POPUP_H
@@ -8,6 +8,7 @@
 #include <QPropertyAnimation>
 #include <QLayout>
 #include <QTimer>
+#include "common.h"
 
 namespace WalletGUI
 {

@@ -105,15 +105,15 @@
     </qresource>
     <qresource prefix="/images">
         <file alias="splash">images/splash.png</file>
-        <file alias="bytecoin">images/bytecoin.png</file>
+        <file alias="armor">images/armor.png</file>
         <file alias="add_address_helper">images/add_address_helper.png</file>
-        <file alias="bytecoin_mac">images/bytecoin.icns</file>
-        <file alias="bytecoin_win">images/bytecoin.ico</file>
-        <file alias="bytecoin_test">images/bytecoin_test.png</file>
-        <file alias="bytecoin_stage">images/bytecoin_stage.png</file>
+        <file alias="armor_mac">images/armor.icns</file>
+        <file alias="armor_win">images/armor.ico</file>
+        <file alias="armor_test">images/armor_test.png</file>
+        <file alias="armor_stage">images/armor_stage.png</file>
     </qresource>
     <qresource prefix="/style">
-        <file alias="qss">bytecoinwallet.qss</file>
+        <file alias="qss">armorwallet.qss</file>
     </qresource>
     <qresource prefix="/font">
         <file alias="Black">font/WorkSans-Black.ttf</file>

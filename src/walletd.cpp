@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018, The Bytecoin developers.
+// Copyright (c) 2015-2018, The Armor developers.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include <QProcess>
@@ -538,8 +538,8 @@ void BuiltinWalletd::run()
     if (importKeys)
         args << "--import-keys";
 
-    if (Settings::instance().getBytecoindConnectionMethod() != ConnectionMethod::BUILTIN)
-        args << QString{"--bytecoind-remote-address=%1"}.arg(Settings::instance().getBytecoindEndPoint());
+    if (Settings::instance().getArmordConnectionMethod() != ConnectionMethod::BUILTIN)
+        args << QString{"--armord-remote-address=%1"}.arg(Settings::instance().getArmordEndPoint());
 
     args << QString{"--net=%1"}.arg(Settings::instance().getNetworkTypeString());
 
@@ -981,20 +981,20 @@ QString BuiltinWalletd::errorMessage(ReturnCodes err)
 
     switch(err)
     {
-    case ReturnCodes::BYTECOIND_DATABASE_ERROR:
+    case ReturnCodes::ARMORD_DATABASE_ERROR:
         msg = tr("Database write error. Disk is full or database is corrupted.");
         break;
-    case ReturnCodes::BYTECOIND_ALREADY_RUNNING:
-        msg = tr("Cannot run bytecoind. Another instance of bytecoind is running.");
+    case ReturnCodes::ARMORD_ALREADY_RUNNING:
+        msg = tr("Cannot run armord. Another instance of armord is running.");
         break;
     case ReturnCodes::WALLETD_BIND_PORT_IN_USE:
         msg = tr("Cannot run walletd. Walletd bind port in use.");
         break;
-    case ReturnCodes::BYTECOIND_BIND_PORT_IN_USE:
-        msg = tr("Cannot run bytecoind. Bytecoind bind port in use.");
+    case ReturnCodes::ARMORD_BIND_PORT_IN_USE:
+        msg = tr("Cannot run armord. Armord bind port in use.");
         break;
-    case ReturnCodes::BYTECOIND_WRONG_ARGS:
-        msg = tr("Wrong arguments passed to bytecoind.");
+    case ReturnCodes::ARMORD_WRONG_ARGS:
+        msg = tr("Wrong arguments passed to armord.");
         break;
     case ReturnCodes::WALLET_FILE_READ_ERROR:
         msg = tr("Cannot read the specified wallet file\n(") + Settings::instance().getWalletFile() + ").";
@@ -1009,7 +1009,7 @@ QString BuiltinWalletd::errorMessage(ReturnCodes err)
         msg = tr("Cannot write to the wallet file. Probably your file system is read only\n(") + Settings::instance().getWalletFile() + ").";
         break;
     case ReturnCodes::WALLET_FILE_EXISTS:
-        msg = tr("The specified wallet file already exists. Bytecoin wallet never overwrites an existed wallet file for safety reason. If you want to overwrite the file please remove it manually and try again\n(") + Settings::instance().getWalletFile() + ").";
+        msg = tr("The specified wallet file already exists. Armor wallet never overwrites an existed wallet file for safety reason. If you want to overwrite the file please remove it manually and try again\n(") + Settings::instance().getWalletFile() + ").";
         break;
     case ReturnCodes::WALLET_WITH_SAME_KEYS_IN_USE:
         msg = tr("Another walletd instance is using the specified wallet file or another wallet file with the same keys\n(") + Settings::instance().getWalletFile() + ").";

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018, The Bytecoin developers.
+// Copyright (c) 2015-2018, The Armor developers.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include "popup.h"
@@ -48,7 +48,7 @@ void MagicToolTip::paintEvent(QPaintEvent* /*event*/)
     roundedRect.setWidth(rect().width() - 10);
     roundedRect.setHeight(rect().height() - 10);
 
-    painter.setBrush(QBrush(QColor(0xEE4486))); // TODO: make setter
+    painter.setBrush(QBrush(QColor(MAIN_NET_COLOR))); // TODO: make setter
     painter.setPen(Qt::NoPen);
     painter.drawRoundedRect(roundedRect, 7, 7);
 }

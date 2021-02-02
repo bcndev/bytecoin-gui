@@ -3,7 +3,7 @@
 "VSVersion" = "3:800"
 "ProjectType" = "8:{978C614F-708E-4E1A-B201-565925725DBA}"
 "IsWebType" = "8:FALSE"
-"ProjectName" = "8:Bytecoin"
+"ProjectName" = "8:Armor"
 "LanguageId" = "3:1033"
 "CodePage" = "3:1252"
 "UILanguageId" = "3:1033"
@@ -315,7 +315,7 @@
         "DisplayName" = "8:Debug"
         "IsDebugOnly" = "11:TRUE"
         "IsReleaseOnly" = "11:FALSE"
-        "OutputFilename" = "8:Debug\\Bytecoin.msi"
+        "OutputFilename" = "8:Debug\\Armor.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -347,7 +347,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:Release\\Bytecoin.msi"
+        "OutputFilename" = "8:Release\\Armor.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -536,8 +536,8 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_22FB6F3AD790418EBE8762A9843DF579"
             {
-            "SourcePath" = "8:..\\bin\\bytecoind.pdb"
-            "TargetName" = "8:bytecoind.pdb"
+            "SourcePath" = "8:..\\bin\\armord.pdb"
+            "TargetName" = "8:armord.pdb"
             "Tag" = "8:"
             "Folder" = "8:_BB6FE95E6903428FBAEC9FE62CB0FE39"
             "Condition" = "8:"
@@ -716,8 +716,8 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6692C6A6F2CB48D88DFD0141D14A533E"
             {
-            "SourcePath" = "8:..\\bin\\bytecoind.exe"
-            "TargetName" = "8:bytecoind.exe"
+            "SourcePath" = "8:..\\bin\\armord.exe"
+            "TargetName" = "8:armord.exe"
             "Tag" = "8:"
             "Folder" = "8:_BB6FE95E6903428FBAEC9FE62CB0FE39"
             "Condition" = "8:"
@@ -956,8 +956,8 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_ABCF8F071D16461785EDF6D56ED2ABCE"
             {
-            "SourcePath" = "8:..\\src\\images\\bytecoin.ico"
-            "TargetName" = "8:bytecoin.ico"
+            "SourcePath" = "8:..\\src\\images\\armor.ico"
+            "TargetName" = "8:armor.ico"
             "Tag" = "8:"
             "Folder" = "8:_BB6FE95E6903428FBAEC9FE62CB0FE39"
             "Condition" = "8:"
@@ -1036,8 +1036,8 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B46FD94A95C54654A0085B62BA303464"
             {
-            "SourcePath" = "8:..\\bin\\bytecoin-gui.exe"
-            "TargetName" = "8:bytecoin-gui.exe"
+            "SourcePath" = "8:..\\bin\\armor-gui.exe"
+            "TargetName" = "8:armor-gui.exe"
             "Tag" = "8:"
             "Folder" = "8:_BB6FE95E6903428FBAEC9FE62CB0FE39"
             "Condition" = "8:"
@@ -1371,7 +1371,7 @@
                 {
                     "{9EF0B969-E518-4E46-987F-47570745A589}:_FB523710BEF24C0BAD2342CECFDD610B"
                     {
-                    "Name" = "8:Bytecoin"
+                    "Name" = "8:Armor"
                     "AlwaysCreate" = "11:FALSE"
                     "Condition" = "8:"
                     "Transitive" = "11:FALSE"
@@ -1404,7 +1404,7 @@
                 {
                     "{9EF0B969-E518-4E46-987F-47570745A589}:_950739CF6A65416F8DBB9C76E035DA20"
                     {
-                    "Name" = "8:bytecoin"
+                    "Name" = "8:armor"
                     "AlwaysCreate" = "11:TRUE"
                     "Condition" = "8:"
                     "Transitive" = "11:FALSE"
@@ -1508,7 +1508,7 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:Bytecoin"
+        "ProductName" = "8:Armor"
         "ProductCode" = "8:{D9D78741-9E49-49BB-A310-DCAC6CBF5F42}"
         "PackageCode" = "8:{77284CC6-1E09-453C-AA55-B6F04240B8F8}"
         "UpgradeCode" = "8:{DC5C7D60-BB08-4B97-B634-E87679CCEB3C}"
@@ -1518,15 +1518,15 @@
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
         "ProductVersion" = "8:19.3.7"
-        "Manufacturer" = "8:Bytecoin Developers"
+        "Manufacturer" = "8:Armor Developers"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
-        "Title" = "8:Bytecoin 3.4.1 Installer"
+        "Title" = "8:Armor 3.4.1 Installer"
         "Subject" = "8:"
-        "ARPCONTACT" = "8:Bytecoin Developers"
+        "ARPCONTACT" = "8:Armor Developers"
         "Keywords" = "8:"
-        "ARPCOMMENTS" = "8:Release version of bytecoin from 07 Mar 2019"
-        "ARPURLINFOABOUT" = "8:https://bytecoin.org"
+        "ARPCOMMENTS" = "8:Release version of armor from 07 Mar 2019"
+        "ARPURLINFOABOUT" = "8:https://armor.org"
         "ARPPRODUCTICON" = "8:_ABCF8F071D16461785EDF6D56ED2ABCE"
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
@@ -1732,7 +1732,7 @@
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
                             "Setting" = "3:2"
-                            "Value" = "8:Release version 3.4.1 of bytecoin core and GUI wallet from 2019/03/07."
+                            "Value" = "8:Release version 3.4.1 of armor core and GUI wallet from 2019/03/07."
                             "DefaultValue" = "8:#1202"
                             "UsePlugInResources" = "11:TRUE"
                             }
@@ -1971,7 +1971,7 @@
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
                             "Setting" = "3:2"
-                            "Value" = "8:Release version 3.4.1 of bytecoin core and GUI wallet from 2019/03/07."
+                            "Value" = "8:Release version 3.4.1 of armor core and GUI wallet from 2019/03/07."
                             "DefaultValue" = "8:#1202"
                             "UsePlugInResources" = "11:TRUE"
                             }

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Armor Wallet
+Comment=Armor wallet
+Exec=armorwallet %U
+Terminal=false
+Type=Application
+Icon=armor
+MimeType=x-scheme-handler/armor;
+Categories=Office;Finance;

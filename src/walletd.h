@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018, The Bytecoin developers.
+// Copyright (c) 2015-2018, The Armor developers.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #ifndef WALLETD_H
@@ -140,11 +140,11 @@ public:
 
     enum class ReturnCodes
     {
-        BYTECOIND_DATABASE_ERROR       = 101,  // We hope we are out of disk space, otherwise blockchain DB is corrupted.
-        BYTECOIND_ALREADY_RUNNING      = 102,
+        ARMORD_DATABASE_ERROR       = 101,  // We hope we are out of disk space, otherwise blockchain DB is corrupted.
+        ARMORD_ALREADY_RUNNING      = 102,
         WALLETD_BIND_PORT_IN_USE       = 103,
-        BYTECOIND_BIND_PORT_IN_USE     = 104,
-        BYTECOIND_WRONG_ARGS           = 105,
+        ARMORD_BIND_PORT_IN_USE     = 104,
+        ARMORD_WRONG_ARGS           = 105,
         WALLET_FILE_READ_ERROR         = 205,
         WALLET_FILE_UNKNOWN_VERSION    = 206,
         WALLET_FILE_DECRYPT_ERROR      = 207,
