@@ -19,7 +19,7 @@ class AddressBookModel : public QAbstractItemModel
 
 public:
   enum Columns {
-    COLUMN_LABEL = 0, COLUMN_ADDRESS, /*COLUMN_DONATION,*/ /*COLUMN_ACTION*/
+    COLUMN_LABEL = 0, COLUMN_ADDRESS, /*COLUMN_DONATION,*/ COLUMN_ACTION
   };
 
   enum Roles {
