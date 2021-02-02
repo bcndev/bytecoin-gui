@@ -48,9 +48,3 @@ jobs:
       shell: bash
       run: |
         make
-
-    - name: Test
-      working-directory: ${{github.workspace}}/bin
-      shell: bash
-      run: |
-          ./armor-gui --version
