@@ -20,8 +20,14 @@ jobs:
       working-directory: ${{github.workspace}}
       shell: bash
       run: |
-          sudo apt install qt5-qmake qtbase5-dev qtbase5-dev-tools
+          sudo apt install qt5-qmake qtbase5-dev qtbase5-dev-tools libboost-all-dev libudev-dev
           cd ..
+          git clone --single-branch --branch OpenSSL_1_1_1-stable --depth 1 https://github.com/openssl/openssl.git
+          cd openssl
+          ./Configure linux-x86_64 no-shared
+          make
+          cd ..
+          git clone https://github.com/noritte/lmdb.git
           git clone https://github.com/armornetworkdev/armor.git
           cd armor
           mkdir -p build
