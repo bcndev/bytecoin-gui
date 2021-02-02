@@ -1,0 +1,50 @@
+name: CMake
+
+on: [push]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    # The CMake configure and build commands are platform agnostic and should work equally
+    # well on Windows or Mac.  You can convert this to a matrix build if you need
+    # cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependeces
+      working-directory: ${{github.workspace}}
+      shell: bash
+      run: |
+          sudo apt install qt5-qmake qtbase5-dev qtbase5-dev-tools
+          cd ..
+          git clone https://github.com/armornetworkdev/armor.git
+          cd armor
+          mkdir -p build
+          cd build
+          cmake ..
+          make armor-crypto
+          cd ..
+    - name: CMAKE
+      working-directory: ${{github.workspace}}
+      shell: bash
+      run: |
+          mkdir -p build
+          cd build
+          cmake ..
+          
+    - name: Build
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      run: |
+        make
+
+    - name: Test
+      working-directory: ${{github.workspace}}/bin
+      shell: bash
+      run: |
+          ./armor-gui --version
