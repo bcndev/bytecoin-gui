@@ -22,66 +22,10 @@ if(APPLE)
     set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -mmacosx-version-min=10.11")
 endif()
 
-set(SOURCES
-    src/main.cpp
-    src/mainwindow.cpp 
-    src/signalhandler.cpp 
-    src/overviewframe.cpp 
-    src/aboutdialog.cpp 
-    src/JsonRpc/JsonRpcClient.cpp 
-    src/JsonRpc/JsonRpcNotification.cpp 
-    src/JsonRpc/JsonRpcObject.cpp 
-    src/JsonRpc/JsonRpcObjectFactory.cpp 
-    src/JsonRpc/JsonRpcRequest.cpp 
-    src/JsonRpc/JsonRpcResponse.cpp 
-    src/application.cpp 
-    src/logger.cpp 
-    src/okbutton.cpp 
-    src/statusbar.cpp 
-    src/windoweditemmodel.cpp 
-    src/walletmodel.cpp 
-    src/sendframe.cpp 
-    src/transferframe.cpp 
-    src/resizablescrollarea.cpp 
-    src/common.cpp 
-    src/connectionoptionsframe.cpp 
-    src/settings.cpp 
-    src/Miner/Miner.cpp 
-    src/Miner/StratumClient.cpp 
-    src/Miner/Worker.cpp 
-    src/MinerDelegate.cpp 
-    src/MinerModel.cpp 
-    src/MiningFrame.cpp 
-    src/MiningManager.cpp 
-    src/connectselectiondialog.cpp 
-    src/walletd.cpp 
-    src/rpcapi.cpp 
-    src/progressbar.cpp 
-    src/addressbookframe.cpp 
-    src/addressbookmodel.cpp 
-    src/addressbooksortedmodel.cpp 
-    src/newaddressdialog.cpp 
-    src/addressbookdelegate.cpp 
-    src/addressbookmanager.cpp 
-    src/balanceoverviewframe.cpp 
-    src/miningoverviewframe.cpp 
-    src/crashdialog.cpp 
-    src/changepassworddialog.cpp
-    src/sendconfirmationdialog.cpp
-    src/addressbookdialog.cpp
-    src/popup.cpp
-    src/logframe.cpp
-    src/askpassworddialog.cpp
-    src/importkeydialog.cpp
-    src/questiondialog.cpp
-    src/PoolTreeView.cpp
-    src/createproofdialog.cpp
-    src/checkproofdialog.cpp
-    src/walletdparamsdialog.cpp
-    src/exportkeydialog.cpp
-    src/filedownloader.cpp
-    src/mnemonicdialog.cpp
-    src/version.cpp
+file(GLOB SOURCES
+    src/*.cpp
+    src/JsonRpc/*.cpp
+    src/Miner/*.cpp
 )
 
 include_directories(${CMAKE_BINARY_DIR} src )
