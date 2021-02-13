@@ -195,7 +195,7 @@ jobs:
     qtFullVer: $(qtVer)-0-201903131307
     qtBuildName: Windows-Windows_10-MSVC2019
     qtMSVC: msvc2019
-    qtRepoUrlPrefix: https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt5_5122/qt.qt5.5122.win
+    qtRepoUrlPrefix: https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt5_5152/qt.qt5.5152.win
     wixInstallPath: C:\Program Files (x86)\WiX Toolset v3.11\bin
   strategy:
     matrix:
