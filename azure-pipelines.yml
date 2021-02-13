@@ -354,16 +354,6 @@ jobs:
       curl \
         -H "Authorization: token $(GithubPAT)" \
         -H "Content-Type: application/zip" -X POST \
-        --data-binary "@$(Build.ArtifactStagingDirectory)/win32/armor-desktop-$(Build.SourceBranchName)-win32.msi" \
-        https://uploads.github.com/repos/$(desktopRepo)/releases/$release_id/assets?name="armor-desktop-$(Build.SourceBranchName)-win32.msi"
-      curl \
-        -H "Authorization: token $(GithubPAT)" \
-        -H "Content-Type: application/zip" -X POST \
         --data-binary "@$(Build.ArtifactStagingDirectory)/win64/armor-desktop-$(Build.SourceBranchName)-win64-portable.zip" \
         https://uploads.github.com/repos/$(desktopRepo)/releases/$release_id/assets?name="armor-desktop-$(Build.SourceBranchName)-win64-portable.zip"
-      curl \
-        -H "Authorization: token $(GithubPAT)" \
-        -H "Content-Type: application/zip" -X POST \
-        --data-binary "@$(Build.ArtifactStagingDirectory)/win32/armor-desktop-$(Build.SourceBranchName)-win32-portable.zip" \
-        https://uploads.github.com/repos/$(desktopRepo)/releases/$release_id/assets?name="armor-desktop-$(Build.SourceBranchName)-win32-portable.zip"
     displayName: Create github release in desktop repo
