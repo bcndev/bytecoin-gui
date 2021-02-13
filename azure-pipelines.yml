@@ -65,8 +65,8 @@ jobs:
     displayName: Download daemons build artifacts
     inputs:
       buildType: specific
-      project: armor
-      pipeline: armor
+      project: armornetwork
+      pipeline: armornetworkdev.armor
       buildVersionToDownload: 'latest'
       downloadType: single
       artifactName: linux64
@@ -128,8 +128,8 @@ jobs:
     displayName: Download daemons build artifacts
     inputs:
       buildType: specific
-      project: armor
-      pipeline: armor
+      project: armornetwork
+      pipeline: armornetworkdev.armor
       buildVersionToDownload: 'latest'
       downloadType: single
       artifactName: macos
@@ -213,8 +213,8 @@ jobs:
     displayName: Download daemons build artifacts
     inputs:
       buildType: specific
-      project: armor
-      pipeline: armor
+      project: armornetwork
+      pipeline: armornetworkdev.armor
       buildVersionToDownload: 'latest'
       downloadType: single
       artifactName: win$(arch)
