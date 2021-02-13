@@ -181,21 +181,21 @@ jobs:
 ####################### Windows #######################
 - job: Windows
   pool:
-    vmImage: windows-2019
+    vmImage: vs2017-win2016
   dependsOn: WaitForDaemonsBuild
   condition: |
       succeeded()
   variables:
     QTDIR: C:\Users\qt\work\install
-    vsPath: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise
+    vsPath: C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise
     vsCMakeDir: $(vsPath)\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin
-    vsMSBuildDir: $(vsPath)\MSBuild\16.0\Bin
+    vsMSBuildDir: $(vsPath)\MSBuild\15.0\Bin
     VCINSTALLDIR: $(vsPath)\VC
-    qtVer: 5.15.2
-    qtFullVer: $(qtVer)-0-202011130602
-    qtBuildName: Windows-Windows_10-MSVC2019-Windows-Windows_10-X86
-    qtMSVC: msvc2019
-    qtRepoUrlPrefix: https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt5_5152/qt.qt5.5152.win
+    qtVer: 5.12.2
+    qtFullVer: $(qtVer)-0-201903131307
+    qtBuildName: Windows-Windows_10-MSVC2017-Windows-Windows_10-X86
+    qtMSVC: msvc2017
+    qtRepoUrlPrefix: https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt5_5122/qt.qt5.5122.win
     wixInstallPath: C:\Program Files (x86)\WiX Toolset v3.11\bin
   strategy:
     matrix:
