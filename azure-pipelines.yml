@@ -115,17 +115,12 @@ jobs:
 ####################### Macos #######################
 - job: Mac
   pool:
-    vmImage: macOS-10.13
+    vmImage: macOS-10.14
   dependsOn: WaitForDaemonsBuild
   variables:
     MACOSX_DEPLOYMENT_TARGET: 10.11
   condition: |
-    and(
-      succeeded(),
-      or(
-        startsWith(variables['build.sourceBranch'], 'refs/heads/releases/'),
-        startsWith(variables['build.sourceBranch'], 'refs/tags/')
-    ))
+      succeeded()
   steps:
   - checkout: none
 
@@ -189,12 +184,7 @@ jobs:
     vmImage: vs2017-win2016
   dependsOn: WaitForDaemonsBuild
   condition: |
-    and(
-      succeeded(),
-      or(
-        startsWith(variables['build.sourceBranch'], 'refs/heads/releases/'),
-        startsWith(variables['build.sourceBranch'], 'refs/tags/')
-    ))
+      succeeded()
   variables:
     QTDIR: C:\Users\qt\work\install
     vsPath: C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise
@@ -216,13 +206,6 @@ jobs:
         qtBinArch: _64
         installerArch: x64
         arch: 64
-      win32:
-        opensslDir: openssl32
-        opensslConfig: VC-WIN32
-        generatorName: Visual Studio 15 2017
-        qtBinArch:
-        installerArch: x86
-        arch: 32
   steps:
   - checkout: none
 
@@ -327,10 +310,7 @@ jobs:
   - Mac
   - Windows
   condition: |
-    and(
-      succeeded(),
-      startsWith(variables['build.sourceBranch'], 'refs/heads/releases/')
-    )
+      succeeded()
   steps:
   - checkout: none
 
@@ -347,9 +327,9 @@ jobs:
       ls -alh $(Build.ArtifactStagingDirectory)
       [[ `echo $(Build.SourceBranchName) | grep '-'` ]] && preRelease=true || preRelease=false
       curl -H "Authorization: token $(GithubPAT)" \
-        -d '{ "tag_name": "v$(Build.SourceBranchName)",
-            "target_commitish": "$(Build.SourceVersion)",
-            "name": "v$(Build.SourceBranchName)",
+        -d '{ "tag_name": "v$(TagName)",
+            "target_commitish": "$(Build.SourceBranchName)",
+            "name": "v$(TagName)",
             "draft": true,
             "prerelease": '$preRelease'}' \
         https://api.github.com/repos/$(desktopRepo)/releases > resp
@@ -387,7 +367,3 @@ jobs:
         --data-binary "@$(Build.ArtifactStagingDirectory)/win32/armor-desktop-$(Build.SourceBranchName)-win32-portable.zip" \
         https://uploads.github.com/repos/$(desktopRepo)/releases/$release_id/assets?name="armor-desktop-$(Build.SourceBranchName)-win32-portable.zip"
     displayName: Create github release in desktop repo
-
-  - script: |
-      curl -H "Authorization: token $(GithubPAT)" -X DELETE https://api.github.com/repos/$(desktopRepo)/git/$(Build.SourceBranch)
-    displayName: Remove branch created for the build
