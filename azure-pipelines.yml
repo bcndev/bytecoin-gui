@@ -66,12 +66,12 @@ jobs:
     inputs:
       buildType: specific
       project: armor
-      pipeline: armornetworkdev.armor
+      pipeline: armor
       buildVersionToDownload: 'latest'
       downloadType: single
       artifactName: linux64
       downloadPath: '$(Build.ArtifactStagingDirectory)'
-
+      
   - script: |
       unzip $(Build.ArtifactStagingDirectory)/linux64/\*.zip
       mkdir armor/bin
@@ -129,7 +129,7 @@ jobs:
     inputs:
       buildType: specific
       project: armor
-      pipeline: armornetworkdev.armor
+      pipeline: armor
       buildVersionToDownload: 'latest'
       downloadType: single
       artifactName: macos
@@ -214,7 +214,7 @@ jobs:
     inputs:
       buildType: specific
       project: armor
-      pipeline: armornetworkdev.armor
+      pipeline: armor
       buildVersionToDownload: 'latest'
       downloadType: single
       artifactName: win$(arch)
