@@ -216,6 +216,7 @@ RESOURCES += \
 
 
 unix|win32: LIBS += -L$$PWD/../../armor/libs/ -larmor-crypto
+win32: LIBS += -lAdvAPI32
 
 INCLUDEPATH += $$PWD/../../armor/src
 DEPENDPATH += $$PWD/../../armor/src
