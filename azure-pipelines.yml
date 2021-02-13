@@ -193,7 +193,7 @@ jobs:
     VCINSTALLDIR: $(vsPath)\VC
     qtVer: 5.15.2
     qtFullVer: $(qtVer)-0-202011130602
-    qtBuildName: Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64
+    qtBuildName: Windows-Windows_10-MSVC2019-Windows-Windows_10-X86
     qtMSVC: msvc2019
     qtRepoUrlPrefix: https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt5_5152/qt.qt5.5152.win
     wixInstallPath: C:\Program Files (x86)\WiX Toolset v3.11\bin
