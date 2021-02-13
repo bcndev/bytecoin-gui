@@ -194,7 +194,7 @@ jobs:
     qtVer: 5.12.2
     qtFullVer: $(qtVer)-0-201903131307
     qtBuildName: Windows-Windows_10-MSVC2019
-    qtMSVC: msvc2017
+    qtMSVC: msvc2019
     qtRepoUrlPrefix: https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt5_5122/qt.qt5.5122.win
     wixInstallPath: C:\Program Files (x86)\WiX Toolset v3.11\bin
   strategy:
@@ -222,7 +222,7 @@ jobs:
 
   - bash: |
       set -o xtrace
-      7z x $(Build.ArtifactStagingDirectory)/win$(arch)/\*.zip
+      7z x "$(Build.ArtifactStagingDirectory)"/win$(arch)/\*.zip
       mkdir armor/bin
       mv -v *d.exe armor/bin
       mv -v *d.pdb armor/bin
