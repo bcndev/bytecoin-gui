@@ -158,9 +158,15 @@ jobs:
   - script: |
       brew update
       brew install qt@5
+      export LDFLAGS="-L/usr/local/opt/qt@5/lib"
+      export CPPFLAGS="-I/usr/local/opt/qt@5/include"
+      export PKG_CONFIG_PATH="/usr/local/opt/qt@5/lib/pkgconfig"
     displayName: Install qt 5
 
   - script: |
+      export LDFLAGS="-L/usr/local/opt/qt@5/lib"
+      export CPPFLAGS="-I/usr/local/opt/qt@5/include"
+      export PKG_CONFIG_PATH="/usr/local/opt/qt@5/lib/pkgconfig"
       mkdir armor-gui/build && cd armor-gui/build
       /usr/local/opt/qt/bin/qmake ../src/armor-gui.pro && make -j
     displayName: Build desktop code
