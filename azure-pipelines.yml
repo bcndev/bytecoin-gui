@@ -170,11 +170,11 @@ jobs:
       export CPPFLAGS="-I/usr/local/opt/qt@5/include"
       export PKG_CONFIG_PATH="/usr/local/opt/qt@5/lib/pkgconfig"
       mkdir armor-gui/build && cd armor-gui/build
-      /usr/local/opt/qt/bin/qmake ../src/armor-gui.pro && make -j
+      qmake ../src/armor-gui.pro && make -j
     displayName: Build desktop code
 
   - script: |
-      /usr/local/opt/qt/bin/macdeployqt armor-gui/bin/armor-gui.app
+      macdeployqt armor-gui/bin/armor-gui.app
     displayName: Call macdeployqt
 
   - script: |
