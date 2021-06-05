@@ -1525,7 +1525,7 @@
         "Subject" = "8:"
         "ARPCONTACT" = "8:Armor Developers"
         "Keywords" = "8:"
-        "ARPCOMMENTS" = "8:Release version of armor from 07 Mar 2019"
+        "ARPCOMMENTS" = "8:Release version of armor 05 Jun 2021"
         "ARPURLINFOABOUT" = "8:https://armor.org"
         "ARPPRODUCTICON" = "8:_ABCF8F071D16461785EDF6D56ED2ABCE"
         "ARPIconIndex" = "3:0"
@@ -1732,7 +1732,7 @@
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
                             "Setting" = "3:2"
-                            "Value" = "8:Release version 3.4.1 of armor core and GUI wallet from 2019/03/07."
+                            "Value" = "8:Release version 0.0.3 of armor core and GUI wallet from 2021/06/05."
                             "DefaultValue" = "8:#1202"
                             "UsePlugInResources" = "11:TRUE"
                             }
@@ -1971,7 +1971,7 @@
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
                             "Setting" = "3:2"
-                            "Value" = "8:Release version 3.4.1 of armor core and GUI wallet from 2019/03/07."
+                            "Value" = "8:Release version 0.0.3 of armor core and GUI wallet 05 Jun 2021"
                             "DefaultValue" = "8:#1202"
                             "UsePlugInResources" = "11:TRUE"
                             }
