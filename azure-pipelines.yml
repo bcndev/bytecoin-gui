@@ -56,7 +56,7 @@ jobs:
 ####################### Linux #######################
 - job: Linux
   pool:
-    vmImage: ubuntu-16.04
+    vmImage: ubuntu-18.04
   dependsOn: WaitForDaemonsBuild
   steps:
   - checkout: none
@@ -71,7 +71,12 @@ jobs:
       downloadType: single
       artifactName: linux64
       downloadPath: '$(Build.ArtifactStagingDirectory)'
-      
+    
+  - script: |
+    sudo apt-get update
+    sudo apt-get install -y build-essential libudev-dev
+  displayName: Install dependences
+
   - script: |
       unzip $(Build.ArtifactStagingDirectory)/linux64/\*.zip
       mkdir armor/bin
@@ -91,11 +96,6 @@ jobs:
       sudo apt-get update
       sudo apt-get install -y qt5-qmake qtbase5-dev qtbase5-dev-tools qt5-default
     displayName: Install qt
-
-  - script: |
-      sudo apt-get update
-      sudo apt-get install -y build-essential libudev-dev
-    displayName: Install dependences
 
   - script: |
       mkdir armor-gui/build && cd armor-gui/build
