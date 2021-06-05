@@ -123,7 +123,7 @@ jobs:
     vmImage: macOS-10.14
   dependsOn: WaitForDaemonsBuild
   variables:
-    MACOSX_DEPLOYMENT_TARGET: 10.11
+    MACOSX_DEPLOYMENT_TARGET: 10.14
   condition: |
       succeeded()
   steps:
@@ -156,11 +156,11 @@ jobs:
     displayName: Clone desktop code
 
   - script: |
-      curl -L -O https://raw.githubusercontent.com/Homebrew/homebrew-core/8d4d48f0bb552b7b107119aeef59f141ce1f72c3/Formula/qt.rb
-      depends_on :macos => :mountain_lion
-      sed -i '' 's/depends_on :macos => :mountain_lion/#depends_on :macos => :mountain_lion/g' qt.rb
-      brew install qt.rb
-    displayName: Install qt 5.10.1
+      brew update
+      cd $( brew --prefix )/Homebrew/Library/Taps/homebrew/homebrew-core
+      git checkout 9ba3d6ef8891e5c15dbdc9333f857b13711d4e97 Formula/qt@5.5.rb
+      brew install qt@5.5
+    displayName: Install qt 5.5
 
   - script: |
       mkdir armor-gui/build && cd armor-gui/build
