@@ -93,6 +93,11 @@ jobs:
     displayName: Install qt
 
   - script: |
+      sudo apt-get update
+      sudo apt-get install -y build-essential libudev-dev
+    displayName: Install dependences
+
+  - script: |
       mkdir armor-gui/build && cd armor-gui/build
       qmake ../src/armor-gui.pro && make -j$(nproc)
     displayName: Build desktop
