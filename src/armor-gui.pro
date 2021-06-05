@@ -15,7 +15,7 @@ TEMPLATE = app
 macx: QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
 macx: ICON = images/armor.icns
 win32: RC_ICONS = images/armor.ico
-win32: VERSION = 0.0.0.2
+win32: VERSION = 0.0.0.3
 
 #QMAKE_CXXFLAGS += -fno-omit-frame-pointer -fsanitize=address,undefined
 #LIBS += -lasan -lubsan
